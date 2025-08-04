@@ -4,6 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import { PresignedUrlResponse } from '@/api/types/video';
 import { uploadToS3 } from '@/utils/uploadToS3';
 import { VideoPlayer } from '@/components/videoPlayer';
+import { Button } from "@/components/ui/button";
 
 export default function VideoUpload() {
 
@@ -80,22 +81,9 @@ export default function VideoUpload() {
           <p>ここに動画ファイルをドロップ、またはクリックして選択</p>
         )}
       </div>
-
-      <button
-        onClick={handleUpload}
-        disabled={!selectedFile || uploading}
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          backgroundColor: uploading ? '#ccc' : '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: uploading ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {uploading ? 'アップロード中...' : 'アップロード'}
-      </button>
+        
+      <div className="p-6 space-y-4">
+    </div>
       {uploading && (
         <div style={{ width: '100%', backgroundColor: '#eee', marginTop: '10px' }}>
           <div
