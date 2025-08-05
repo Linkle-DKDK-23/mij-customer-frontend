@@ -11,15 +11,11 @@ import {
   Play, 
   Clock, 
   Eye, 
-  Home, 
-  Rss, 
-  TrendingUp, 
-  MessageCircle, 
-  User,
   Star,
   Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import BottomNavigation from '@/components/BottomNavigation';
 
 interface Post {
   id: string;
@@ -263,7 +259,7 @@ export default function Top() {
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {mockGenres.map((genre) => (
               <div key={genre.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition-colors">
                 <h3 className="font-medium text-gray-900 text-sm">{genre.name}</h3>
@@ -284,7 +280,7 @@ export default function Top() {
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {mockPosts.map((post) => (
               <div key={post.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
@@ -350,9 +346,9 @@ export default function Top() {
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
-          <div className="flex overflow-x-auto space-x-4 scrollbar-hide pb-2">
+          <div className="grid grid-cols-1 gap-4">
             {mockCreators.map((creator) => (
-              <div key={creator.id} className="flex-shrink-0 bg-white rounded-lg border border-gray-200 p-4 w-48 hover:shadow-md transition-shadow">
+              <div key={creator.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
                 <div className="text-center">
                   <div className="relative inline-block mb-3">
                     <img 
@@ -380,32 +376,7 @@ export default function Top() {
       </section>
 
       {/* Fixed Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-around py-2">
-            <div className="flex flex-col items-center py-2 px-3 text-pink-500">
-              <Home className="h-6 w-6" />
-              <span className="text-xs mt-1 font-medium">Home</span>
-            </div>
-            <div className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-pink-500 cursor-pointer">
-              <Rss className="h-6 w-6" />
-              <span className="text-xs mt-1">Feed</span>
-            </div>
-            <div className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-pink-500 cursor-pointer">
-              <TrendingUp className="h-6 w-6" />
-              <span className="text-xs mt-1">Ranking</span>
-            </div>
-            <div className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-pink-500 cursor-pointer">
-              <MessageCircle className="h-6 w-6" />
-              <span className="text-xs mt-1">Messages</span>
-            </div>
-            <div className="flex flex-col items-center py-2 px-3 text-gray-500 hover:text-pink-500 cursor-pointer">
-              <User className="h-6 w-6" />
-              <span className="text-xs mt-1">Account</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <BottomNavigation />
     </div>
   );
 }
