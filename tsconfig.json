@@ -6,8 +6,9 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "module": "esnext", 
-    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ESNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
