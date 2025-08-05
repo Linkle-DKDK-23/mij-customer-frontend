@@ -21,12 +21,14 @@ import MainStreemUploadArea from "@/components/custome/MainStreemUploadArea"
 import SampleStreemUploadArea from "@/components/custome/SampleStreemUploadArea"
 import OgpPreview from "@/components/custome/OgpPreview"
 import OgpUploadArea from "@/components/custome/OgpUploadArea,"
+import { DatePickerWithPopover } from "@/components/custome/DatePickerWithPopover"
 
 export default function ShareVideo() {
 
 	const [selectedMainFile, setSelectedMainFile] = useState<File | null>(null);
 	const [previewMainUrl, setPreviewMainUrl] = useState<string | null>(null)
 	const [selectedSampleFile, setSelectedSampleFile] = useState<File | null>(null);
+	const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
 	const [ogp, setOgp] = useState<string | null>(null);
 	const [ogpPreview, setOgpPreview] = useState<string | null>(null);
 	const [previewSampleUrl, setPreviewSampleUrl] = useState<string | null>(null)
@@ -107,8 +109,6 @@ export default function ShareVideo() {
 				const minutes = Math.floor(durationInSeconds / 60);
 				const seconds = Math.floor(durationInSeconds % 60);
 				const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-				console.log("再生時間:", formatted); // ← ここで表示
-				// 必要に応じて setSampleDuration(formatted) など状態に保存
 				setSampleDuration(formatted);
 			};
 		}
@@ -338,12 +338,41 @@ export default function ShareVideo() {
 					onChangeToggle={(v) => onToggleSwitch('scheduled', v)}
 				/>
 				{scheduled && (
-					<div className="space-y-2">
-						<Label htmlFor="scheduled-date" className="text-sm font-medium font-bold">
-							<span className="text-primary mr-1">*</span>予約投稿日時
-						</Label>
-						<Input id="scheduled-date" type="datetime-local" />
+					<div className="flex items-center space-x-2 w-full">
+					{/* 日付入力欄：60% */}
+					<DatePickerWithPopover value={selectedDate} onChange={setSelectedDate} />
+				
+					{/* 時間選択：40% */}
+					<div className="flex items-center space-x-2 basis-2/5 flex-shrink-0">
+						<Select>
+							<SelectTrigger className="w-[80px]">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{Array.from({ length: 24 }, (_, i) => (
+									<SelectItem key={i} value={i.toString()}>
+										{i.toString().padStart(2, "0")}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<span className="text-sm font-medium font-bold">時</span>
+				
+						<Select>
+							<SelectTrigger className="w-[80px]">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{Array.from({ length: 60 }, (_, i) => (
+									<SelectItem key={i} value={i.toString()}>
+										{i.toString().padStart(2, "0")}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<span className="text-sm font-medium font-bold">分</span>
 					</div>
+				</div>
 				)}
 				<ToggleRow 
 					label="公開期限" 
@@ -352,11 +381,8 @@ export default function ShareVideo() {
 					onChangeToggle={(v) => onToggleSwitch('expiration', v)}
 				/>
 				{expiration && (
-					<div className="space-y-2">
-						<Label htmlFor="expiration-date" className="text-sm font-medium font-bold">
-							<span className="text-primary mr-1">*</span>公開期限
-						</Label>
-						<Input id="expiration-date" type="datetime-local" />
+					<div className="flex items-center space-x-2 w-full">
+						<DatePickerWithPopover value={selectedDate} onChange={setSelectedDate} />
 					</div>
 				)}
 				<ToggleRow 
