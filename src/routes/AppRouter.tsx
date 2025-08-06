@@ -5,6 +5,7 @@ import Upload from '@/pages/Upload';
 import ViewVideo from '@/pages/ViewVideo';
 import Top from '@/pages/Top';
 import ShareVideo from '@/pages/share/video/ShareVideo';
+import CreatorProfile from '@/pages/CreatorProfile';
 
 export default function AppRouter() {
   return (
@@ -13,6 +14,7 @@ export default function AppRouter() {
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/top" element={<Top />} />
       <Route path="/share/video" element={<ShareVideo />} />
+      <Route path="/creatorpProfile" element={<CreatorProfile />} />
     </Routes>
   );
 }
