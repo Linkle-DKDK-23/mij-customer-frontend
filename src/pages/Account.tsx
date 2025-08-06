@@ -1,137 +1,178 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Settings, TrendingUp, FileText, CreditCard, HelpCircle } from 'lucide-react';
-import AccountLayout from '@/components/account/AccountLayout';
+import { Settings, Edit, ChevronRight, Gift, FileText, DollarSign, CreditCard } from 'lucide-react';
 
 interface UserProfile {
   name: string;
   username: string;
   avatar: string;
+  followingCount: number;
   followerCount: number;
-  postCount: number;
-  coinBalance: number;
-}
-
-interface ManagementSection {
-  id: string;
-  title: string;
-  icon: React.ReactNode;
-  description: string;
-  count?: number;
+  totalLikes: number;
 }
 
 const mockUser: UserProfile = {
   name: 'ピエール',
   username: '@piepie',
-  avatar: 'https://picsum.photos/100/100?random=50',
-  followerCount: 1,
-  postCount: 3,
-  coinBalance: 0
+  avatar: 'https://picsum.photos/120/120?random=50',
+  followingCount: 0,
+  followerCount: 3,
+  totalLikes: 0
 };
 
-const managementSections: ManagementSection[] = [
-  {
-    id: 'posts',
-    title: '投稿の管理',
-    icon: <FileText className="h-6 w-6" />,
-    description: '投稿の作成・編集・削除',
-    count: 0
-  },
-  {
-    id: 'sales',
-    title: '売上管理',
-    icon: <TrendingUp className="h-6 w-6" />,
-    description: '売上の確認・出金申請',
-    count: 0
-  },
-  {
-    id: 'plans',
-    title: 'プラン管理',
-    icon: <CreditCard className="h-6 w-6" />,
-    description: 'プランの作成・編集',
-    count: 0
-  },
-  {
-    id: 'settings',
-    title: 'アカウント設定',
-    icon: <Settings className="h-6 w-6" />,
-    description: 'プロフィール・設定の変更'
-  }
-];
-
 export default function Account() {
+  const [activeTab, setActiveTab] = useState('管理画面');
+  
+  const tabs = ['管理画面', '加入中', '単品購入', 'いいね'];
+
   return (
-    <AccountLayout>
-      <div className="p-6 space-y-8">
-        <div className="flex items-center space-x-4 p-6 bg-gray-50 rounded-lg">
-          <img 
-            src={mockUser.avatar} 
-            alt={mockUser.name}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">{mockUser.name}</h2>
-            <p className="text-gray-600">{mockUser.username}</p>
-            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-              <span>{mockUser.postCount}投稿</span>
-              <span>{mockUser.followerCount}フォロワー</span>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-md mx-auto">
+        {/* Profile Section */}
+        <div className="p-6 text-center">
+          <div className="mb-4">
+            <h1 className="text-lg font-medium text-gray-900">{mockUser.name}</h1>
+            <p className="text-gray-600 text-sm">{mockUser.username}</p>
+            <div className="flex items-center justify-center mt-2">
+              <button className="text-blue-500 text-sm flex items-center">
+                プロフィールを見る
+                <Edit className="h-4 w-4 ml-1" />
+              </button>
             </div>
           </div>
-          <Button className="bg-primary hover:bg-primary/90">
-            プロフィールを見る
-          </Button>
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">売上金の出金申請</h3>
-              <p className="text-sm text-gray-600 mt-1">出金可能売上金額: ¥{mockUser.coinBalance.toLocaleString()}</p>
+          
+          <div className="w-24 h-24 mx-auto mb-4">
+            <img 
+              src={mockUser.avatar} 
+              alt={mockUser.name}
+              className="w-full h-full rounded-full object-cover bg-gray-200"
+            />
+          </div>
+          
+          <div className="flex justify-center space-x-8 text-sm">
+            <div className="text-center">
+              <div className="text-gray-600">フォロー</div>
+              <div className="font-medium">{mockUser.followingCount}人</div>
             </div>
-            <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
-              出金申請
-            </Button>
+            <div className="text-center">
+              <div className="text-gray-600">フォロワー</div>
+              <div className="font-medium">{mockUser.followerCount}人</div>
+            </div>
+            <div className="text-center">
+              <div className="text-gray-600">総いいね</div>
+              <div className="font-medium">{mockUser.totalLikes}件</div>
+            </div>
           </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">管理</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {managementSections.map((section) => (
-              <div key={section.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <div className="text-primary">{section.icon}</div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{section.title}</h4>
-                    <p className="text-sm text-gray-600">{section.description}</p>
-                  </div>
-                  {section.count !== undefined && (
-                    <span className="text-lg font-semibold text-gray-900">{section.count}</span>
-                  )}
-                </div>
-              </div>
+        {/* Account Settings Link */}
+        <div className="px-6 mb-6">
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+            <div className="flex items-center space-x-3">
+              <Settings className="h-5 w-5 text-gray-600" />
+              <span className="text-gray-900">アカウント設定</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="px-6 mb-6">
+          <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === tab
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {tab}
+              </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">その他</h3>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-              <div className="flex items-center space-x-3">
-                <CreditCard className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-900">クーポン管理</span>
+        {/* Management Content */}
+        {activeTab === '管理画面' && (
+          <div className="px-6 space-y-4">
+            {/* Coupon Management */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-blue-500 p-2 rounded-lg">
+                    <Gift className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">クーポン管理</h3>
+                    <p className="text-sm text-gray-600">
+                      保有クーポンの確認、クーポンの発行、管理、
+                      <br />
+                      利用状況を確認できます。
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400" />
               </div>
             </div>
-            <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-              <div className="flex items-center space-x-3">
-                <HelpCircle className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-900">よくある質問</span>
+
+            {/* Post Management */}
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="font-medium text-gray-900 mb-4">投稿管理</h3>
+              <div className="grid grid-cols-5 gap-2 text-center text-sm">
+                <div>
+                  <div className="text-gray-600">審査中</div>
+                  <div className="font-medium">1</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">要修正</div>
+                  <div className="font-medium">0</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">非公開</div>
+                  <div className="font-medium">1</div>
+                </div>
+                <div>
+                  <div className="text-primary">公開済み</div>
+                  <div className="font-medium text-primary">1</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">削除</div>
+                  <div className="font-medium">0</div>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <button className="text-pink-500 text-sm">すべて見る &gt;</button>
+              </div>
+            </div>
+
+            {/* Sales */}
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="font-medium text-gray-900 mb-2">売上金</h3>
+              <div className="text-center mb-4">
+                <div className="text-2xl font-bold text-gray-900">0円</div>
+              </div>
+              <div className="space-y-2">
+                <button className="w-full text-pink-500 text-sm text-center">
+                  売上金の詳細 &gt;
+                </button>
+                <button className="w-full text-pink-500 text-sm text-center">
+                  出金申請 &gt;
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Other tabs content (placeholder) */}
+        {activeTab !== '管理画面' && (
+          <div className="px-6 py-8 text-center text-gray-500">
+            {activeTab}のコンテンツ
+          </div>
+        )}
       </div>
-    </AccountLayout>
+    </div>
   );
 }
