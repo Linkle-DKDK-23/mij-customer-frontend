@@ -14,7 +14,7 @@ export default function AppRouter() {
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/top" element={<Top />} />
       <Route path="/share/video" element={<ShareVideo />} />
-      <Route path="/creatorpProfile" element={<CreatorProfile />} />
+      <Route path="/creator/profile" element={<CreatorProfile />} />
     </Routes>
   );
 }

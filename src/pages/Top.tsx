@@ -15,7 +15,7 @@ import {
   Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import BottomNavigation from '@/components/BottomNavigation';
+import BottomNavigation from '@/components/custome/BottomNavigation';
 import Header from '@/components/custome/Header';
 
 import { useKeenSlider } from "keen-slider/react";
@@ -218,15 +218,14 @@ export default function Top() {
 
 
   return (
-    <div className="w-full max-w-lg bg-white space-y-6 pt-16">
+    <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
       <div className="min-h-screen bg-gray-50 pb-20">
         {/* Header */}
         <Header />
 
         {/* Banner Carousel */}
         <section className="bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            {/* スライダー本体 */}
+          <div className="max-w-screen-sm mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div ref={sliderRef} className="keen-slider">
               {bannerItems.map((banner, idx) => (
                 <div
@@ -245,7 +244,6 @@ export default function Top() {
               ))}
             </div>
 
-            {/* ドットナビゲーション */}
             <div className="flex justify-center mt-4 space-x-2">
               {bannerItems.map((_, idx) => (
                 <button
@@ -262,8 +260,8 @@ export default function Top() {
         </section>
 
         {/* Post Library Navigation */}
-        <section className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="max-w-screen-md mx-auto bg-white border-b border-gray-200">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-around w-full py-4">
               <div className="flex flex-col items-center space-y-1 text-gray-700 hover:text-primary cursor-pointer">
                 <ShoppingCart className="h-5 w-5" />
@@ -287,7 +285,7 @@ export default function Top() {
 
         {/* Recommended Genres */}
         <section className="bg-white py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">おすすめジャンル</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-pink-600">
@@ -308,7 +306,7 @@ export default function Top() {
 
         {/* ランキング */}
         <section className="bg-white py-6 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">ランキング</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
@@ -374,7 +372,7 @@ export default function Top() {
 
         {/* トップクリエイター */}
         <section className="bg-white py-6 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">トップクリエイター</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-pink-600">
@@ -383,7 +381,6 @@ export default function Top() {
               </Button>
             </div>
 
-            {/* 横スクロールエリア */}
             <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
               {mockCreators.map((creator) => (
                 <div
@@ -418,7 +415,7 @@ export default function Top() {
 
         {/* 新人クリエイター */}
         <section className="bg-white py-6 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">新人クリエイター</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-pink-600">
@@ -427,7 +424,6 @@ export default function Top() {
               </Button>
             </div>
 
-            {/* 横スクロールエリア */}
             <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
               {mockCreators.map((creator) => (
                 <div
@@ -459,7 +455,7 @@ export default function Top() {
 
         {/* 注目クリエイター */}
         <section className="bg-white py-6 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">注目クリエイター</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-pink-600">
@@ -468,7 +464,6 @@ export default function Top() {
               </Button>
             </div>
 
-            {/* 横スクロールエリア */}
             <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
               {mockCreators.map((creator) => (
                 <div
@@ -500,7 +495,7 @@ export default function Top() {
 
         {/* 新着投稿 */}
         <section className="bg-white py-6 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">新着投稿</h2>
               <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
