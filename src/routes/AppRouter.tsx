@@ -18,6 +18,8 @@ import Login from '@/pages/Login';
 import SingUp from '@/pages/SingUp';
 import QreatorRequest from '@/pages/QreatorRequest';
 import QreatorRequestCertifierImage from '@/pages/QreatorRequestCertifierImage';
+import FeedSample from '@/pages/FeedSample';
+import PostRanking from '@/pages/PostRanking';
 
 export default function AppRouter() {
   return (
@@ -39,6 +41,8 @@ export default function AppRouter() {
       <Route path="/signup" element={<SingUp />} />
       <Route path="/creator/request" element={<QreatorRequest />} />
       <Route path="/creator/request/verification" element={<QreatorRequestCertifierImage />} />
+      <Route path="/feed" element={<FeedSample />} />
+      <Route path="/ranking/posts" element={<PostRanking />} />
     </Routes>
   );
 }
