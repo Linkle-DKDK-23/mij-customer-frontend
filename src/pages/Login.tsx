@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/components/auth/AuthLayout';
+import AccountHeader from '@/components/account/AccountHeader';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginForm {
   email: string;
@@ -16,7 +18,7 @@ export default function Login() {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -35,18 +37,20 @@ export default function Login() {
   };
 
   return (
-    <AuthLayout>
+    <div className="bg-white">
+      <AccountHeader title="ログイン" showBackButton />
+      <AuthLayout>
       <div className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Email or ID
+              メールアドレス
             </Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter address or ID"
+              placeholder="入力する"
               value={formData.email}
               onChange={handleInputChange}
               className="mt-1"
@@ -56,14 +60,14 @@ export default function Login() {
 
           <div>
             <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-              Password
+              パスワード
             </Label>
             <div className="relative mt-1">
               <Input
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder="入力する"
                 value={formData.password}
                 onChange={handleInputChange}
                 className="pr-10"
@@ -87,19 +91,15 @@ export default function Login() {
             type="submit"
             className="w-full bg-primary hover:bg-primary/90 text-white"
           >
-            Login
+            ログイン
           </Button>
         </form>
-
-        <div className="text-center">
-          <span className="text-gray-500">or</span>
-        </div>
 
         <Button
           onClick={handleTwitterLogin}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white"
         >
-          Login with Twitter
+          Xでログイン
         </Button>
 
         <div className="text-center space-y-2">
@@ -107,18 +107,19 @@ export default function Login() {
             href="#"
             className="text-sm text-primary hover:text-primary/80"
           >
-            Forgot your password?
+            パスワードを忘れた方はこちら
           </a>
-          <div>
-            <a
-              href="#"
-              className="text-sm text-gray-600 hover:text-gray-800"
-            >
-              Help
-            </a>
-          </div>
+        </div>
+        <div className="text-center border-t border-gray-200 pt-4 space-y-2">
+          <Button
+            onClick={() => navigate('/signup')}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            新規登録
+          </Button>
         </div>
       </div>
-    </AuthLayout>
+      </AuthLayout>
+    </div>
   );
 }

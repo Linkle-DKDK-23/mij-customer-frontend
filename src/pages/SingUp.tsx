@@ -161,26 +161,7 @@ export default function SingUp() {
             </div>
           </div>
 
-          <div>
-            <Label className="text-sm font-medium text-gray-700 mb-3 block">
-              アカウントタイプ
-            </Label>
-            <RadioGroup
-              value={formData.accountType}
-              onValueChange={handleAccountTypeChange}
-              className="flex space-x-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="fan" id="fan" />
-                <Label htmlFor="fan" className="text-sm">ファン</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="creator" id="creator" />
-                <Label htmlFor="creator" className="text-sm">クリエイター</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
+      
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <input
