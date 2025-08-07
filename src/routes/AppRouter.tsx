@@ -14,6 +14,10 @@ import AccountPost from '@/pages/AccountPost';
 import AccountSale from '@/pages/AccountSale';
 import AccountSaleWithDraw from '@/pages/AccountSaleWithDraw';
 import AccountPlanSetting from '@/pages/AccountPlanSetting';
+import Login from '@/pages/Login';
+import SingUp from '@/pages/SingUp';
+import QreatorRequest from '@/pages/QreatorRequest';
+import QreatorRequestCertifierImage from '@/pages/QreatorRequestCertifierImage';
 
 export default function AppRouter() {
   return (
@@ -31,6 +35,10 @@ export default function AppRouter() {
       <Route path="/account/sale" element={<AccountSale />} />
       <Route path="/account/sale-withdraw" element={<AccountSaleWithDraw />} />
       <Route path="/account/plan" element={<AccountPlanSetting />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SingUp />} />
+      <Route path="/creator/request" element={<QreatorRequest />} />
+      <Route path="/creator/request/verification" element={<QreatorRequestCertifierImage />} />
     </Routes>
   );
 }
