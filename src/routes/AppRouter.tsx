@@ -6,6 +6,14 @@ import ViewVideo from '@/pages/ViewVideo';
 import Top from '@/pages/Top';
 import ShareVideo from '@/pages/share/video/ShareVideo';
 import CreatorProfile from '@/pages/CreatorProfile';
+import Account from '@/pages/Account';
+import AccountProfile from '@/pages/AccountProfile';
+import AccountEdit from '@/pages/AccountEdit';
+import AccountSetting from '@/pages/AccountSetting';
+import AccountPost from '@/pages/AccountPost';
+import AccountSale from '@/pages/AccountSale';
+import AccountSaleWithDraw from '@/pages/AccountSaleWithDraw';
+import AccountPlanSetting from '@/pages/AccountPlanSetting';
 
 export default function AppRouter() {
   return (
@@ -15,6 +23,14 @@ export default function AppRouter() {
       <Route path="/top" element={<Top />} />
       <Route path="/share/video" element={<ShareVideo />} />
       <Route path="/creator/profile" element={<CreatorProfile />} />
+      <Route path="/account" element={<Account />} />
+      <Route path="/account/profile" element={<AccountProfile />} />
+      <Route path="/account/edit" element={<AccountEdit />} />
+      <Route path="/account/settings" element={<AccountSetting />} />
+      <Route path="/account/post" element={<AccountPost />} />
+      <Route path="/account/sale" element={<AccountSale />} />
+      <Route path="/account/sale-withdraw" element={<AccountSaleWithDraw />} />
+      <Route path="/account/plan" element={<AccountPlanSetting />} />
     </Routes>
   );
 }
