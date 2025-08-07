@@ -59,7 +59,7 @@ export default function AccountPlanSetting() {
   };
 
   return (
-    <AccountLayout>
+    <div className="bg-white">
       <AccountHeader title="プラン管理" showBackButton />
       
       <div className="p-6 space-y-6">
@@ -152,6 +152,6 @@ export default function AccountPlanSetting() {
           </ul>
         </div>
       </div>
-    </AccountLayout>
+    </div>
   );
 }

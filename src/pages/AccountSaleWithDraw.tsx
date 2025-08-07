@@ -47,7 +47,7 @@ export default function AccountSaleWithDraw() {
   };
 
   return (
-    <AccountLayout>
+    <div className="bg-white">
       <AccountHeader title="売上金の出金申請" showBackButton />
       
       <div className="p-6 space-y-6">
@@ -129,6 +129,6 @@ export default function AccountSaleWithDraw() {
           </Button>
         </div>
       </div>
-    </AccountLayout>
+    </div>
   );
 }

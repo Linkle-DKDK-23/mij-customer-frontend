@@ -50,7 +50,7 @@ const mockTransactions: SalesTransaction[] = [
 
 export default function AccountSale() {
   return (
-    <AccountLayout>
+    <div className="bg-white">
       <AccountHeader title="売上管理" showBackButton />
       
       <div className="p-6 space-y-6">
@@ -147,6 +147,6 @@ export default function AccountSale() {
           </div>
         </div>
       </div>
-    </AccountLayout>
+    </div>
   );
 }

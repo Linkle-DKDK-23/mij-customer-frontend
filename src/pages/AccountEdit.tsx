@@ -33,7 +33,7 @@ export default function AccountEdit() {
   };
 
   return (
-    <AccountLayout>
+     <div className="bg-white">
       <AccountHeader title="プロフィールを編集" showBackButton />
       
       <div className="p-6 space-y-6">
@@ -119,6 +119,6 @@ export default function AccountEdit() {
           </div>
         </div>
       </div>
-    </AccountLayout>
+    </div>
   );
 }

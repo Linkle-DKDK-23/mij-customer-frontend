@@ -18,6 +18,7 @@ import CreatorHeader from '@/components/creater/section/CreatorHeader';
 import PlanArea from '@/components/creater/section/PlanArea';
 import GachaPlan from '@/components/creater/section/GachaPlan';
 import TabsSection from '@/components/creater/section/TabsSection';
+import BottomNavigation from '@/components/custome/BottomNavigation';
 
 interface Post {
   id: string;
@@ -257,7 +258,7 @@ export default function CreatorProfile() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="w-full max-w-lg bg-white space-y-6">
+      <div className="w-full max-w-lg bg-white space-y-6 mb-20">
         <CreatorHeader creator={mockCreator} />
 
         <section className="bg-white border-b border-gray-200 py-6">
@@ -275,6 +276,8 @@ export default function CreatorProfile() {
         <section className="py-8">
           {renderContent()}
         </section>
+
+        <BottomNavigation />
       </div>
     </div>
   );

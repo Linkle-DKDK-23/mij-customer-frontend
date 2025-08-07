@@ -107,7 +107,7 @@ const settingSections: SettingSection[] = [
 
 export default function AccountSetting() {
   return (
-    <AccountLayout>
+    <div className="bg-white">
       <AccountHeader title="アカウント設定" showBackButton />
       
       <div className="p-6 space-y-6">
@@ -156,6 +156,6 @@ export default function AccountSetting() {
           </div>
         ))}
       </div>
-    </AccountLayout>
+    </div>
   );
 }

@@ -75,12 +75,12 @@ export default function AccountPost() {
   const filteredPosts = mockPosts.filter(post => post.status === activeStatus);
 
   return (
-    <AccountLayout>
+    <div className="bg-white">
       <AccountHeader title="投稿の管理" showBackButton />
       
       <AccountNavigation items={navigationItems} onItemClick={handleStatusClick} />
 
-      <div className="p-6">
+      <div className="p-1 mt-10">
         {filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">
@@ -88,7 +88,7 @@ export default function AccountPost() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-1">
             {filteredPosts.map((post) => (
               <div key={post.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
@@ -111,6 +111,6 @@ export default function AccountPost() {
           </div>
         )}
       </div>
-    </AccountLayout>
+    </div>
   );
 }
