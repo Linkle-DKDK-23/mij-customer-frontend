@@ -1,48 +1,131 @@
-
+// src/routes/AppRouter.tsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+
 import Upload from '@/pages/Upload';
 import ViewVideo from '@/pages/ViewVideo';
-import Top from '@/pages/Top';
+import Top from '@/pages/top/Top';
 import ShareVideo from '@/pages/share/video/ShareVideo';
-import CreatorProfile from '@/pages/CreatorProfile';
-import Account from '@/pages/Account';
-import AccountProfile from '@/pages/AccountProfile';
-import AccountEdit from '@/pages/AccountEdit';
-import AccountSetting from '@/pages/AccountSetting';
-import AccountPost from '@/pages/AccountPost';
-import AccountSale from '@/pages/AccountSale';
-import AccountSaleWithDraw from '@/pages/AccountSaleWithDraw';
-import AccountPlanSetting from '@/pages/AccountPlanSetting';
-import Login from '@/pages/Login';
-import SingUp from '@/pages/SingUp';
-import QreatorRequest from '@/pages/QreatorRequest';
-import QreatorRequestCertifierImage from '@/pages/QreatorRequestCertifierImage';
-import FeedSample from '@/pages/FeedSample';
-import PostRanking from '@/pages/PostRanking';
+import CreatorProfile from '@/pages/qreator/CreatorProfile';
+import Account from '@/pages/account/Account';
+import AccountProfile from '@/pages/account/AccountProfile';
+import AccountEdit from '@/pages/account/AccountEdit';
+import AccountSetting from '@/pages/account/AccountSetting';
+import AccountPost from '@/pages/account/AccountPost';
+import AccountSale from '@/pages/account/AccountSale';
+import AccountSaleWithDraw from '@/pages/account/AccountSaleWithDraw';
+import AccountPlanSetting from '@/pages/account/AccountPlanSetting';
+import Login from '@/pages/signUp/Login';
+import SingUp from '@/pages/signUp/SingUp';
+import QreatorRequest from '@/pages/qreator/QreatorRequest';
+import QreatorRequestCertifierImage from '@/pages/qreator/QreatorRequestCertifierImage';
+import FeedSample from '@/pages/feed/FeedSample';
+import PostRanking from '@/pages/postRanking/PostRanking';
+
+import PrivateRoute from '@/routes/PrivateRoute';
 
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/upload_test" element={<Upload />} />
-      <Route path="/view_video" element={<ViewVideo />} />
+      {/* 公開ページ */}
       <Route path="/top" element={<Top />} />
+      <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/share/video" element={<ShareVideo />} />
       <Route path="/creator/profile" element={<CreatorProfile />} />
-      <Route path="/account" element={<Account />} />
-      <Route path="/account/profile" element={<AccountProfile />} />
-      <Route path="/account/edit" element={<AccountEdit />} />
-      <Route path="/account/settings" element={<AccountSetting />} />
-      <Route path="/account/post" element={<AccountPost />} />
-      <Route path="/account/sale" element={<AccountSale />} />
-      <Route path="/account/sale-withdraw" element={<AccountSaleWithDraw />} />
-      <Route path="/account/plan" element={<AccountPlanSetting />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SingUp />} />
-      <Route path="/creator/request" element={<QreatorRequest />} />
-      <Route path="/creator/request/verification" element={<QreatorRequestCertifierImage />} />
       <Route path="/feed" element={<FeedSample />} />
       <Route path="/ranking/posts" element={<PostRanking />} />
+
+      {/* 認証必須ページ（必要に応じて追加） */}
+      <Route
+        path="/upload_test"
+        element={
+          <PrivateRoute>
+            <Upload />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account"
+        element={
+          <PrivateRoute>
+            <Account />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/profile"
+        element={
+          <PrivateRoute>
+            <AccountProfile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/edit"
+        element={
+          <PrivateRoute>
+            <AccountEdit />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/settings"
+        element={
+          <PrivateRoute>
+            <AccountSetting />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/post"
+        element={
+          <PrivateRoute>
+            <AccountPost />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/sale"
+        element={
+          <PrivateRoute>
+            <AccountSale />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/sale-withdraw"
+        element={
+          <PrivateRoute>
+            <AccountSaleWithDraw />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/account/plan"
+        element={
+          <PrivateRoute>
+            <AccountPlanSetting />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request"
+        element={
+          <PrivateRoute>
+            <QreatorRequest />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/verification"
+        element={
+          <PrivateRoute>
+            <QreatorRequestCertifierImage />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }

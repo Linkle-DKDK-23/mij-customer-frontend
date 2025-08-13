@@ -153,9 +153,6 @@ export default function FeedSample() {
 
   return (
     <div className="w-full h-screen bg-black overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
-        <Header />
-      </div>
 
       <div ref={sliderRef} className="keen-slider h-full">
         {mockFeedPosts.map((post, index) => (

@@ -2,27 +2,18 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/components/auth/AuthLayout';
-
-interface SignUpForm {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-  accountType: 'fan' | 'creator';
-  agreeToTerms: boolean;
-  agreeToPrivacy: boolean;
-}
+import { useNavigate } from 'react-router-dom';
+import { SignUpForm } from '@/api/types/user';
+import { signUp } from '@/api/endpoints/user';
 
 export default function SingUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignUpForm>({
     email: '',
-    username: '',
     password: '',
     confirmPassword: '',
-    accountType: 'fan',
     agreeToTerms: false,
     agreeToPrivacy: false
   });
@@ -37,14 +28,7 @@ export default function SingUp() {
     }));
   };
 
-  const handleAccountTypeChange = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      accountType: value as 'fan' | 'creator'
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -56,15 +40,23 @@ export default function SingUp() {
       alert('利用規約とプライバシーポリシーに同意してください');
       return;
     }
-    
+
     console.log('Sign up form submitted:', formData);
+    try {
+      const response = await signUp(formData);
+      console.log('Sign up response:', response);
+      navigate('/login');
+    } catch (error) {
+      console.error('Sign up error:', error);
+      alert('登録に失敗しました');
+    }
   };
 
   const handleTwitterSignUp = () => {
     console.log('Twitter sign up clicked');
   };
 
-  const isFormValid = formData.email && formData.username && formData.password && 
+  const isFormValid = formData.email  && formData.password && 
                      formData.confirmPassword && formData.agreeToTerms && formData.agreeToPrivacy;
 
   return (
@@ -79,24 +71,7 @@ export default function SingUp() {
               id="email"
               name="email"
               type="email"
-              placeholder="example@email.com"
               value={formData.email}
-              onChange={handleInputChange}
-              className="mt-1"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="username" className="text-sm font-medium text-gray-700">
-              ユーザー名
-            </Label>
-            <Input
-              id="username"
-              name="username"
-              type="text"
-              placeholder="ユーザー名を入力"
-              value={formData.username}
               onChange={handleInputChange}
               className="mt-1"
               required
@@ -112,7 +87,6 @@ export default function SingUp() {
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="パスワードを入力"
                 value={formData.password}
                 onChange={handleInputChange}
                 className="pr-10"
@@ -141,7 +115,6 @@ export default function SingUp() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="パスワードを再入力"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 className="pr-10"
