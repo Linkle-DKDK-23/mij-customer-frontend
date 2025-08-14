@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Circle, Phone, FileText, CreditCard } from 'lucide-react';
+import { CheckCircle, Phone, FileText, CreditCard, User } from 'lucide-react';
 import AuthLayout from '@/components/auth/AuthLayout';
+import QreatorRequestSmsVerification from './QreatorRequestSmsVerification';
+import QreatorRequestPersonalInfo from './QreatorRequestPersonalInfo';
+import QreatorRequestCertifierImage from './QreatorRequestCertifierImage';
+import QreatorRequestPlanSetup from './QreatorRequestPlanSetup';
+import { registerCreator } from '@/api/endpoints/creator';
 
 interface ApplicationStep {
   id: number;
@@ -12,8 +17,27 @@ interface ApplicationStep {
   current: boolean;
 }
 
+interface PersonalInfo {
+  name: string;
+  firstNameKana: string;
+  lastNameKana: string;
+  birthDate: string;
+  address: string;
+  phoneNumber: string;
+}
+
+interface PlanData {
+  planType: 'basic' | 'premium' | 'pro';
+  monthlyFee: number;
+  description: string;
+}
+
 export default function QreatorRequest() {
+  const [currentStep, setCurrentStep] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
+  const [planData, setPlanData] = useState<PlanData | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const steps: ApplicationStep[] = [
     {
@@ -21,37 +45,157 @@ export default function QreatorRequest() {
       title: 'SMS認証',
       description: '電話番号による本人確認',
       icon: <Phone className="h-6 w-6" />,
-      completed: false,
-      current: true
+      completed: currentStep > 1,
+      current: currentStep === 1
     },
     {
       id: 2,
-      title: '身分証明書確認',
-      description: '身分証明書のアップロード',
-      icon: <FileText className="h-6 w-6" />,
-      completed: false,
-      current: false
+      title: '個人情報入力',
+      description: '基本情報の入力',
+      icon: <User className="h-6 w-6" />,
+      completed: currentStep > 2,
+      current: currentStep === 2
     },
     {
       id: 3,
+      title: '身分証明書確認',
+      description: '身分証明書のアップロード',
+      icon: <FileText className="h-6 w-6" />,
+      completed: currentStep > 3,
+      current: currentStep === 3
+    },
+    {
+      id: 4,
       title: 'プラン登録',
       description: 'クリエイタープランの設定',
       icon: <CreditCard className="h-6 w-6" />,
-      completed: false,
-      current: false
+      completed: currentStep > 4,
+      current: currentStep === 4
     }
   ];
 
-  const handleSubmit = () => {
+  const handleStartApplication = () => {
     if (!agreedToTerms) {
       alert('利用規約に同意してください');
       return;
     }
-    console.log('Creator application submitted');
+    setCurrentStep(1);
   };
 
+  const handleSmsVerificationNext = () => {
+    setCurrentStep(2);
+  };
+
+  const handlePersonalInfoNext = (data: PersonalInfo) => {
+    setPersonalInfo(data);
+    setCurrentStep(3);
+  };
+
+  const handleDocumentVerificationNext = () => {
+    setCurrentStep(4);
+  };
+
+  const handlePlanSetupNext = async (data: PlanData) => {
+    setPlanData(data);
+    
+    if (!personalInfo) {
+      alert('個人情報が入力されていません');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const userId = 'temp-user-id';
+      
+      await registerCreator({
+        name: personalInfo.name,
+        first_name_kana: personalInfo.firstNameKana,
+        last_name_kana: personalInfo.lastNameKana,
+        address: personalInfo.address,
+        phone_number: personalInfo.phoneNumber,
+        birth_date: personalInfo.birthDate,
+        country_code: 'JP'
+      }, userId);
+
+      setCurrentStep(5);
+      alert('クリエイター申請が完了しました！');
+    } catch (error) {
+      console.error('Creator registration error:', error);
+      alert('申請中にエラーが発生しました。もう一度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  if (currentStep === 1) {
+    return (
+      <QreatorRequestSmsVerification
+        onNext={handleSmsVerificationNext}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentStep === 2) {
+    return (
+      <QreatorRequestPersonalInfo
+        onNext={handlePersonalInfoNext}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentStep === 3) {
+    return (
+      <QreatorRequestCertifierImage
+        onNext={handleDocumentVerificationNext}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentStep === 4) {
+    return (
+      <QreatorRequestPlanSetup
+        onNext={handlePlanSetupNext}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentStep === 5) {
+    return (
+      <AuthLayout>
+        <div className="space-y-6 text-center">
+          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full">
+            <CheckCircle className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            申請完了
+          </h2>
+          <p className="text-sm text-gray-600">
+            クリエイター申請が正常に完了しました。<br />
+            審査結果は3-5営業日以内にメールでお知らせいたします。
+          </p>
+          <Button
+            onClick={() => window.location.href = '/account'}
+            className="bg-primary hover:bg-primary/90 text-white"
+          >
+            マイページへ
+          </Button>
+        </div>
+      </AuthLayout>
+    );
+  }
+
   return (
-    <AuthLayout >
+    <AuthLayout>
       <div className="space-y-6">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
@@ -63,7 +207,7 @@ export default function QreatorRequest() {
         </div>
 
         <div className="space-y-4">
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <div
               key={step.id}
               className={`flex items-center p-4 rounded-lg border ${
@@ -128,11 +272,11 @@ export default function QreatorRequest() {
         </div>
 
         <Button
-          onClick={handleSubmit}
-          disabled={!agreedToTerms}
+          onClick={handleStartApplication}
+          disabled={!agreedToTerms || isSubmitting}
           className="w-full bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300"
         >
-          申請を開始する
+          {isSubmitting ? '申請中...' : '申請を開始する'}
         </Button>
       </div>
     </AuthLayout>

@@ -11,7 +11,12 @@ interface UploadedFile {
   uploaded: boolean;
 }
 
-export default function QreatorRequestCertifierImage() {
+interface QreatorRequestCertifierImageProps {
+  onNext?: () => void;
+  onBack?: () => void;
+}
+
+export default function QreatorRequestCertifierImage({ onNext, onBack }: QreatorRequestCertifierImageProps = {}) {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
     { id: '1', name: '身分証明書（表面）', type: 'id-front', uploaded: false },
     { id: '2', name: '身分証明書（裏面）', type: 'id-back', uploaded: false },
@@ -34,6 +39,9 @@ export default function QreatorRequestCertifierImage() {
       return;
     }
     console.log('Identity verification submitted');
+    if (onNext) {
+      onNext();
+    }
   };
 
   const allFilesUploaded = uploadedFiles.every(file => file.uploaded);
@@ -109,13 +117,24 @@ export default function QreatorRequestCertifierImage() {
           </ul>
         </div>
 
-        <Button
-          onClick={handleSubmit}
-          disabled={!allFilesUploaded}
-          className="w-full bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300"
-        >
-          確認書類を提出する
-        </Button>
+        <div className="flex space-x-4">
+          {onBack && (
+            <Button
+              onClick={onBack}
+              variant="outline"
+              className="flex-1"
+            >
+              戻る
+            </Button>
+          )}
+          <Button
+            onClick={handleSubmit}
+            disabled={!allFilesUploaded}
+            className={`${onBack ? 'flex-1' : 'w-full'} bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300`}
+          >
+            確認書類を提出する
+          </Button>
+        </div>
       </div>
     </AuthLayout>
   );

@@ -19,6 +19,9 @@ import Login from '@/pages/signUp/Login';
 import SingUp from '@/pages/signUp/SingUp';
 import QreatorRequest from '@/pages/qreator/QreatorRequest';
 import QreatorRequestCertifierImage from '@/pages/qreator/QreatorRequestCertifierImage';
+import QreatorRequestSmsVerification from '@/pages/qreator/QreatorRequestSmsVerification';
+import QreatorRequestPersonalInfo from '@/pages/qreator/QreatorRequestPersonalInfo';
+import QreatorRequestPlanSetup from '@/pages/qreator/QreatorRequestPlanSetup';
 import FeedSample from '@/pages/feed/FeedSample';
 import PostRanking from '@/pages/postRanking/PostRanking';
 
@@ -123,6 +126,30 @@ export default function AppRouter() {
         element={
           <PrivateRoute>
             <QreatorRequestCertifierImage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/sms"
+        element={
+          <PrivateRoute>
+            <QreatorRequestSmsVerification onNext={() => {}} onBack={() => {}} />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/personal-info"
+        element={
+          <PrivateRoute>
+            <QreatorRequestPersonalInfo onNext={() => {}} onBack={() => {}} />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/plan-setup"
+        element={
+          <PrivateRoute>
+            <QreatorRequestPlanSetup onNext={() => {}} onBack={() => {}} />
           </PrivateRoute>
         }
       />
