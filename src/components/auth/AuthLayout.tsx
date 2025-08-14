@@ -15,7 +15,7 @@ export default function AuthLayout({ children, title }: AuthLayoutProps) {
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           )}
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 shadow-md p-8">
+        <div className="bg-white rounded-lg p-8">
           {children}
         </div>
       </div>

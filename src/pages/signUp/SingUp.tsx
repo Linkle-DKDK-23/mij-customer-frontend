@@ -4,42 +4,50 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/components/auth/AuthLayout';
-import AccountHeader from '@/components/account/AccountHeader';
 import { useNavigate } from 'react-router-dom';
+import { SignUpForm } from '@/api/types/user';
+import { signUp } from '@/api/endpoints/user';
 
-interface LoginForm {
-  email: string;
-  password: string;
-}
-
-export default function Login() {
-  const [formData, setFormData] = useState<LoginForm>({
+export default function SingUp() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<SignUpForm>({
     email: '',
-    password: ''
+    password: '',
+    name: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login form submitted:', formData);
+
+    console.log('Sign up form submitted:', formData);
+
+    try {
+      const response = await signUp(formData);
+      console.log('Sign up response:', response);
+      navigate('/login');
+    } catch (error) {
+      console.error('Sign up error:', error);
+      alert('登録に失敗しました');
+    }
   };
 
-  const handleTwitterLogin = () => {
-    console.log('Twitter login clicked');
+  const handleTwitterSignUp = () => {
+    console.log('Twitter sign up clicked');
   };
+
+  const isFormValid = formData.email  && formData.password;
 
   return (
-    <div className="bg-white">
-      <AccountHeader title="ログイン" showBackButton />
-      <AuthLayout>
+    <AuthLayout title="新規登録">
       <div className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -50,7 +58,6 @@ export default function Login() {
               id="email"
               name="email"
               type="email"
-              placeholder="入力する"
               value={formData.email}
               onChange={handleInputChange}
               className="mt-1"
@@ -67,7 +74,6 @@ export default function Login() {
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="入力する"
                 value={formData.password}
                 onChange={handleInputChange}
                 className="pr-10"
@@ -87,39 +93,50 @@ export default function Login() {
             </div>
           </div>
 
+          <div>
+            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+              名前
+            </Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="mt-1"
+              required
+            />
+          </div>
+      
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 text-white"
+            disabled={!isFormValid}
+            className="w-full bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300"
           >
-            ログイン
+            アカウントを作成
           </Button>
         </form>
 
+        <div className="text-center">
+          <span className="text-gray-500">or</span>
+        </div>
+
         <Button
-          onClick={handleTwitterLogin}
+          onClick={handleTwitterSignUp}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white"
         >
-          Xでログイン
+          Twitterで登録
         </Button>
 
-        <div className="text-center space-y-2">
-          <a
-            href="#"
-            className="text-sm text-primary hover:text-primary/80"
-          >
-            パスワードを忘れた方はこちら
-          </a>
-        </div>
-        <div className="text-center border-t border-gray-200 pt-4 space-y-2">
-          <Button
-            onClick={() => navigate('/signup')}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-          >
-            新規登録
-          </Button>
+        <div className="text-center">
+          <span className="text-sm text-gray-600">
+            すでにアカウントをお持ちですか？{' '}
+            <a href="/login" className="text-primary hover:text-primary/80">
+              ログイン
+            </a>
+          </span>
         </div>
       </div>
-      </AuthLayout>
-    </div>
+    </AuthLayout>
   );
 }
