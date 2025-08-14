@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Calendar, MapPin } from 'lucide-react';
-import AuthLayout from '@/components/auth/AuthLayout';
+import VerificationLayout from '@/components/auth/VerificationLayout';
 
 interface PersonalInfo {
   name: string;
@@ -15,9 +15,17 @@ interface PersonalInfo {
 interface QreatorRequestPersonalInfoProps {
   onNext: (data: PersonalInfo) => void;
   onBack: () => void;
+  currentStep: number;
+  totalSteps: number;
+  steps: Array<{
+    id: number;
+    title: string;
+    completed: boolean;
+    current: boolean;
+  }>;
 }
 
-export default function QreatorRequestPersonalInfo({ onNext, onBack }: QreatorRequestPersonalInfoProps) {
+export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep, totalSteps, steps }: QreatorRequestPersonalInfoProps) {
   const [formData, setFormData] = useState<PersonalInfo>({
     name: '',
     firstNameKana: '',
@@ -43,7 +51,7 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack }: QreatorRe
   };
 
   return (
-    <AuthLayout>
+    <VerificationLayout currentStep={currentStep} totalSteps={totalSteps} steps={steps}>
       <div className="space-y-6">
         <div className="text-center">
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-primary rounded-full">
@@ -174,6 +182,6 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack }: QreatorRe
           </Button>
         </div>
       </div>
-    </AuthLayout>
+    </VerificationLayout>
   );
 }

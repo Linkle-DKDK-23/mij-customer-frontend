@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Check } from 'lucide-react';
-import AuthLayout from '@/components/auth/AuthLayout';
+import VerificationLayout from '@/components/auth/VerificationLayout';
 
 interface PlanData {
   planType: 'basic' | 'premium' | 'pro';
@@ -12,6 +12,14 @@ interface PlanData {
 interface QreatorRequestPlanSetupProps {
   onNext: (data: PlanData) => void;
   onBack: () => void;
+  currentStep: number;
+  totalSteps: number;
+  steps: Array<{
+    id: number;
+    title: string;
+    completed: boolean;
+    current: boolean;
+  }>;
 }
 
 const plans = [
@@ -60,7 +68,7 @@ const plans = [
   }
 ];
 
-export default function QreatorRequestPlanSetup({ onNext, onBack }: QreatorRequestPlanSetupProps) {
+export default function QreatorRequestPlanSetup({ onNext, onBack, currentStep, totalSteps, steps }: QreatorRequestPlanSetupProps) {
   const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'pro'>('premium');
 
   const handleSubmit = () => {
@@ -75,7 +83,7 @@ export default function QreatorRequestPlanSetup({ onNext, onBack }: QreatorReque
   };
 
   return (
-    <AuthLayout>
+    <VerificationLayout currentStep={currentStep} totalSteps={totalSteps} steps={steps}>
       <div className="space-y-6">
         <div className="text-center">
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-primary rounded-full">
@@ -169,6 +177,6 @@ export default function QreatorRequestPlanSetup({ onNext, onBack }: QreatorReque
           </Button>
         </div>
       </div>
-    </AuthLayout>
+    </VerificationLayout>
   );
 }

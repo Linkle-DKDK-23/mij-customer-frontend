@@ -138,6 +138,9 @@ export default function QreatorRequest() {
       <QreatorRequestSmsVerification
         onNext={handleSmsVerificationNext}
         onBack={handleBack}
+        currentStep={currentStep}
+        totalSteps={4}
+        steps={steps}
       />
     );
   }
@@ -147,6 +150,9 @@ export default function QreatorRequest() {
       <QreatorRequestPersonalInfo
         onNext={handlePersonalInfoNext}
         onBack={handleBack}
+        currentStep={currentStep}
+        totalSteps={4}
+        steps={steps}
       />
     );
   }
@@ -156,6 +162,9 @@ export default function QreatorRequest() {
       <QreatorRequestCertifierImage
         onNext={handleDocumentVerificationNext}
         onBack={handleBack}
+        currentStep={currentStep}
+        totalSteps={4}
+        steps={steps}
       />
     );
   }
@@ -165,6 +174,9 @@ export default function QreatorRequest() {
       <QreatorRequestPlanSetup
         onNext={handlePlanSetupNext}
         onBack={handleBack}
+        currentStep={currentStep}
+        totalSteps={4}
+        steps={steps}
       />
     );
   }
@@ -206,45 +218,6 @@ export default function QreatorRequest() {
           </p>
         </div>
 
-        <div className="space-y-4">
-          {steps.map((step) => (
-            <div
-              key={step.id}
-              className={`flex items-center p-4 rounded-lg border ${
-                step.current
-                  ? 'border-primary bg-primary/5'
-                  : step.completed
-                  ? 'border-green-200 bg-green-50'
-                  : 'border-gray-200 bg-gray-50'
-              }`}
-            >
-              <div
-                className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                  step.completed
-                    ? 'bg-green-500 text-white'
-                    : step.current
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-300 text-gray-600'
-                }`}
-              >
-                {step.completed ? (
-                  <CheckCircle className="h-5 w-5" />
-                ) : (
-                  <span className="text-sm font-medium">{step.id}</span>
-                )}
-              </div>
-              <div className="ml-4 flex-1">
-                <h3 className="text-sm font-medium text-gray-900">
-                  {step.title}
-                </h3>
-                <p className="text-xs text-gray-600">{step.description}</p>
-              </div>
-              <div className="ml-4">
-                {step.icon}
-              </div>
-            </div>
-          ))}
-        </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h4 className="font-medium text-blue-900 mb-2">申請前の確認事項</h4>

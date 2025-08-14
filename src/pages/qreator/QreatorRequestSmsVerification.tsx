@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, CheckCircle } from 'lucide-react';
-import AuthLayout from '@/components/auth/AuthLayout';
+import VerificationLayout from '@/components/auth/VerificationLayout';
 
 interface QreatorRequestSmsVerificationProps {
   onNext: () => void;
   onBack: () => void;
+  currentStep: number;
+  totalSteps: number;
+  steps: Array<{
+    id: number;
+    title: string;
+    completed: boolean;
+    current: boolean;
+  }>;
 }
 
-export default function QreatorRequestSmsVerification({ onNext, onBack }: QreatorRequestSmsVerificationProps) {
+export default function QreatorRequestSmsVerification({ onNext, onBack, currentStep, totalSteps, steps }: QreatorRequestSmsVerificationProps) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [isCodeSent, setIsCodeSent] = useState(false);
@@ -41,7 +49,7 @@ export default function QreatorRequestSmsVerification({ onNext, onBack }: Qreato
   };
 
   return (
-    <AuthLayout>
+    <VerificationLayout currentStep={currentStep} totalSteps={totalSteps} steps={steps}>
       <div className="space-y-6">
         <div className="text-center">
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-primary rounded-full">
@@ -150,6 +158,6 @@ export default function QreatorRequestSmsVerification({ onNext, onBack }: Qreato
           </Button>
         </div>
       </div>
-    </AuthLayout>
+    </VerificationLayout>
   );
 }
