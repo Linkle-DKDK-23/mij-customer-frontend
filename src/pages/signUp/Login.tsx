@@ -30,10 +30,21 @@ export default function Login() {
     if (submitting) return;
     setSubmitting(true);
     try {
+      // 1) /auth/login（Cookieにaccess/refresh、bodyでcsrf_token）
       const res = await loginApi(formData);
+
+      console.log('res:', res);
+
       const csrf = (res.data as any)?.csrf_token ?? null;
-      setCsrfToken(csrf);
+
+      console.log('csrf:', csrf);
+
+      setCsrfToken(csrf); // 2) メモリに保持（非GET時にX-CSRF-Tokenヘッダ自動付与）
+
+      // 3) /auth/me でユーザー情報を取得（Cookieベース）
       await meApi();
+
+      // 4) 成功 → 遷移
       navigate('/top');
     } catch (err: any) {
       alert(err?.response?.data?.detail ?? 'ログイン失敗');

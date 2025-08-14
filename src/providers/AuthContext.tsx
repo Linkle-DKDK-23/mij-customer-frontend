@@ -1,5 +1,12 @@
 import React from "react";
-import { User, AuthContextValue } from "@/api/types/auth";
+
+export type User = { id: string; email: string } | null;
+export type AuthContextValue = {
+  user: User;
+  loading: boolean;
+  reload: () => Promise<void>;
+  setUser: (u: User) => void;
+};
 
 export const AuthCtx = React.createContext<AuthContextValue>({
   user: null,

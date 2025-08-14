@@ -5,7 +5,6 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosRequestConfig,
 } from "axios";
-import { refresh } from "@/api/endpoints/auth";
 
 let csrfToken: string | null = null;
 export const setCsrfToken = (v: string | null) => {
@@ -54,9 +53,10 @@ apiClient.interceptors.response.use(
       } else {
         try {
           refreshing = true;
-          const r = await refresh();
-          const newCsrf = (r.data as any)?.csrf_token ?? null;
-          setCsrfToken(newCsrf);
+          // const r = await apiClient.post("/auth/refresh");
+          // const newCsrf = (r.data as any)?.csrf_token ?? null;
+          // setCsrfToken(newCsrf);
+          console.log('refresh');
         } catch {
           refreshing = false;
           queue = [];

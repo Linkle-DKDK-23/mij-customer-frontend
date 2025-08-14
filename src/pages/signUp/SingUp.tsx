@@ -13,12 +13,9 @@ export default function SingUp() {
   const [formData, setFormData] = useState<SignUpForm>({
     email: '',
     password: '',
-    confirmPassword: '',
-    agreeToTerms: false,
-    agreeToPrivacy: false
+    name: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -30,18 +27,9 @@ export default function SingUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      alert('パスワードが一致しません');
-      return;
-    }
-    
-    if (!formData.agreeToTerms || !formData.agreeToPrivacy) {
-      alert('利用規約とプライバシーポリシーに同意してください');
-      return;
-    }
 
     console.log('Sign up form submitted:', formData);
+
     try {
       const response = await signUp(formData);
       console.log('Sign up response:', response);
@@ -56,8 +44,7 @@ export default function SingUp() {
     console.log('Twitter sign up clicked');
   };
 
-  const isFormValid = formData.email  && formData.password && 
-                     formData.confirmPassword && formData.agreeToTerms && formData.agreeToPrivacy;
+  const isFormValid = formData.email  && formData.password;
 
   return (
     <AuthLayout title="新規登録">
@@ -107,69 +94,20 @@ export default function SingUp() {
           </div>
 
           <div>
-            <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-              パスワード確認
+            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+              名前
             </Label>
-            <div className="relative mt-1">
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="pr-10"
-                required
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <Eye className="h-4 w-4 text-gray-400" />
-                )}
-              </button>
-            </div>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="mt-1"
+              required
+            />
           </div>
-
       
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="terms"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleInputChange}
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="terms" className="text-sm text-gray-700">
-                <a href="#" className="text-primary hover:text-primary/80">
-                  利用規約
-                </a>
-                に同意します
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="privacy"
-                name="agreeToPrivacy"
-                checked={formData.agreeToPrivacy}
-                onChange={handleInputChange}
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="privacy" className="text-sm text-gray-700">
-                <a href="#" className="text-primary hover:text-primary/80">
-                  プライバシーポリシー
-                </a>
-                に同意します
-              </label>
-            </div>
-          </div>
-
           <Button
             type="submit"
             disabled={!isFormValid}

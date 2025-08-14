@@ -51,7 +51,7 @@ export default function QreatorRequest() {
   };
 
   return (
-    <AuthLayout title="クリエイター申請">
+    <AuthLayout >
       <div className="space-y-6">
         <div className="text-center">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">

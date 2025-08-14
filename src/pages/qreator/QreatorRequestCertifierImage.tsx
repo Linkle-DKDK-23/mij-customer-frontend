@@ -41,7 +41,6 @@ export default function QreatorRequestCertifierImage() {
   return (
     <AuthLayout>
       <div className="space-y-6">
-        <AuthHeader title="身分証明書確認" showBackButton />
 
         <div className="text-center">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
