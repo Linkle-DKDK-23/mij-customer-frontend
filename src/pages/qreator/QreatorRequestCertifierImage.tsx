@@ -114,7 +114,9 @@ export default function QreatorRequestCertifierImage({
       const uploadOne = async (kind: FileKind) => {
         const file = files[kind]!;
         const item = uploads[kind]; 
-        await putToPresignedUrl(item, file, {
+        const header = item.required_headers;
+
+        await putToPresignedUrl(item, file, header, {
           onProgress: (pct) => setProgress((p) => ({ ...p, [kind]: pct })),
         });
         setUploadedFiles((prev) =>

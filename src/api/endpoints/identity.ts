@@ -16,16 +16,12 @@ export const presignedUrl = async (request: PresignedUrlRequest) => {
 export async function putToPresignedUrl(
   item: PresignedUploadItem,
   file: File,
+  headers: Record<string, string>,
   opts?: { onProgress?: (pct: number) => void }
 ): Promise<void> {
   const client = axios.create({ withCredentials: false, timeout: 60_000 });
-
   await client.put(item.upload_url, file, {
-		headers: {
-			"Content-Type": file.type,
-			"x-amz-server-side-encryption": "aws:kms",
-			"x-amz-server-side-encryption-aws-kms-key-id": "alias/mij-kyc-kms-dev",
-		},
+		headers: headers,
 		onUploadProgress: (e) => {
 			if (opts?.onProgress && e.total) opts.onProgress(Math.round((e.loaded * 100) / e.total));
 		},
