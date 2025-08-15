@@ -133,7 +133,19 @@ export default function AppRouter() {
         path="/creator/request/sms"
         element={
           <PrivateRoute>
-            <QreatorRequestSmsVerification onNext={() => {}} onBack={() => {}} />
+            <QreatorRequestSmsVerification 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={2}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: false, current: true },
+                { id: 3, title: '個人情報', completed: false, current: false },
+                { id: 4, title: 'プラン設定', completed: false, current: false },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
           </PrivateRoute>
         }
       />
@@ -141,7 +153,19 @@ export default function AppRouter() {
         path="/creator/request/personal-info"
         element={
           <PrivateRoute>
-            <QreatorRequestPersonalInfo onNext={() => {}} onBack={() => {}} />
+            <QreatorRequestPersonalInfo 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={3}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: true, current: false },
+                { id: 3, title: '個人情報', completed: false, current: true },
+                { id: 4, title: 'プラン設定', completed: false, current: false },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
           </PrivateRoute>
         }
       />
@@ -149,7 +173,19 @@ export default function AppRouter() {
         path="/creator/request/plan-setup"
         element={
           <PrivateRoute>
-            <QreatorRequestPlanSetup onNext={() => {}} onBack={() => {}} />
+            <QreatorRequestPlanSetup 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={4}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: true, current: false },
+                { id: 3, title: '個人情報', completed: true, current: false },
+                { id: 4, title: 'プラン設定', completed: false, current: true },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
           </PrivateRoute>
         }
       />

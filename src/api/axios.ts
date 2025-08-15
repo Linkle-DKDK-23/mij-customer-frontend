@@ -6,35 +6,54 @@ import axios, {
   AxiosRequestConfig,
 } from "axios";
 
+const BASE_URL = (import.meta as any).env.VITE_API_BASE_URL
+if (!BASE_URL) {
+  throw new Error("VITE_API_BASE_URL is not set");
+}
+
+// ---- CSRF管理（メモリ + Cookieフォールバック） ----
 let csrfToken: string | null = null;
 export const setCsrfToken = (v: string | null) => {
   csrfToken = v;
 };
 
+const getCookie = (name: string) => {
+  // 例: "csrf_token=abc; other=..." から値を取得（URLエンコード考慮）
+  const raw =
+    document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(name + "="))
+      ?.split("=")[1] ?? null;
+  return raw ? decodeURIComponent(raw) : null;
+};
+
+// ---- axios instance ----
 const apiClient = axios.create({
-  baseURL: (import.meta as any).env.VITE_API_BASE_URL,
-  withCredentials: true,
+  baseURL: BASE_URL,
+  withCredentials: true, // Cookie送受信 必須
 });
 
-// 非GETは X-CSRF-Token を自動付与
+// ---- Request: 非GETに X-CSRF-Token を必ず付与 ----
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const method = (config.method ?? "get").toUpperCase();
   const needsCsrf = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 
-  if (needsCsrf && csrfToken) {
-    // headers は AxiosHeaders を使う
-    const headers =
-      (config.headers as AxiosHeaders | undefined) ?? new AxiosHeaders();
-    headers.set("X-CSRF-Token", csrfToken);
-    config.headers = headers;
+  if (needsCsrf) {
+    const token = csrfToken ?? getCookie("csrf_token"); // ← ここが重要（Cookieからも拾う）
+    if (token) {
+      const headers =
+        (config.headers as AxiosHeaders | undefined) ?? new AxiosHeaders();
+      headers.set("X-CSRF-Token", token);
+      config.headers = headers;
+    }
   }
   return config;
 });
 
-// 401 は 1回だけ /auth/refresh → リトライ
+// ---- Response: 401時は1回だけ refresh → リトライ ----
 let refreshing = false;
 let queue: Array<() => void> = [];
-const runQueued = async () => {
+const flushQueue = () => {
   queue.forEach((fn) => fn());
   queue = [];
 };
@@ -42,10 +61,12 @@ const runQueued = async () => {
 apiClient.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
-    const original = error.config as AxiosRequestConfig & { _retried?: boolean };
+    const original = error.config as (AxiosRequestConfig & { _retried?: boolean }) | undefined;
     const status = error.response?.status;
+    const url = (original?.url ?? "").toString();
+    const isRefreshCall = url.includes("/auth/refresh");
 
-    if (status === 401 && !original?._retried) {
+    if (status === 401 && original && !original._retried && !isRefreshCall) {
       original._retried = true;
 
       if (refreshing) {
@@ -53,19 +74,21 @@ apiClient.interceptors.response.use(
       } else {
         try {
           refreshing = true;
-          // const r = await apiClient.post("/auth/refresh");
-          // const newCsrf = (r.data as any)?.csrf_token ?? null;
-          // setCsrfToken(newCsrf);
-          console.log('refresh');
-        } catch {
+          // Cookieのrefresh_tokenを使って再発行
+          const r = await apiClient.post("/auth/refresh");
+          const newCsrf = (r.data as any)?.csrf_token ?? getCookie("csrf_token");
+          setCsrfToken(newCsrf ?? null);
+        } catch (e) {
+          // 失敗：キュー解放してエラー返却
+          flushQueue();
           refreshing = false;
-          queue = [];
           return Promise.reject(error);
-        } finally {
-          refreshing = false;
-          await runQueued();
         }
+        // 成功：待機キュー解放
+        refreshing = false;
+        flushQueue();
       }
+      // 元リクエストを再送
       return apiClient(original);
     }
     return Promise.reject(error);

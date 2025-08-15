@@ -1,242 +1,280 @@
-import React, { useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Camera, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Camera, CheckCircle } from 'lucide-react';
 import AuthLayout from '@/components/auth/AuthLayout';
 import VerificationLayout from '@/components/auth/VerificationLayout';
+import { QreatorRequestCertifierImageProps, UploadedFile, FileKind } from '@/api/types/identity';
+import { presignedUrl, putToPresignedUrl, completeIdentityUpload } from '@/api/endpoints/identity';
+import { useAuth } from '@/providers/AuthContext';
 
-interface UploadedFile {
-  id: string;
-  name: string;
-  type: 'id-front' | 'id-back' | 'selfie';
-  uploaded: boolean;
-}
+const mimeToExt = (mime: string): "jpg" | "jpeg" | "png" | "pdf" => {
+  if (mime === "image/png") return "png";
+  if (mime === "application/pdf") return "pdf";
+  return "jpg";
+};
 
-interface QreatorRequestCertifierImageProps {
-  onNext?: () => void;
-  onBack?: () => void;
-  currentStep?: number;
-  totalSteps?: number;
-  steps?: Array<{
-    id: number;
-    title: string;
-    completed: boolean;
-    current: boolean;
-  }>;
-}
 
-export default function QreatorRequestCertifierImage({ onNext, onBack, currentStep, totalSteps, steps }: QreatorRequestCertifierImageProps) {
+export default function QreatorRequestCertifierImage({
+  onNext,
+  onBack,
+  currentStep,
+  totalSteps,
+  steps
+}: QreatorRequestCertifierImageProps) {
+  const { user } = useAuth();
+
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    { id: '1', name: '身分証明書（表面）', type: 'id-front', uploaded: false },
-    { id: '2', name: '身分証明書（裏面）', type: 'id-back', uploaded: false },
-    { id: '3', name: '本人確認写真', type: 'selfie', uploaded: false }
+    { id: '1', name: '身分証明書（表面）', type: 'front', uploaded: false },
+    { id: '2', name: '身分証明書（裏面）', type: 'back', uploaded: false },
+    { id: '3', name: '本人確認写真',     type: 'selfie',   uploaded: false }
   ]);
 
-  const handleFileUpload = (fileType: string) => {
-    setUploadedFiles(prev =>
-      prev.map(file =>
-        file.type === fileType ? { ...file, uploaded: true } : file
-      )
-    );
-    console.log(`File uploaded for: ${fileType}`);
+  /** ファイル実体・進捗・メッセージ */
+  const [files, setFiles] = useState<Record<FileKind, File | null>>({
+    'front': null,
+    'back': null,
+    'selfie': null
+  });
+  const [progress, setProgress] = useState<Record<FileKind, number>>({
+    'front': 0, 'back': 0, 'selfie': 0
+  });
+  const [message, setMessage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  /** 隠しinputを種類ごとに用意（クリックで発火） */
+  const inputRefs = {
+    'front': useRef<HTMLInputElement>(null),
+    'back':  useRef<HTMLInputElement>(null),
+    'selfie':   useRef<HTMLInputElement>(null),
   };
 
-  const handleSubmit = () => {
-    const allUploaded = uploadedFiles.every(file => file.uploaded);
-    if (!allUploaded) {
-      alert('すべての書類をアップロードしてください');
+  const allFilesPicked = useMemo(
+    () => (['front','back','selfie'] as const).every(k => !!files[k]),
+    [files]
+  );
+  /** ファイル選択ボタン押下 → input を click */
+  const openPicker = (kind: FileKind) => inputRefs[kind].current?.click();
+
+  /** ファイル選択時の処理（まだS3には送らない） */
+  const onPick = (kind: FileKind) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setMessage(null);
+    if (!f) return;
+
+    // フロント側バリデーション（最小）
+    const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!allowed.includes(f.type)) {
+      setMessage('ファイル形式は JPEG/PNG/PDF のみです');
       return;
     }
-    console.log('Identity verification submitted');
-    if (onNext) {
-      onNext();
+    if (f.size > 10 * 1024 * 1024) {
+      setMessage('ファイルサイズは 10MB 以下にしてください');
+      return;
+    }
+
+    setFiles(prev => ({ ...prev, [kind]: f }));
+    setUploadedFiles(prev => prev.map(item =>
+      item.type === kind ? { ...item, uploaded: false } : item
+    ));
+    setProgress(p => ({ ...p, [kind]: 0 }));
+  };
+
+  /** 送信（presign → PUT → complete） */
+  const handleSubmit = async () => {
+
+    setMessage(null);
+    // 3ファイル存在チェック（キー名修正）
+    const fFront = files['front'];
+    const fBack  = files['back'];
+    const fSelf  = files['selfie'];
+    if (!fFront || !fBack || !fSelf) {
+      setMessage('すべての書類を選択してください');
+      return;
+    }
+
+    setSubmitting(true);
+    // presign payload（ファイルごと）
+    const presignedUrlRequest = {
+      files: (['front','back','selfie'] as const).map((k) => {
+        const file = files[k]!;
+        return {
+          kind: k,
+          content_type: file.type as "image/jpeg" | "image/png" | "application/pdf",
+          ext: mimeToExt(file.type),
+        };
+      })
+    };
+
+    try {
+      // 1) presign
+      const presignRes = await presignedUrl(presignedUrlRequest);
+      const { verification_id, uploads } = presignRes;
+
+      // 2) S3 PUT（presigned には CSRF不要なので素の axios を使用）
+      const uploadOne = async (kind: FileKind) => {
+        const file = files[kind]!;
+        const item = uploads[kind]; 
+        await putToPresignedUrl(item, file, {
+          onProgress: (pct) => setProgress((p) => ({ ...p, [kind]: pct })),
+        });
+        setUploadedFiles((prev) =>
+          prev.map((it) => (it.type === kind ? { ...it, uploaded: true } : it))
+        );
+      };
+    
+      await uploadOne('front');
+      await uploadOne('back');
+      await uploadOne('selfie');
+
+      // 3) complete（各ファイルの ext を渡す）
+      await completeIdentityUpload(
+        verification_id,
+        (['front','back','selfie'] as const).map((k) => ({
+          kind: k,
+          ext: mimeToExt(files[k]!.type),
+        }))
+      );
+
+      setMessage('アップロード完了。審査をお待ちください。');
+      if (onNext) onNext();
+    } catch (e: any) {
+      const status = e?.response?.status;
+      if (status === 400 || status === 403) {
+        setMessage('URLの有効期限切れかヘッダ不一致です。もう一度やり直してください。');
+      } else {
+        setMessage('アップロードに失敗しました。時間をおいて再試行してください。');
+      }
+      console.error(e);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const allFilesUploaded = uploadedFiles.every(file => file.uploaded);
+  const allFilesUploaded = uploadedFiles.every(f => f.uploaded);
+
+  /** カードUI（共通） */
+  const Card = ({ file, compact = false }: { file: UploadedFile; compact?: boolean }) => (
+    <div
+      className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+        file.uploaded ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-gray-400'
+      }`}
+    >
+      <div className="flex flex-col items-center space-y-2">
+        {file.uploaded ? (
+          <CheckCircle className="h-8 w-8 text-green-500" />
+        ) : file.type === 'selfie' ? (
+          <Camera className="h-8 w-8 text-gray-400" />
+        ) : (
+          <FileText className="h-8 w-8 text-gray-400" />
+        )}
+
+        <h3 className="text-sm font-medium text-gray-900">{file.name}</h3>
+
+        <input
+          ref={inputRefs[file.type]}
+          type="file"
+          accept="image/jpeg,image/png,application/pdf"
+          className="hidden"
+          onChange={onPick(file.type)}
+        />
+
+        {!file.uploaded && (
+          <Button
+            onClick={() => openPicker(file.type)}
+            variant="outline"
+            className="mt-2"
+            disabled={submitting}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            ファイルを選択
+          </Button>
+        )}
+
+        {/* 進捗バー */}
+        <div className="w-full h-2 bg-gray-200 rounded mt-2 overflow-hidden">
+          <div
+            className="h-2 bg-primary transition-all"
+            style={{ width: `${progress[file.type]}%` }}
+          />
+        </div>
+
+        {/* 選択済みファイル名表示 */}
+        {files[file.type] && !file.uploaded && (
+          <p className="text-xs text-gray-500 mt-1">
+            {files[file.type]!.name}（{Math.round(files[file.type]!.size / 1024)} KB）
+          </p>
+        )}
+
+        {file.uploaded && <p className="text-xs text-green-600">アップロード完了</p>}
+      </div>
+    </div>
+  );
+
+  const PageBody = (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">身分証明書のアップロード</h2>
+        <p className="text-sm text-gray-600">本人確認のため、以下の書類をアップロードしてください</p>
+      </div>
+
+      <div className="space-y-4">
+        {uploadedFiles.map((file) => (
+          <Card key={file.id} file={file} />
+        ))}
+      </div>
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h4 className="font-medium text-yellow-900 mb-2">アップロード時の注意事項</h4>
+        <ul className="text-sm text-yellow-800 space-y-1">
+          <li>• 画像は鮮明で文字が読み取れるものをご用意ください</li>
+          <li>• ファイル形式：JPEG、PNG、PDF（最大10MB）</li>
+          <li>• 身分証明書は有効期限内のものをご使用ください</li>
+          <li>• 本人確認写真は身分証明書と同じ人物であることを確認できるもの</li>
+        </ul>
+      </div>
+
+      <div className="flex space-x-4">
+        {onBack && (
+          <Button onClick={onBack} variant="outline" className="flex-1" disabled={submitting}>
+            戻る
+          </Button>
+        )}
+        <Button
+          onClick={handleSubmit}
+          disabled={submitting || !allFilesPicked}
+          className={`${onBack ? 'flex-1' : 'w-full'} bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300`}
+        >
+          {submitting ? '提出中…' : '確認書類を提出する'}
+        </Button>
+      </div>
+
+      {message && (
+        <div className="text-sm mt-2">
+          {message}
+        </div>
+      )}
+    </div>
+  );
 
   if (currentStep && totalSteps && steps) {
     return (
       <VerificationLayout currentStep={currentStep} totalSteps={totalSteps} steps={steps}>
-        <div className="space-y-6">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              身分証明書のアップロード
-            </h2>
-            <p className="text-sm text-gray-600">
-              本人確認のため、以下の書類をアップロードしてください
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {uploadedFiles.map((file) => (
-              <div
-                key={file.id}
-                className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                  file.uploaded
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-300 bg-gray-50 hover:border-primary hover:bg-primary/5'
-                }`}
-              >
-                <div className="flex flex-col items-center space-y-2">
-                  {file.uploaded ? (
-                    <CheckCircle className="h-8 w-8 text-green-500" />
-                  ) : file.type === 'selfie' ? (
-                    <Camera className="h-8 w-8 text-gray-400" />
-                  ) : (
-                    <FileText className="h-8 w-8 text-gray-400" />
-                  )}
-                  <h3 className="text-sm font-medium text-gray-900">
-                    {file.name}
-                  </h3>
-                  {file.uploaded ? (
-                    <p className="text-xs text-green-600">アップロード完了</p>
-                  ) : (
-                    <Button
-                      onClick={() => handleFileUpload(file.type)}
-                      variant="outline"
-                      className="mt-2"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      ファイルを選択
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h4 className="font-medium text-yellow-900 mb-2">アップロード時の注意事項</h4>
-            <ul className="text-sm text-yellow-800 space-y-1">
-              <li>• 画像は鮮明で文字が読み取れるものをご用意ください</li>
-              <li>• ファイル形式：JPEG、PNG（最大5MB）</li>
-              <li>• 身分証明書は有効期限内のものをご使用ください</li>
-              <li>• 本人確認写真は身分証明書と同じ人物であることを確認できるもの</li>
-            </ul>
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 mb-2">対応可能な身分証明書</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• 運転免許証</li>
-              <li>• パスポート</li>
-              <li>• マイナンバーカード</li>
-              <li>• 住民基本台帳カード</li>
-            </ul>
-          </div>
-
-          <div className="flex space-x-4">
-            {onBack && (
-              <Button
-                onClick={onBack}
-                variant="outline"
-                className="flex-1"
-              >
-                戻る
-              </Button>
-            )}
-            <Button
-              onClick={handleSubmit}
-              disabled={!allFilesUploaded}
-              className={`${onBack ? 'flex-1' : 'w-full'} bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300`}
-            >
-              確認書類を提出する
-            </Button>
-          </div>
-        </div>
+        {PageBody}
       </VerificationLayout>
     );
   }
 
   return (
     <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-primary rounded-full">
-            <FileText className="h-8 w-8 text-white" />
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            身分証明書確認
-          </h2>
-          <p className="text-sm text-gray-600">
-            本人確認のため、身分証明書をアップロードしてください
-          </p>
+      {/* 上部のアイコンヘッダー（元の見た目を維持） */}
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-primary rounded-full">
+          <FileText className="h-8 w-8 text-white" />
         </div>
-
-        <div className="space-y-4">
-          {uploadedFiles.map((file) => (
-            <div
-              key={file.id}
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                file.uploaded
-                  ? 'border-green-300 bg-green-50'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              <div className="flex flex-col items-center">
-                {file.uploaded ? (
-                  <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                ) : (
-                  <Upload className="h-12 w-12 text-gray-400 mb-4" />
-                )}
-                <h3 className="text-sm font-medium text-gray-900 mb-2">
-                  {file.name}
-                </h3>
-                {file.uploaded ? (
-                  <p className="text-sm text-green-600">アップロード完了</p>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600">
-                      ファイルをドラッグ&ドロップまたはクリックしてアップロード
-                    </p>
-                    <Button
-                      onClick={() => handleFileUpload(file.type)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      ファイルを選択
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mr-3 mt-0.5" />
-            <div>
-              <h4 className="font-medium text-yellow-900 mb-2">アップロード時の注意事項</h4>
-              <ul className="text-sm text-yellow-800 space-y-1">
-                <li>• ファイル形式：JPEG、PNG、PDF</li>
-                <li>• ファイルサイズ：10MB以下</li>
-                <li>• 文字が鮮明に読み取れるもの</li>
-                <li>• 有効期限内のもの</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex space-x-4">
-          {onBack && (
-            <Button
-              onClick={onBack}
-              variant="outline"
-              className="flex-1"
-            >
-              戻る
-            </Button>
-          )}
-          <Button
-            onClick={handleSubmit}
-            disabled={!allFilesUploaded}
-            className={`${onBack ? 'flex-1' : 'w-full'} bg-primary hover:bg-primary/90 text-white disabled:bg-gray-300`}
-          >
-            確認書類を提出する
-          </Button>
-        </div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">身分証明書確認</h2>
+        <p className="text-sm text-gray-600">本人確認のため、身分証明書をアップロードしてください</p>
       </div>
+      {PageBody}
     </AuthLayout>
   );
 }
