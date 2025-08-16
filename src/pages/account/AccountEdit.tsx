@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, Camera } from 'lucide-react';
 import AccountLayout from '@/components/account/AccountLayout';
 import AccountHeader from '@/components/account/AccountHeader';
+import { updateAccountInfo, AccountUpdateRequest, getAccountInfo, AccountInfo } from '@/api/endpoints/account';
 
 interface ProfileData {
   coverImage: string;
@@ -15,21 +16,63 @@ interface ProfileData {
 
 const mockProfileData: ProfileData = {
   coverImage: 'https://picsum.photos/600/200?random=110',
-  avatar: 'https://picsum.photos/200/200?random=111',
-  name: 'ピエール',
-  id: '@piepie',
+  avatar: '/src/assets/no-image.svg',
+  name: '',
+  id: '',
   description: 'プロフィール説明文がここに入ります。',
   links: 'https://example.com'
 };
 
 export default function AccountEdit() {
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+
+  useEffect(() => {
+    const fetchAccountInfo = async () => {
+      try {
+        const data = await getAccountInfo();
+        setAccountInfo(data);
+        setProfileData(prev => ({
+          ...prev,
+          name: data.display_name || '',
+          id: data.slug ? `@${data.slug}` : '',
+          avatar: data.avatar_url || '/src/assets/no-image.svg'
+        }));
+      } catch (error) {
+        console.error('Failed to fetch account info:', error);
+      }
+    };
+
+    fetchAccountInfo();
+  }, []);
 
   const handleInputChange = (field: keyof ProfileData, value: string) => {
     setProfileData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    setMessage('');
+    
+    try {
+      const updateData: AccountUpdateRequest = {
+        name: profileData.id.replace('@', ''), // Remove @ from ID
+        display_name: profileData.name
+      };
+      
+      const response = await updateAccountInfo(updateData);
+      setMessage('アカウント情報が正常に更新されました');
+    } catch (error) {
+      console.error('Failed to update account:', error);
+      setMessage('更新に失敗しました。もう一度お試しください。');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,8 +82,24 @@ export default function AccountEdit() {
       <div className="p-6 space-y-6">
         <div className="flex justify-end space-x-3">
           <Button variant="outline">キャンセル</Button>
-          <Button className="bg-primary hover:bg-primary/90">保存</Button>
+          <Button 
+            className="bg-primary hover:bg-primary/90" 
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? '保存中...' : '保存'}
+          </Button>
         </div>
+
+        {message && (
+          <div className={`p-3 rounded-md text-sm ${
+            message.includes('正常') 
+              ? 'bg-green-50 text-green-700 border border-green-200' 
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            {message}
+          </div>
+        )}
 
         <div className="space-y-6">
           <div>
