@@ -19,6 +19,9 @@ import Login from '@/pages/signUp/Login';
 import SingUp from '@/pages/signUp/SingUp';
 import QreatorRequest from '@/pages/qreator/QreatorRequest';
 import QreatorRequestCertifierImage from '@/pages/qreator/QreatorRequestCertifierImage';
+import QreatorRequestSmsVerification from '@/pages/qreator/QreatorRequestSmsVerification';
+import QreatorRequestPersonalInfo from '@/pages/qreator/QreatorRequestPersonalInfo';
+import QreatorRequestPlanSetup from '@/pages/qreator/QreatorRequestPlanSetup';
 import FeedSample from '@/pages/feed/FeedSample';
 import PostRanking from '@/pages/postRanking/PostRanking';
 
@@ -123,6 +126,66 @@ export default function AppRouter() {
         element={
           <PrivateRoute>
             <QreatorRequestCertifierImage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/sms"
+        element={
+          <PrivateRoute>
+            <QreatorRequestSmsVerification 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={2}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: false, current: true },
+                { id: 3, title: '個人情報', completed: false, current: false },
+                { id: 4, title: 'プラン設定', completed: false, current: false },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/personal-info"
+        element={
+          <PrivateRoute>
+            <QreatorRequestPersonalInfo 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={3}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: true, current: false },
+                { id: 3, title: '個人情報', completed: false, current: true },
+                { id: 4, title: 'プラン設定', completed: false, current: false },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/creator/request/plan-setup"
+        element={
+          <PrivateRoute>
+            <QreatorRequestPlanSetup 
+              onNext={() => {}} 
+              onBack={() => {}} 
+              currentStep={4}
+              totalSteps={5}
+              steps={[
+                { id: 1, title: '基本情報', completed: true, current: false },
+                { id: 2, title: '本人確認', completed: true, current: false },
+                { id: 3, title: '個人情報', completed: true, current: false },
+                { id: 4, title: 'プラン設定', completed: false, current: true },
+                { id: 5, title: '完了', completed: false, current: false }
+              ]}
+            />
           </PrivateRoute>
         }
       />
