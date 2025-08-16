@@ -24,9 +24,9 @@ export default function Account() {
   const tabs = ['管理画面', '加入中', '単品購入', 'いいね'];
 
   const mockUser: UserProfile = {
-    name: 'ピエール',
-    username: '@piepie',
-    avatar: 'https://picsum.photos/120/120?random=50',
+    name: accountInfo?.display_name || 'ピエール',
+    username: accountInfo?.slug ? `@${accountInfo.slug}` : '@piepie',
+    avatar: accountInfo?.avatar_url || '/src/assets/no-image.svg',
     followingCount: accountInfo?.following_count || 0,
     followerCount: accountInfo?.followers_count || 0,
     totalLikes: accountInfo?.total_likes || 0

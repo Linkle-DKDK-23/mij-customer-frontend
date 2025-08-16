@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, Camera } from 'lucide-react';
 import AccountLayout from '@/components/account/AccountLayout';
 import AccountHeader from '@/components/account/AccountHeader';
-import { updateAccountInfo, AccountUpdateRequest } from '@/api/endpoints/account';
+import { updateAccountInfo, AccountUpdateRequest, getAccountInfo, AccountInfo } from '@/api/endpoints/account';
 
 interface ProfileData {
   coverImage: string;
@@ -16,9 +16,9 @@ interface ProfileData {
 
 const mockProfileData: ProfileData = {
   coverImage: 'https://picsum.photos/600/200?random=110',
-  avatar: 'https://picsum.photos/200/200?random=111',
-  name: 'ピエール',
-  id: '@piepie',
+  avatar: '/src/assets/no-image.svg',
+  name: '',
+  id: '',
   description: 'プロフィール説明文がここに入ります。',
   links: 'https://example.com'
 };
@@ -27,6 +27,26 @@ export default function AccountEdit() {
   const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+
+  useEffect(() => {
+    const fetchAccountInfo = async () => {
+      try {
+        const data = await getAccountInfo();
+        setAccountInfo(data);
+        setProfileData(prev => ({
+          ...prev,
+          name: data.display_name || '',
+          id: data.slug ? `@${data.slug}` : '',
+          avatar: data.avatar_url || '/src/assets/no-image.svg'
+        }));
+      } catch (error) {
+        console.error('Failed to fetch account info:', error);
+      }
+    };
+
+    fetchAccountInfo();
+  }, []);
 
   const handleInputChange = (field: keyof ProfileData, value: string) => {
     setProfileData(prev => ({

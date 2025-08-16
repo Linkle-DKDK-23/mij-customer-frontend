@@ -1,6 +1,9 @@
 import apiClient from '../axios';
 
 export interface AccountInfo {
+  slug?: string;
+  display_name?: string;
+  avatar_url?: string;
   followers_count: number;
   following_count: number;
   total_likes: number;
