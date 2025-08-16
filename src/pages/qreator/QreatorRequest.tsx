@@ -71,6 +71,14 @@ export default function QreatorRequest() {
       icon: <CreditCard className="h-6 w-6" />,
       completed: currentStep > 4,
       current: currentStep === 4
+    },
+    {
+      id: 5,
+      title: '完了',
+      description: 'クリエイター申請が完了しました',
+      icon: <CheckCircle className="h-6 w-6" />,
+      completed: currentStep > 5,
+      current: currentStep === 5
     }
   ];
 
@@ -86,8 +94,7 @@ export default function QreatorRequest() {
     setCurrentStep(2);
   };
 
-  const handlePersonalInfoNext = (data: PersonalInfo) => {
-    setPersonalInfo(data);
+  const handlePersonalInfoNext = () => {
     setCurrentStep(3);
   };
 
@@ -105,23 +112,9 @@ export default function QreatorRequest() {
 
     setIsSubmitting(true);
     try {
-      const userId = 'temp-user-id';
-      
-      await registerCreator({
-        name: personalInfo.name,
-        first_name_kana: personalInfo.firstNameKana,
-        last_name_kana: personalInfo.lastNameKana,
-        address: personalInfo.address,
-        phone_number: personalInfo.phoneNumber,
-        birth_date: personalInfo.birthDate,
-        country_code: 'JP'
-      }, userId);
-
       setCurrentStep(5);
-      alert('クリエイター申請が完了しました！');
     } catch (error) {
       console.error('Creator registration error:', error);
-      alert('申請中にエラーが発生しました。もう一度お試しください。');
     } finally {
       setIsSubmitting(false);
     }

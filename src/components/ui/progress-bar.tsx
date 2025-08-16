@@ -13,12 +13,13 @@ interface ProgressBarProps {
   className?: string;
 }
 
-export default function ProgressBar({ currentStep, totalSteps, steps, className }: ProgressBarProps) {
+export default function ProgressBar( {currentStep, totalSteps, steps, className }: ProgressBarProps) {
   const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   return (
     <div className={cn("w-full bg-white border-b border-gray-200 py-4", className)}>
       <div className="max-w-4xl mx-auto px-4">
+
         <div className="relative mb-4">
           <div className="h-2 bg-gray-200 rounded-full">
             <div 
@@ -43,16 +44,6 @@ export default function ProgressBar({ currentStep, totalSteps, steps, className 
               >
                 {step.completed ? "✓" : step.id}
               </div>
-              <span
-                className={cn(
-                  "text-xs text-center max-w-20",
-                  step.current || step.completed
-                    ? "text-primary font-medium"
-                    : "text-gray-500"
-                )}
-              >
-                {step.title}
-              </span>
             </div>
           ))}
         </div>

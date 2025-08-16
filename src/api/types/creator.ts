@@ -5,8 +5,7 @@ export interface CreatorCreate {
   address?: string;
   phone_number: string;
   birth_date?: string;
-  category_id?: string;
-  country_code?: string;
+  gender_slug: string[];
 }
 
 export interface CreatorUpdate {

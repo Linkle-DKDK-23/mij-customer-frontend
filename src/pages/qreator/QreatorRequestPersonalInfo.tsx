@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Calendar, MapPin } from 'lucide-react';
 import VerificationLayout from '@/components/auth/VerificationLayout';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { getGenders } from '@/api/endpoints/gender';
+import { GenderOut } from '@/api/types/gender';
+import { registerCreator } from '@/api/endpoints/creator';
 
 interface PersonalInfo {
   name: string;
-  firstNameKana: string;
-  lastNameKana: string;
-  birthDate: string;
+  first_name_kana: string;
+  last_name_kana: string;
+  birth_date: string;
   address: string;
-  phoneNumber: string;
+  phone_number: string;
+  gender_slug: string[];
 }
 
 interface QreatorRequestPersonalInfoProps {
-  onNext: (data: PersonalInfo) => void;
+  onNext: () => void;
   onBack: () => void;
   currentStep: number;
   totalSteps: number;
@@ -26,14 +34,27 @@ interface QreatorRequestPersonalInfoProps {
 }
 
 export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep, totalSteps, steps }: QreatorRequestPersonalInfoProps) {
+
+  const [gender_slug, setContent] = useState<string[]>([]);
+  const [genders, setGenders] = useState<GenderOut[]>([]);
   const [formData, setFormData] = useState<PersonalInfo>({
     name: '',
-    firstNameKana: '',
-    lastNameKana: '',
-    birthDate: '',
+    first_name_kana: '',
+    last_name_kana: '',
+    birth_date: '',
     address: '',
-    phoneNumber: ''
+    phone_number: '',
+    gender_slug: []
   });
+
+  useEffect(() => {
+    const fetchGenders = async () => {
+      const genders = await getGenders();
+      setGenders(genders);
+    };
+    fetchGenders();
+
+  }, []);
 
   const handleInputChange = (field: keyof PersonalInfo, value: string) => {
     setFormData(prev => ({
@@ -42,12 +63,42 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
     }));
   };
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.firstNameKana || !formData.lastNameKana || !formData.birthDate || !formData.phoneNumber) {
+  const handleContentChange = (value: string, checked: boolean) => {
+    setFormData(prev => {
+      const currentContent = prev.gender_slug || [];
+      if (checked) {
+        // チェックされた場合、配列に追加（重複を避ける）
+        if (!currentContent.includes(value)) {
+          return {
+            ...prev,
+            gender_slug: [...currentContent, value]
+          };
+        }
+      } else { 
+        // チェックが外された場合、配列から削除
+        return {
+          ...prev,
+          gender_slug: currentContent.filter(item => item !== value)
+        };
+      }
+      return prev;
+    });
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.first_name_kana || !formData.last_name_kana || !formData.birth_date || !formData.phone_number || !formData.gender_slug || formData.gender_slug.length === 0) {
       alert('必須項目をすべて入力してください');
       return;
     }
-    onNext(formData);
+    // 次のステップに入力情報を引き継ぐ
+    onNext();
+
+    // await registerCreator(formData).then(() => {
+    //   onNext(formData);
+    // }).catch((error) => {
+    //   alert('登録に失敗しました');
+    //   console.error(error);
+    // });
   };
 
   return (
@@ -67,10 +118,10 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
               氏名 <span className="text-red-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               id="name"
               value={formData.name}
@@ -82,27 +133,27 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstNameKana" className="block text-sm font-medium text-gray-700 mb-2">
+              <Label htmlFor="first_name_kana" className="block text-sm font-medium text-gray-700 mb-2">
                 姓（カナ） <span className="text-red-500">*</span>
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
-                id="firstNameKana"
-                value={formData.firstNameKana}
-                onChange={(e) => handleInputChange('firstNameKana', e.target.value)}
+                id="first_name_kana"
+                value={formData.first_name_kana}
+                onChange={(e) => handleInputChange('first_name_kana', e.target.value)}
                 placeholder="ヤマダ"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
             <div>
-              <label htmlFor="lastNameKana" className="block text-sm font-medium text-gray-700 mb-2">
+              <Label htmlFor="last_name_kana" className="block text-sm font-medium text-gray-700 mb-2">
                 名（カナ） <span className="text-red-500">*</span>
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
-                id="lastNameKana"
-                value={formData.lastNameKana}
-                onChange={(e) => handleInputChange('lastNameKana', e.target.value)}
+                id="last_name_kana"
+                value={formData.last_name_kana}
+                onChange={(e) => handleInputChange('last_name_kana', e.target.value)}
                 placeholder="タロウ"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
@@ -110,42 +161,42 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
           </div>
 
           <div>
-            <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="birth_date" className="block text-sm font-medium text-gray-700 mb-2">
               生年月日 <span className="text-red-500">*</span>
-            </label>
+            </Label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
+              <Input
                 type="date"
-                id="birthDate"
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                id="birth_date"
+                value={formData.birth_date}
+                onChange={(e) => handleInputChange('birth_date', e.target.value)}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 mb-2">
               電話番号 <span className="text-red-500">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="tel"
-              id="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              id="phone_number"
+              value={formData.phone_number}
+              onChange={(e) => handleInputChange('phone_number', e.target.value)}
               placeholder="090-1234-5678"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
               住所
-            </label>
+            </Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-              <textarea
+              <Textarea
                 id="address"
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
@@ -155,6 +206,36 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
               />
             </div>
           </div>
+
+          <div>
+            <Label htmlFor="gender_slug" className="block text-sm font-medium text-gray-700 mb-2">
+              投稿内容について
+            </Label>
+            <div className="flex flex-col space-y-4">
+              {genders.map((gender) => (
+                <div key={gender.slug} className="flex items-center space-x-2 border border-gray-300 rounded-md p-4">
+                  <Checkbox
+                    id={gender.slug}
+                    checked={formData.gender_slug.includes(gender.slug)}
+                    onCheckedChange={(checked) => handleContentChange(gender.slug, checked as boolean)}
+                  />
+                  <Label htmlFor={gender.slug} className="text-md text-gray-700">{gender.name}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-medium text-blue-900 mb-2">個人情報の取り扱いについて</h4>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• 入力された情報は本人確認のためにのみ使用されます</li>
+            <li>• 個人情報は適切に保護され、第三者に提供されることはありません</li>
+            <li>• 必須項目は正確に入力してください</li>
+          </ul>
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -185,3 +266,4 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
     </VerificationLayout>
   );
 }
+

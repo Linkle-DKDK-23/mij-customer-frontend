@@ -11,9 +11,8 @@ import {
 
 export const registerCreator = async (
   creatorData: CreatorCreate,
-  userId: string
-): Promise<CreatorOut> => {
-  const response = await apiClient.post(`/creators/register?user_id=${userId}`, creatorData);
+): Promise<void> => {
+  const response = await apiClient.post(`/creators/register`, creatorData);
   return response.data;
 };
 

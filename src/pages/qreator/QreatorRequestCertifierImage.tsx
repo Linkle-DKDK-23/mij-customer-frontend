@@ -5,7 +5,6 @@ import AuthLayout from '@/components/auth/AuthLayout';
 import VerificationLayout from '@/components/auth/VerificationLayout';
 import { QreatorRequestCertifierImageProps, UploadedFile, FileKind } from '@/api/types/identity';
 import { presignedUrl, putToPresignedUrl, completeIdentityUpload } from '@/api/endpoints/identity';
-import { useAuth } from '@/providers/AuthContext';
 
 const mimeToExt = (mime: string): "jpg" | "jpeg" | "png" | "pdf" => {
   if (mime === "image/png") return "png";
@@ -19,9 +18,8 @@ export default function QreatorRequestCertifierImage({
   onBack,
   currentStep,
   totalSteps,
-  steps
+  steps,
 }: QreatorRequestCertifierImageProps) {
-  const { user } = useAuth();
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
     { id: '1', name: '身分証明書（表面）', type: 'front', uploaded: false },
@@ -107,35 +105,35 @@ export default function QreatorRequestCertifierImage({
 
     try {
       // 1) presign
-      const presignRes = await presignedUrl(presignedUrlRequest);
-      const { verification_id, uploads } = presignRes;
+      // const presignRes = await presignedUrl(presignedUrlRequest);
+      // const { verification_id, uploads } = presignRes;
 
-      // 2) S3 PUT（presigned には CSRF不要なので素の axios を使用）
-      const uploadOne = async (kind: FileKind) => {
-        const file = files[kind]!;
-        const item = uploads[kind]; 
-        const header = item.required_headers;
+      // // 2) S3 PUT（presigned には CSRF不要なので素の axios を使用）
+      // const uploadOne = async (kind: FileKind) => {
+      //   const file = files[kind]!;
+      //   const item = uploads[kind]; 
+      //   const header = item.required_headers;
 
-        await putToPresignedUrl(item, file, header, {
-          onProgress: (pct) => setProgress((p) => ({ ...p, [kind]: pct })),
-        });
-        setUploadedFiles((prev) =>
-          prev.map((it) => (it.type === kind ? { ...it, uploaded: true } : it))
-        );
-      };
+      //   await putToPresignedUrl(item, file, header, {
+      //     onProgress: (pct) => setProgress((p) => ({ ...p, [kind]: pct })),
+      //   });
+      //   setUploadedFiles((prev) =>
+      //     prev.map((it) => (it.type === kind ? { ...it, uploaded: true } : it))
+      //   );
+      // };
     
-      await uploadOne('front');
-      await uploadOne('back');
-      await uploadOne('selfie');
+      // await uploadOne('front');
+      // await uploadOne('back');
+      // await uploadOne('selfie');
 
-      // 3) complete（各ファイルの ext を渡す）
-      await completeIdentityUpload(
-        verification_id,
-        (['front','back','selfie'] as const).map((k) => ({
-          kind: k,
-          ext: mimeToExt(files[k]!.type),
-        }))
-      );
+      // // 3) complete（各ファイルの ext を渡す）
+      // await completeIdentityUpload(
+      //   verification_id,
+      //   (['front','back','selfie'] as const).map((k) => ({
+      //     kind: k,
+      //     ext: mimeToExt(files[k]!.type),
+      //   }))
+      // );
 
       setMessage('アップロード完了。審査をお待ちください。');
       if (onNext) onNext();
