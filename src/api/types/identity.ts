@@ -1,9 +1,10 @@
-export type FileKind = "front" | "back" | "selfie";
+import { FileSpec } from "./commons";
+import { IdentityFileKind } from "@/constants/constants";
 
-export interface UploadedFile {
+export interface IdentityUploadedFile {
   id: string;
   name: string;
-  type: FileKind;
+  type: IdentityFileKind;
   uploaded: boolean;
 }
 
@@ -22,12 +23,12 @@ export interface QreatorRequestCertifierImageProps {
 
 /** 🔧 ファイルごとに content_type / ext を持たせる */
 export interface PresignedUrlFileSpec {
-  kind: FileKind;
-  content_type: "image/jpeg" | "image/png" | "application/pdf";
-  ext: "jpg" | "jpeg" | "png" | "pdf";
+  kind: IdentityFileKind;
+  content_type: FileSpec['content_type'];
+  ext: FileSpec['ext'];
 }
 
-export interface PresignedUrlRequest {
+export interface IdentityPresignedUrlRequest {
   files: PresignedUrlFileSpec[];
 }
 
@@ -35,7 +36,7 @@ export interface PresignedUrlRequest {
 export interface PresignUploadResponse {
   verification_id: string;
   uploads: {
-    [K in FileKind]: {
+    [K in IdentityFileKind]: {
       key: string;
       upload_url: string;
       required_headers: Record<string, string>;
@@ -56,6 +57,6 @@ export type PresignedUploadItem = {
 
 
 export interface CompleteFile {
-  kind: FileKind;
-  ext: "jpg" | "jpeg" | "png" | "pdf";
+  kind: IdentityFileKind;
+  ext: FileSpec['ext'];
 }
