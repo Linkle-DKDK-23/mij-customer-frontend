@@ -1,33 +1,161 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, Camera } from 'lucide-react';
-import AccountLayout from '@/components/account/AccountLayout';
 import AccountHeader from '@/components/account/AccountHeader';
-import { updateAccountInfo, AccountUpdateRequest, getAccountInfo, AccountInfo } from '@/api/endpoints/account';
+import { updateAccountInfo, getAccountInfo, AccountInfo } from '@/api/endpoints/account';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { ProfileData, AccountUploadedFile, AccountPresignedUrlRequest } from '@/api/types/plofile';
+import { FileSpec } from '@/api/types/commons';
+import { AccountFileKind } from '@/constants/constants';
+import { accountPresignedUrl } from '@/api/endpoints/account';
+import { putToPresignedUrl } from '@/service/s3FileUpload';
+import { useNavigate } from 'react-router-dom';
 
-interface ProfileData {
-  coverImage: string;
-  avatar: string;
-  name: string;
-  id: string;
-  description: string;
-  links: string;
-}
 
-const mockProfileData: ProfileData = {
-  coverImage: 'https://picsum.photos/600/200?random=110',
-  avatar: '/src/assets/no-image.svg',
-  name: '',
-  id: '',
-  description: 'プロフィール説明文がここに入ります。',
-  links: 'https://example.com'
+const mimeToExt = (mime: string): FileSpec['ext'] => {
+  if (mime === "image/png") return "png";
+  if (mime === "application/pdf") return "pdf";
+  return "jpg" as FileSpec['ext'];
 };
 
+
 export default function AccountEdit() {
-  const [profileData, setProfileData] = useState<ProfileData>(mockProfileData);
+  const navigate = useNavigate();
+
+  const [profileData, setProfileData] = useState<ProfileData>({
+    coverImage: 'https://picsum.photos/600/200?random=110',
+    avatar: '/src/assets/no-image.svg',
+    name: '',
+    id: '',
+    description: '',
+    links: {
+      website: '',
+    }
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<AccountUploadedFile[]>([
+    { id: '1', name: 'カバー画像', type: 'cover', uploaded: false },
+    { id: '2', name: 'アバター画像', type: 'avatar', uploaded: false }
+  ]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+  const [files, setFiles] = useState<Record<AccountFileKind, File | null>>({
+    'cover': null,
+    'avatar': null
+  });
+
+  const [progress, setProgress] = useState<Record<AccountFileKind, number>>({
+    'cover': 0, 
+    'avatar': 0
+  });
+
+  const inputRefs = {
+    'cover': useRef<HTMLInputElement>(null),
+    'avatar':  useRef<HTMLInputElement>(null),
+  };
+
+  const allFilesPicked = useMemo(
+    () => (['cover','avatar'] as const).every(k => !!files[k]),
+    [files]
+  );
+
+  const openPicker = (kind: AccountFileKind) => inputRefs[kind].current?.click();
+
+  const onPick = (kind: AccountFileKind) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setMessage(null);
+    if (!f) return;
+
+    const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!allowed.includes(f.type)) {
+      setMessage('ファイル形式は JPEG/PNG/PDF のみです');
+      return;
+    }
+    if (f.size > 10 * 1024 * 1024) {
+      setMessage('ファイルサイズは 10MB 以下にしてください');
+      return;
+    }
+
+    setFiles(prev => ({ ...prev, [kind]: f }));
+    setUploadedFiles(prev => prev.map(item =>
+      item.type === kind ? { ...item, uploaded: false } : item
+    ));
+    setProgress(p => ({ ...p, [kind]: 0 }));
+  };
+
+  const handleSave = async () => {
+    setMessage(null);
+    if (!allFilesPicked) {
+      setMessage('すべての画像を選択してください');
+      return;
+    }
+
+    setSubmitting(true);
+    const AccountFileKinds = ['cover','avatar'] as const;
+
+    const presignedUrlRequest: AccountPresignedUrlRequest = {
+      files: AccountFileKinds.map((k) => {
+        const file = files[k]!;
+        return {
+          kind: k,
+          content_type: file.type as FileSpec['content_type'],
+          ext: mimeToExt(file.type),
+        };
+      })
+    };
+
+    try {
+      // 1) presign
+      const presignRes = await accountPresignedUrl(presignedUrlRequest);
+
+      const uploadOne = async (kind: AccountFileKind) => {
+        const file = files[kind]!;
+        const item = presignRes.uploads[kind]; 
+        const header = item.required_headers;
+
+        await putToPresignedUrl(item, file, header, {
+          onProgress: (pct) => setProgress((p) => ({ ...p, [kind]: pct })),
+        });
+        setUploadedFiles((prev) =>
+          prev.map((it) => (it.type === kind ? { ...it, uploaded: true } : it))
+        );
+      };
+
+      await uploadOne('cover');
+      await uploadOne('avatar');
+
+      const res = await updateAccountInfo({
+        name: profileData.name,
+        display_name: profileData.id.replace('@', ''),
+        description: profileData.description,
+        links: profileData.links,
+        avatar_url: presignRes.uploads['avatar'].key,
+        cover_url: presignRes.uploads['cover'].key
+      });
+
+      if (res.success) {
+        setMessage('アカウント情報が正常に更新されました');
+        navigate('/account');
+      } else {
+        setMessage('アカウント情報の更新に失敗しました');
+      }
+      return;
+    } catch (e: any) {
+      const status = e?.response?.status;
+      if (status === 400 || status === 403) {
+        setMessage('URLの有効期限切れかヘッダ不一致です。もう一度やり直してください。');
+      } else {
+        setMessage('アップロードに失敗しました。時間をおいて再試行してください。');
+      }
+      console.error(e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchAccountInfo = async () => {
@@ -36,8 +164,8 @@ export default function AccountEdit() {
         setAccountInfo(data);
         setProfileData(prev => ({
           ...prev,
-          name: data.display_name || '',
-          id: data.slug ? `@${data.slug}` : '',
+          name: data.slug,
+          id: data.display_name,
           avatar: data.avatar_url || '/src/assets/no-image.svg'
         }));
       } catch (error) {
@@ -53,26 +181,6 @@ export default function AccountEdit() {
       ...prev,
       [field]: value
     }));
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    setMessage('');
-    
-    try {
-      const updateData: AccountUpdateRequest = {
-        name: profileData.id.replace('@', ''), // Remove @ from ID
-        display_name: profileData.name
-      };
-      
-      const response = await updateAccountInfo(updateData);
-      setMessage('アカウント情報が正常に更新されました');
-    } catch (error) {
-      console.error('Failed to update account:', error);
-      setMessage('更新に失敗しました。もう一度お試しください。');
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -102,35 +210,76 @@ export default function AccountEdit() {
         )}
 
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">カバー画像をアップロード</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors">
-              <div className="flex flex-col items-center">
-                <Upload className="h-12 w-12 text-gray-400 mb-2" />
-                <p className="text-blue-500 font-medium">ファイルを選択</p>
-                <p className="text-sm text-gray-500 mt-1">カバー画像とアバター画像は審査対象です。</p>
-                <p className="text-sm text-gray-500">審査完了するまでは反映されませんのでご了承ください。</p>
-                <p className="text-sm text-red-500 mt-2">
-                  著作権を侵害する恐れのある画像、公序良俗に反するガイドラインに反している画像等は
-                  アップロードしないでください。詳細は利用規約・ガイドライン一覧をご確認ください。
-                </p>
+          {uploadedFiles.map((file) => (
+            <div key={file.id}>
+              <Label className="block text-sm font-medium text-gray-700 mb-3">{file.name}</Label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  file.uploaded ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-gray-400'
+                }`}
+              >
+                <div className="flex flex-col items-center space-y-2">
+                  {file.uploaded ? (
+                    <div className="h-12 w-12 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xl">✓</span>
+                    </div>
+                  ) : file.type === 'avatar' ? (
+                    <Camera className="h-12 w-12 text-gray-400" />
+                  ) : (
+                    <Upload className="h-12 w-12 text-gray-400" />
+                  )}
+
+                  <h3 className="text-sm font-medium text-gray-900">{file.name}</h3>
+
+                  <input
+                    ref={inputRefs[file.type]}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    className="hidden"
+                    onChange={onPick(file.type)}
+                  />
+
+                  {!file.uploaded && (
+                    <Button
+                      onClick={() => openPicker(file.type)}
+                      variant="outline"
+                      className="mt-2"
+                      disabled={submitting}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      ファイルを選択
+                    </Button>
+                  )}
+
+                  {/* 進捗バー */}
+                  <div className="w-full h-2 bg-gray-200 rounded mt-2 overflow-hidden">
+                    <div
+                      className="h-2 bg-primary transition-all"
+                      style={{ width: `${progress[file.type]}%` }}
+                    />
+                  </div>
+
+                  {/* 選択済みファイル名表示 */}
+                  {files[file.type] && !file.uploaded && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {files[file.type]!.name}（{Math.round(files[file.type]!.size / 1024)} KB）
+                    </p>
+                  )}
+
+                  {file.uploaded && <p className="text-xs text-green-600">アップロード完了</p>}
+                </div>
               </div>
             </div>
+          ))}
+
+          <div className="text-sm text-gray-500">
+            著作権を侵害する恐れのあるカバー画像とアバター画像は審査対象です。<br />
+            詳細は利用規約・ガイドライン一覧をご確認ください。
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">アバター画像をアップロード</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors">
-              <div className="flex flex-col items-center">
-                <Camera className="h-12 w-12 text-gray-400 mb-2" />
-                <p className="text-blue-500 font-medium">ファイルを選択</p>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">名前</label>
-            <input
+            <Label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">名前</Label>
+            <Input
               type="text"
               id="name"
               value={profileData.name}
@@ -141,21 +290,19 @@ export default function AccountEdit() {
           </div>
 
           <div>
-            <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-2">ID</label>
-            <input
+            <Label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-2">ID</Label>
+            <Input
               type="text"
               id="id"
               value={profileData.id}
               onChange={(e) => handleInputChange('id', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-gray-100"
-              placeholder="@username"
-              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">説明文</label>
-            <textarea
+            <Label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">説明文</Label>
+            <Textarea
               id="description"
               value={profileData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
@@ -166,14 +313,13 @@ export default function AccountEdit() {
           </div>
 
           <div>
-            <label htmlFor="links" className="block text-sm font-medium text-gray-700 mb-2">リンク</label>
-            <input
+            <Label htmlFor="links" className="block text-sm font-medium text-gray-700 mb-2">リンク</Label>
+            <Input
               type="url"
               id="links"
-              value={profileData.links}
+              value={profileData.links.website}
               onChange={(e) => handleInputChange('links', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="https://example.com"
             />
           </div>
         </div>

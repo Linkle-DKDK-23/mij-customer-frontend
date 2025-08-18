@@ -24,9 +24,9 @@ export default function Account() {
   const tabs = ['管理画面', '加入中', '単品購入', 'いいね'];
 
   const mockUser: UserProfile = {
-    name: accountInfo?.display_name || 'ピエール',
-    username: accountInfo?.slug ? `@${accountInfo.slug}` : '@piepie',
-    avatar: accountInfo?.avatar_url || '/src/assets/no-image.svg',
+    name: accountInfo?.slug,
+    username: accountInfo?.display_name,
+    avatar: accountInfo?.avatar_url ? `https://cdn-dev.mijfans.jp/${accountInfo.avatar_url}` : '/src/assets/no-image.svg',
     followingCount: accountInfo?.following_count || 0,
     followerCount: accountInfo?.followers_count || 0,
     totalLikes: accountInfo?.total_likes || 0
@@ -47,6 +47,8 @@ export default function Account() {
     fetchAccountInfo();
   }, []);
 
+  console.log('mockUser', mockUser);
+
   return (
     <div className="bg-white">
       <Header />
@@ -63,7 +65,7 @@ export default function Account() {
                 <div className="flex  bg-gray-100 rounded-lg p-4 items-center mt-1">
                   <button 
                     className="text-blue-500 text-sm flex items-center"
-                    onClick={() => navigate('/creator/profile')}
+                    onClick={() => navigate(`/account/profile?slug=${mockUser.username}`)}
                   >
                     プロフィールを見る
                   </button>
@@ -71,7 +73,7 @@ export default function Account() {
                 <Edit className="h-4 w-4 ml-1" onClick={() => navigate('/account/edit')} />
                 </div>
             </div>
-            <div className="w-30 h-30 flex-shrink-0">
+            <div className="w-24 h-24 flex-shrink-0">
               <img 
                 src={mockUser.avatar} 
                 alt={mockUser.name}
