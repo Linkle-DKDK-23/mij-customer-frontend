@@ -1,32 +1,10 @@
 import apiClient from '@/api/axios';
-import { AccountPresignedUrlRequest, AccountPresignedUrlResponse } from '@/api/types/plofile';
-
-export interface AccountInfo {
-  slug?: string;
-  display_name?: string;
-  avatar_url?: string;
-  cover_url?: string;
-  followers_count: number;
-  following_count: number;
-  total_likes: number;
-  pending_posts_count: number;
-  rejected_posts_count: number;
-  unpublished_posts_count: number;
-  deleted_posts_count: number;
-  approved_posts_count: number;
-  total_sales: number;
-  plan_count: number;
-  total_plan_price: number;
-}
-
-export interface AccountUpdateRequest {
-  name?: string;
-  display_name?: string;
-  description?: string;
-  links?: Record<string, string>;
-  avatar_url?: string;
-  cover_url?: string;
-}
+import { 
+  AccountInfo, 
+  AccountUpdateRequest, 
+  AccountPresignedUrlRequest, 
+  AccountPresignedUrlResponse 
+} from '@/api/types/account';
 
 /**
  * アカウント情報を取得
