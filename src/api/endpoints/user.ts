@@ -12,6 +12,7 @@ export const signUp = async (form: SignUpForm) => {
  * @param slug ユーザースラッグ
  * @returns UserProfile
  */
-export const getUserProfileBySlug = (slug: string): Promise<UserProfile> => {
-  return apiClient.get(`/users/profile/${slug}`).then(response => response.data);
+export const getUserProfileByDisplayName = (displayName: string): Promise<UserProfile> => {
+  console.log('displayName', displayName);
+  return apiClient.get(`/users/profile?display_name=${displayName}`).then(response => response.data);
 };

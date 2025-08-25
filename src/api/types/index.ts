@@ -1,5 +1,5 @@
 export * from './user';
-export * from './post';
+export * from './postMedia';
 export * from './plan';
 export * from './gachaItem';
 export * from './individualPurchase';

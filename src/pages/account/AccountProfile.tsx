@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Share, MessageCircle, Crown, Star, Link as LinkIcon } from 'lucide-react';
 import AccountLayout from '@/components/account/AccountLayout';
 import AccountNavigation from '@/components/account/AccountNavigation';
-import { getUserProfileBySlug } from '@/api/endpoints/user';
+import { getUserProfileByDisplayName } from '@/api/endpoints/user';
 import { UserProfile } from '@/api/types/profile';
+import BottomNavigation from '@/components/custome/BottomNavigation';
 
 const NO_IMAGE_URL = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgMTAwTDEwMCAxMDBaIiBzdHJva2U9IiM5Q0E0QUYiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzlDQTRBRiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
 
@@ -16,10 +17,10 @@ export default function AccountProfile() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'posts' | 'plans' | 'individual' | 'gacha'>('posts');
   
-  const slug = searchParams.get('slug');
+  const displayName = searchParams.get('display_name');
 
   useEffect(() => {
-    if (!slug) {
+    if (!displayName) {
       setError('スラッグが指定されていません');
       setLoading(false);
       return;
@@ -28,7 +29,9 @@ export default function AccountProfile() {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const data = await getUserProfileBySlug(slug);
+        const data = await getUserProfileByDisplayName(displayName);
+
+        console.log('data', data);
         setProfile(data);
       } catch (err) {
         setError('プロフィールの取得に失敗しました');
@@ -38,7 +41,7 @@ export default function AccountProfile() {
     };
 
     fetchProfile();
-  }, [slug]);
+  }, [displayName]);
 
   if (loading) return <div className="p-6 text-center">読み込み中...</div>;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
@@ -165,16 +168,16 @@ export default function AccountProfile() {
           <div 
             className="h-32 bg-gradient-to-r from-blue-400 to-purple-500"
             style={{
-              backgroundImage: profile.cover_url ? `url(${profile.cover_url})` : undefined,
+              backgroundImage: profile.cover_url ? `url(https://cdn-dev.mijfans.jp/${profile.cover_url})` : undefined,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
           ></div>
-          <div className="absolute -bottom-8 left-6">
+          <div className="absolute -bottom-10 left-6">
             <img 
-              src={profile.avatar_url || NO_IMAGE_URL} 
-              alt={profile.display_name || profile.slug}
-              className="w-16 h-16 rounded-full border-4 border-white object-cover"
+              src={profile.avatar_url ? `https://cdn-dev.mijfans.jp/${profile.avatar_url}` : NO_IMAGE_URL} 
+              alt={profile.display_name}
+              className="w-20 h-20 rounded-full border-4 border-white object-cover"
             />
           </div>
           <div className="absolute top-4 right-4 flex space-x-2">
@@ -190,8 +193,8 @@ export default function AccountProfile() {
         <div className="px-6 pt-10 pb-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900">{profile.display_name || profile.slug}</h1>
-              <p className="text-gray-600">@{profile.slug}</p>
+              <h1 className="text-xl font-bold text-gray-900">{profile.slug}</h1>
+              <p className="text-gray-600">@{profile.display_name}</p>
               {profile.bio && <p className="text-gray-700 mt-2">{profile.bio}</p>}
               <div className="flex items-center space-x-4 mt-3 text-sm text-gray-500">
                 <span>{profile.post_count}投稿</span>
@@ -214,6 +217,7 @@ export default function AccountProfile() {
 
         {renderContent()}
       </div>
+      <BottomNavigation />
     </AccountLayout>
   );
 }

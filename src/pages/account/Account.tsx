@@ -4,16 +4,8 @@ import { Settings, Edit, ChevronRight, Gift, FileText, DollarSign, CreditCard } 
 import Header from '@/components/custome/Header';
 import BottomNavigation from '@/components/custome/BottomNavigation';
 import { useNavigate } from 'react-router-dom';
-import { getAccountInfo, AccountInfo } from '@/api/endpoints/account';
-
-interface UserProfile {
-  name: string;
-  username: string;
-  avatar: string;
-  followingCount: number;
-  followerCount: number;
-  totalLikes: number;
-}
+import { getAccountInfo } from '@/api/endpoints/account';
+import { AccountInfo, UserProfile } from '@/api/types/account';
 
 export default function Account() {
   const navigate = useNavigate();
@@ -65,7 +57,7 @@ export default function Account() {
                 <div className="flex  bg-gray-100 rounded-lg p-4 items-center mt-1">
                   <button 
                     className="text-blue-500 text-sm flex items-center"
-                    onClick={() => navigate(`/account/profile?slug=${mockUser.username}`)}
+                    onClick={() => navigate(`/account/profile?display_name=${mockUser.username}`)}
                   >
                     プロフィールを見る
                   </button>

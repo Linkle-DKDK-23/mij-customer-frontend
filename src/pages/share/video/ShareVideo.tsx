@@ -1,5 +1,26 @@
 // react要素をインポート
-import React, { useState, useEffect, useCallback,useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+
+// 型定義
+import { PostData } from '@/api/types/postMedia';	
+
+// ファイル拡張子取得関数
+const mimeToExt = (mime: string): string => {
+  if (mime === "video/mp4") return "mp4";
+  if (mime === "video/avi") return "avi";
+  if (mime === "video/mov") return "mov";
+  if (mime === "video/wmv") return "wmv";
+  if (mime === "video/MOV") return "MOV";
+  return "mp4";
+};
+
+// 画像用拡張子取得関数
+const mimeToImageExt = (mime: string): "jpg" | "jpeg" | "png" | "pdf" => {
+  if (mime === "image/jpeg") return "jpg";
+  if (mime === "image/png") return "png";
+  if (mime === "application/pdf") return "pdf";
+  return "jpg";
+};
 
 // コンポーネントをインポート
 import { Button } from "@/components/ui/button";
@@ -22,6 +43,10 @@ import SampleStreemUploadArea from "@/components/custome/SampleStreemUploadArea"
 import OgpPreview from "@/components/custome/OgpPreview"
 import OgpUploadArea from "@/components/custome/OgpUploadArea,"
 import { DatePickerWithPopover } from "@/components/custome/DatePickerWithPopover"
+import { FileSpec, VideoFileSpec } from '@/api/types/commons';
+import { PostImagePresignedUrlRequest, PostVideoPresignedUrlRequest } from '@/api/types/postMedia';
+import { postImagePresignedUrl, postVideoPresignedUrl } from '@/api/endpoints/postMedia';
+
 
 export default function ShareVideo() {
 
@@ -44,6 +69,27 @@ export default function ShareVideo() {
     confirm2: false,
     confirm3: false,
   })
+
+	// フォームデータの状態管理
+	const [formData, setFormData] = useState<PostData>({
+		title: '',
+		description: '',
+		genres: [],
+		tags: '',
+		scheduled: false,
+		scheduledDate: undefined,
+		scheduledTime: '',
+		expiration: false,
+		expirationDate: undefined,
+		plan: false,
+		planDate: '',
+		single: false,
+		singleDate: '',
+		mainVideo: null,
+		sampleVideo: null,
+		ogpImage: null,
+		thumbnail: null,
+	});
 
 	// サムネイル生成
 	useEffect(() => {
@@ -84,10 +130,17 @@ export default function ShareVideo() {
 	// 動画アップロード
 	const handleMainVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		if (file) {
-			setSelectedMainFile(file);
-			setPreviewMainUrl(URL.createObjectURL(file));
+		if (!file) return;
+
+		// ファイルバリデーション（AccountEdit.tsxから流用）
+		if (file.size > 500 * 1024 * 1024) { // 500MB
+			alert('ファイルサイズは 500MB 以下にしてください');
+			return;
 		}
+
+		setSelectedMainFile(file);
+		setPreviewMainUrl(URL.createObjectURL(file));
+		setUploadMessage(''); // 前回のメッセージをクリア
 	};
 
 	// サンプル動画アップロード
@@ -153,6 +206,169 @@ export default function ShareVideo() {
 		}
 	}
 
+	// 動画アップロード処理（AccountEdit.tsxから流用）
+	const [uploading, setUploading] = useState(false);
+	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+	const [uploadMessage, setUploadMessage] = useState<string>('');
+
+	// フォームデータ更新関数
+	const updateFormData = (field: keyof PostData, value: any) => {
+		setFormData(prev => ({
+			...prev,
+			[field]: value
+		}));
+	};
+
+	// ジャンル選択処理
+	const handleGenreChange = (genre: string, checked: boolean) => {
+		if (checked) {
+			updateFormData('genres', [...formData.genres, genre]);
+		} else {
+			updateFormData('genres', formData.genres.filter(g => g !== genre));
+		}
+	};
+
+	// 投稿データをまとめて送信（AccountEdit.tsxと同じ処理フロー）
+	const handleSubmitPost = async () => {
+		// バリデーション
+		if (!selectedMainFile) {
+			setUploadMessage('メイン動画を選択してください');
+			return;
+		}
+		if (!formData.description.trim()) {
+			setUploadMessage('説明文を入力してください');
+			return;
+		}
+		if (!allChecked) {
+			setUploadMessage('確認項目にチェックを入れてください');
+			return;
+		}
+
+		setUploading(true);
+		setUploadMessage('');
+
+		// 画像類のリクエスト内容整理
+		const PostImageFileKinds = ['thumbnail','ogp'] as const;
+    const imagePresignedUrlRequest: PostImagePresignedUrlRequest = {
+      files: PostImageFileKinds.map((k) => {
+        if (k === 'thumbnail' && thumbnail) {
+          return {
+            kind: k,
+            content_type: 'image/jpeg' as FileSpec['content_type'],
+            ext: 'jpg' as const,
+          };
+        }
+        if (k === 'ogp' && ogp) {
+          // ogpも同様にbase64文字列
+          return {
+            kind: k,
+            content_type: 'image/jpeg' as FileSpec['content_type'],
+            ext: 'jpg' as const,
+          };
+        }
+      })
+    };
+
+		// 動画類のリクエスト内容整理
+		const videoPresignedUrlRequest: PostVideoPresignedUrlRequest = {
+			files: [
+				{
+					kind: 'main',
+					content_type: 'video/mp4' as VideoFileSpec['content_type'],
+					ext: 'mp4' as const,
+				},
+				{
+					kind: 'sample',
+					content_type: 'video/mp4' as VideoFileSpec['content_type'],
+					ext: 'mp4' as const,
+				}
+			]
+		};
+
+		try {
+
+			// ここでpresigned URLを取得するAPIを呼び出し
+			const presignRes = await postImagePresignedUrl(imagePresignedUrlRequest);
+			console.log('presignRes', presignRes);
+
+			return;
+			
+
+			// 2) S3 PUT（presigned URLを使用）
+			const uploadVideo = async (file: File, kind: string) => {
+				// プログレスバーのシミュレーション
+				for (let i = 0; i <= 100; i += 10) {
+					setUploadProgress(prev => ({ ...prev, [kind]: i }));
+					await new Promise(resolve => setTimeout(resolve, 100));
+				}
+			};
+
+			// メイン動画をアップロード
+			await uploadVideo(selectedMainFile, 'main');
+			
+			// サンプル動画があればアップロード
+			if (selectedSampleFile) {
+				await uploadVideo(selectedSampleFile, 'sample');
+			}
+
+			// 3) 投稿データを送信
+			const finalFormData: PostData = {
+				...formData,
+				mainVideo: selectedMainFile,
+				sampleVideo: selectedSampleFile,
+				ogpImage: ogp,
+				thumbnail: thumbnail,
+				scheduled: scheduled,
+				scheduledDate: scheduled ? selectedDate : undefined,
+				expiration: expiration,
+				expirationDate: expiration ? selectedDate : undefined,
+				plan: plan,
+				single: single,
+			};
+
+			console.log('送信するデータ:', finalFormData);
+
+			// ここで投稿APIを呼び出し
+			// const response = await createPost(finalFormData);
+			// console.log('投稿成功:', response);
+
+			setUploadMessage('動画の投稿が完了しました！');
+			setUploading(false);
+		} catch (error) {
+			console.error('投稿エラー:', error);
+			setUploadMessage('投稿に失敗しました。時間をおいて再試行してください。');
+			setUploading(false);
+		}
+	};
+
+	const handleVideoUpload = async () => {
+		if (!selectedMainFile) {
+			setUploadMessage('動画ファイルを選択してください');
+			return;
+		}
+
+		setUploading(true);
+		setUploadMessage('');
+
+		try {
+			// ここで実際のアップロード処理を実装
+			// 例: S3へのアップロード、APIへの送信など
+			
+			// プログレスバーのシミュレーション
+			for (let i = 0; i <= 100; i += 10) {
+				setUploadProgress(prev => ({ ...prev, main: i }));
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+
+			setUploadMessage('動画のアップロードが完了しました');
+		} catch (error) {
+			console.error('アップロードエラー:', error);
+			setUploadMessage('アップロードに失敗しました');
+		} finally {
+			setUploading(false);
+		}
+	};
+
 
 	return (
 		<div className="w-full max-w-lg bg-white space-y-6">
@@ -181,6 +397,40 @@ export default function ShareVideo() {
 					<MainStreemUploadArea onFileChange={handleMainVideoChange} />
 				)}
 			</div>
+
+			{/* アップロード処理（AccountEdit.tsxから流用） */}
+			{selectedMainFile && (
+				<div className="space-y-4 p-5 border-t border-primary pt-5">
+					<Button
+						onClick={handleVideoUpload}
+						disabled={uploading}
+						className="w-full bg-primary hover:bg-primary/90 text-white"
+					>
+						{uploading ? 'アップロード中...' : '動画をアップロード'}
+					</Button>
+
+					{/* プログレスバー */}
+					{uploading && (
+						<div className="w-full bg-gray-200 rounded-full h-2.5">
+							<div
+								className="bg-primary h-2.5 rounded-full transition-all duration-300"
+								style={{ width: `${uploadProgress.main || 0}%` }}
+							/>
+						</div>
+					)}
+
+					{/* アップロードメッセージ */}
+					{uploadMessage && (
+						<div className={`p-3 rounded-md text-sm ${
+							uploadMessage.includes('完了') 
+								? 'bg-green-50 text-green-700 border border-green-200' 
+								: 'bg-red-50 text-red-700 border border-green-200'
+						}`}>
+							{uploadMessage}
+						</div>
+					)}
+				</div>
+			)}
 
 			{selectedMainFile && (
 
@@ -275,6 +525,8 @@ export default function ShareVideo() {
 				</Label>
 				<Textarea
 					id="description"
+					value={formData.description}
+					onChange={(e) => updateFormData('description', e.target.value)}
 					placeholder="説明文を入力"
 					className="resize-none border border-muted focus:outline-none focus:ring-0 focus:border-primary focus:border-2 shadow-none"
 				/>
@@ -326,7 +578,12 @@ export default function ShareVideo() {
 			{/* タグ入力 */}
 			<div className="space-y-2 border-b-2 border-primary pb-5 pr-5 pl-5">
 				<Label htmlFor="tags" className="text-sm font-medium font-bold">タグ</Label>
-				<Input id="tags" placeholder="タグを入力" />
+				<Input 
+					id="tags" 
+					value={formData.tags}
+					onChange={(e) => updateFormData('tags', e.target.value)}
+					placeholder="タグを入力" 
+				/>
 			</div>
 
 			{/* トグルスイッチ一覧 */}
@@ -393,9 +650,6 @@ export default function ShareVideo() {
 				/>
 				{plan && (
 					<div className="space-y-2">
-						<Label htmlFor="plan-date" className="text-sm font-medium font-bold">
-							<span className="text-primary mr-1">*</span>プランに追加
-						</Label>
 						<Input id="plan-date" type="datetime-local" />
 					</div>
 				)}
@@ -405,10 +659,15 @@ export default function ShareVideo() {
 				/>
 				{single && (
 					<div className="space-y-2">
-						<Label htmlFor="single-date" className="text-sm font-medium font-bold">
-							<span className="text-primary mr-1">*</span>単品販売
-						</Label>
-						<Input id="single-date" type="datetime-local" />
+						<div className="relative">
+							<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">¥</span>
+							<Input 
+								id="single-price" 
+								type="number" 
+								className="pl-8"
+								placeholder="0"
+							/>
+						</div>
 					</div>
 				)}
 			</div>
@@ -440,8 +699,12 @@ export default function ShareVideo() {
 
       {/* ✅ 投稿ボタン */}
 			<div className="m-4">
-				<Button disabled={!allChecked} className="w-full">
-					投稿する
+				<Button 
+					onClick={handleSubmitPost}
+					disabled={!allChecked || uploading} 
+					className="w-full bg-primary hover:bg-primary/90 text-white"
+				>
+					{uploading ? '投稿中...' : '投稿する'}
 				</Button>
 			</div>
 
