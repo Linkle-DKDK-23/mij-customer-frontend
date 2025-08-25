@@ -71,6 +71,7 @@ export default function ShareVideo() {
     confirm3: false,
   });
 	const [selectedPlanId, setSelectedPlanId] = useState<string>('');
+	const [selectedPlanName, setSelectedPlanName] = useState<string>('');
 	const [showPlanSelector, setShowPlanSelector] = useState(false);
 
 	// フォームデータの状態管理
@@ -657,17 +658,28 @@ export default function ShareVideo() {
 							<span className="text-sm font-medium">
 								{selectedPlanId ? '選択済みプラン' : 'プランを選択してください'}
 							</span>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => setShowPlanSelector(true)}
-							>
-								{selectedPlanId ? '変更' : '選択'}
-							</Button>
+							<div className="flex space-x-2">
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => setShowPlanSelector(true)}
+								>
+									{selectedPlanId ? '変更' : '選択'}
+								</Button>
+								{selectedPlanId && (
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => setSelectedPlanId('')}
+									>
+										解除
+									</Button>
+								)}
+							</div>
 						</div>
 						{selectedPlanId && (
 							<div className="text-xs text-gray-600">
-								プランID: {selectedPlanId}
+								選択中: {selectedPlanName || `プランID: ${selectedPlanId}`}
 							</div>
 						)}
 					</div>
@@ -738,8 +750,9 @@ export default function ShareVideo() {
 			{showPlanSelector && (
 				<PlanSelector
 					selectedPlanId={selectedPlanId}
-					onPlanSelect={(planId) => {
+					onPlanSelect={(planId, planName) => {
 						setSelectedPlanId(planId);
+						setSelectedPlanName(planName || '');
 						setShowPlanSelector(false);
 					}}
 					onClose={() => setShowPlanSelector(false)}

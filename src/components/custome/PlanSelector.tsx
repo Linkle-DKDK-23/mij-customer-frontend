@@ -8,7 +8,7 @@ import { getPlans, createPlan, Plan, PlanCreateRequest } from '@/api/endpoints/p
 
 interface PlanSelectorProps {
   selectedPlanId?: string;
-  onPlanSelect: (planId: string) => void;
+  onPlanSelect: (planId: string, planName?: string) => void;
   onClose: () => void;
 }
 
@@ -47,7 +47,7 @@ export default function PlanSelector({ selectedPlanId, onPlanSelect, onClose }: 
       setPlans([...plans, newPlan]);
       setShowCreateForm(false);
       setCreateFormData({ name: '', description: '', price: 1000 });
-      onPlanSelect(newPlan.id);
+      onPlanSelect(newPlan.id, newPlan.name);
     } catch (error) {
       console.error('プラン作成エラー:', error);
       alert('プランの作成に失敗しました');
@@ -77,7 +77,7 @@ export default function PlanSelector({ selectedPlanId, onPlanSelect, onClose }: 
                       ? 'border-primary bg-primary/5'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
-                  onClick={() => onPlanSelect(plan.id)}
+                  onClick={() => onPlanSelect(plan.id, plan.name)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
