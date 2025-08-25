@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import PlanSelector from '@/components/custome/PlanSelector';
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Select,
@@ -68,7 +69,9 @@ export default function ShareVideo() {
     confirm1: false,
     confirm2: false,
     confirm3: false,
-  })
+  });
+	const [selectedPlanId, setSelectedPlanId] = useState<string>('');
+	const [showPlanSelector, setShowPlanSelector] = useState(false);
 
 	// フォームデータの状態管理
 	const [formData, setFormData] = useState<PostData>({
@@ -649,8 +652,24 @@ export default function ShareVideo() {
 					onChangeToggle={(v) => onToggleSwitch('plan', v)}
 				/>
 				{plan && (
-					<div className="space-y-2">
-						<Input id="plan-date" type="datetime-local" />
+					<div className="space-y-2 ml-6">
+						<div className="flex items-center justify-between">
+							<span className="text-sm font-medium">
+								{selectedPlanId ? '選択済みプラン' : 'プランを選択してください'}
+							</span>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setShowPlanSelector(true)}
+							>
+								{selectedPlanId ? '変更' : '選択'}
+							</Button>
+						</div>
+						{selectedPlanId && (
+							<div className="text-xs text-gray-600">
+								プランID: {selectedPlanId}
+							</div>
+						)}
 					</div>
 				)}
 				<ToggleRow label="単品販売" id="single" 
@@ -716,6 +735,16 @@ export default function ShareVideo() {
 				<li>性器や挿入箇所へのモザイク修正が行われていない場合、全ての投稿を削除する可能性があります。</li>
 			</ul>
 
+			{showPlanSelector && (
+				<PlanSelector
+					selectedPlanId={selectedPlanId}
+					onPlanSelect={(planId) => {
+						setSelectedPlanId(planId);
+						setShowPlanSelector(false);
+					}}
+					onClose={() => setShowPlanSelector(false)}
+				/>
+			)}
 
 		</div>
 	);
