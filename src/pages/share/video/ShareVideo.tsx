@@ -1,7 +1,11 @@
 // react要素をインポート
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getGenres, getCategories, getRecommendedCategories, getRecentCategories, Category, Genre } from '@/api/endpoints/categories';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog, DialogContent, DialogTrigger,
+  DialogHeader, DialogTitle, DialogDescription, // ←追加
+} from "@/components/ui/dialog";
+
 
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
@@ -607,8 +611,14 @@ export default function ShareVideo() {
 							value={selectedCategories.length > 0 ? `${selectedCategories.length}つのカテゴリーを選択` : ''}
 							className="cursor-pointer"
 						/>
-					</DialogTrigger>
-					<DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+  				</DialogTrigger>
+					{/* 説明が無いなら aria-describedby を明示的に外す */}
+					<DialogContent className="max-w-md max-h-[80vh] overflow-y-auto" aria-describedby={undefined}>
+						{/* 画面には出さないが、スクリーンリーダーには伝えるタイトル */}
+						<DialogHeader className="sr-only">
+							<DialogTitle>ジャンル選択</DialogTitle>
+						</DialogHeader>
+
 						<div className="space-y-6">
 							<div className="text-center">
 								<h2 className="text-lg font-medium">ジャンル選択</h2>
