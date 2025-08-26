@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Check } from 'lucide-react';
-import { getPlans, createPlan, Plan, PlanCreateRequest } from '@/api/endpoints/plans';
+import { getPlans, createPlan } from '@/api/endpoints/plans';
+import { Plan, PlanCreateRequest } from '@/api/types/plan';
 
 interface PlanSelectorProps {
   selectedPlanId?: string;

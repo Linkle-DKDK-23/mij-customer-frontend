@@ -295,6 +295,8 @@ export default function ShareVideo() {
 			const presignRes = await postImagePresignedUrl(imagePresignedUrlRequest);
 			console.log('presignRes', presignRes);
 
+			console.log('formData', formData);
+
 			return;
 			
 
