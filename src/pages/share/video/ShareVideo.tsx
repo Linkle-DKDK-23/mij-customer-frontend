@@ -1,7 +1,7 @@
 // react要素をインポート
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getGenres, getCategories, getRecommendedCategories, getRecentCategories, Category, Genre } from '@/api/endpoints/categories';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
@@ -609,10 +609,11 @@ export default function ShareVideo() {
 						/>
 					</DialogTrigger>
 					<DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+						<DialogTitle className="text-lg font-medium text-center">ジャンル選択</DialogTitle>
+						<DialogDescription className="sr-only">
+							カテゴリーを選択してください。おすすめのジャンル、直近使用したジャンル、またはカテゴリーから探すことができます。
+						</DialogDescription>
 						<div className="space-y-6">
-							<div className="text-center">
-								<h2 className="text-lg font-medium">ジャンル選択</h2>
-							</div>
 
 							{/* おすすめのジャンル */}
 							<div className="space-y-3">
