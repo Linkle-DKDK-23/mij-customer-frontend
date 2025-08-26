@@ -1,5 +1,6 @@
 // react要素をインポート
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { getGenres, getCategories, getRecommendedCategories, getRecentCategories, Category, Genre } from '@/api/endpoints/categories';
 
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
@@ -73,6 +74,12 @@ export default function ShareVideo() {
 	const [selectedPlanId, setSelectedPlanId] = useState<string>('');
 	const [selectedPlanName, setSelectedPlanName] = useState<string>('');
 	const [showPlanSelector, setShowPlanSelector] = useState(false);
+
+	const [categories, setCategories] = useState<Category[]>([]);
+	const [genres, setGenres] = useState<Genre[]>([]);
+	const [recommendedCategories, setRecommendedCategories] = useState<Category[]>([]);
+	const [recentCategories, setRecentCategories] = useState<Category[]>([]);
+	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
 	// フォームデータの状態管理
 	const [formData, setFormData] = useState<PostData>({
@@ -222,6 +229,36 @@ export default function ShareVideo() {
 			[field]: value
 		}));
 	};
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const [genresData, categoriesData, recommendedData] = await Promise.all([
+					getGenres(),
+					getCategories(),
+					getRecommendedCategories()
+				]);
+				setGenres(genresData);
+				setCategories(categoriesData);
+				setRecommendedCategories(recommendedData);
+				
+				try {
+					const recentData = await getRecentCategories();
+					setRecentCategories(recentData);
+				} catch (error) {
+					console.log('Recent categories not available (user not authenticated)');
+					setRecentCategories([]);
+				}
+			} catch (error) {
+				console.error('Failed to fetch categories data:', error);
+			}
+		};
+		fetchData();
+	}, []);
+
+	useEffect(() => {
+		updateFormData('genres', selectedCategories);
+	}, [selectedCategories]);
 
 	// ジャンル選択処理
 	const handleGenreChange = (genre: string, checked: boolean) => {
@@ -538,47 +575,93 @@ export default function ShareVideo() {
 				/>
 			</div>
 
-			{/* ジャンルセレクト */}
-			<div className="space-y-2 pr-5 pl-5">
+			{/* カテゴリー選択 */}
+			<div className="space-y-4 pr-5 pl-5">
 				<Label className="text-sm font-medium font-bold">
-					<span className="text-primary mr-1">*</span>ジャンル（必ず1つは指定してください）
+					<span className="text-primary mr-1">*</span>ジャンル&amp;カテゴリー（必ず1つは指定してください）
 				</Label>
 
-				{/* ジャンル1 */}
-				<Select>
-					<SelectTrigger>
-						<SelectValue placeholder="ジャンル1" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="music">音楽</SelectItem>
-						<SelectItem value="art">アート</SelectItem>
-						<SelectItem value="fitness">フィットネス</SelectItem>
-					</SelectContent>
-				</Select>
+				{/* おすすめジャンル */}
+				<div className="space-y-2">
+					<h3 className="text-sm font-medium">おすすめジャンル</h3>
+					<div className="grid grid-cols-2 gap-2">
+						{recommendedCategories.map((category) => (
+							<div key={category.id} className="flex items-center space-x-2">
+								<Checkbox
+									id={`recommended-${category.id}`}
+									checked={selectedCategories.includes(category.id)}
+									onCheckedChange={(checked) => {
+										if (checked) {
+											setSelectedCategories([...selectedCategories, category.id]);
+										} else {
+											setSelectedCategories(selectedCategories.filter(id => id !== category.id));
+										}
+									}}
+								/>
+								<Label htmlFor={`recommended-${category.id}`} className="text-sm">
+									{category.name}
+								</Label>
+							</div>
+						))}
+					</div>
+				</div>
 
-				{/* ジャンル2 */}
-				<Select>
-					<SelectTrigger>
-						<SelectValue placeholder="ジャンル2" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="music">音楽</SelectItem>
-						<SelectItem value="art">アート</SelectItem>
-						<SelectItem value="fitness">フィットネス</SelectItem>
-					</SelectContent>
-				</Select>
+				{/* 直近使用したジャンル */}
+				{recentCategories.length > 0 && (
+					<div className="space-y-2">
+						<h3 className="text-sm font-medium">直近使用したジャンル</h3>
+						<div className="grid grid-cols-2 gap-2">
+							{recentCategories.map((category) => (
+								<div key={category.id} className="flex items-center space-x-2">
+									<Checkbox
+										id={`recent-${category.id}`}
+										checked={selectedCategories.includes(category.id)}
+										onCheckedChange={(checked) => {
+											if (checked) {
+												setSelectedCategories([...selectedCategories, category.id]);
+											} else {
+												setSelectedCategories(selectedCategories.filter(id => id !== category.id));
+											}
+										}}
+									/>
+									<Label htmlFor={`recent-${category.id}`} className="text-sm">
+										{category.name}
+									</Label>
+								</div>
+							))}
+						</div>
+					</div>
+				)}
 
-				{/* ジャンル3 */}
-				<Select>
-					<SelectTrigger>
-						<SelectValue placeholder="ジャンル3" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="music">音楽</SelectItem>
-						<SelectItem value="art">アート</SelectItem>
-						<SelectItem value="fitness">フィットネス</SelectItem>
-					</SelectContent>
-				</Select>
+				{/* カテゴリーから探す */}
+				<div className="space-y-2">
+					<h3 className="text-sm font-medium">カテゴリーから探す</h3>
+					{genres.map((genre) => (
+						<div key={genre.id} className="space-y-2">
+							<h4 className="text-xs font-medium text-gray-600">{genre.name}</h4>
+							<div className="grid grid-cols-2 gap-2 ml-4">
+								{categories.filter(cat => cat.genre_id === genre.id).map((category) => (
+									<div key={category.id} className="flex items-center space-x-2">
+										<Checkbox
+											id={`browse-${category.id}`}
+											checked={selectedCategories.includes(category.id)}
+											onCheckedChange={(checked) => {
+												if (checked) {
+													setSelectedCategories([...selectedCategories, category.id]);
+												} else {
+													setSelectedCategories(selectedCategories.filter(id => id !== category.id));
+												}
+											}}
+										/>
+										<Label htmlFor={`browse-${category.id}`} className="text-sm">
+											{category.name}
+										</Label>
+									</div>
+								))}
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 
 			{/* タグ入力 */}
