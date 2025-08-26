@@ -1,10 +1,22 @@
-export interface Plan {
+export interface PlanCreateRequest {
+	name: string;
+	description?: string;
+	price: number;
+	currency?: string;
+	billing_cycle?: number;
+  }
+  
+  export interface Plan {
 	id: string;
-	title: string;
-	description: string;
-	thumbnails: string[];
-	postCount: number;
-	monthlyPrice: number;
-	isRecommended?: boolean;
-	isFree?: boolean;
-}
+	name: string;
+	description?: string;
+	price: number;
+	currency: string;
+	billing_cycle: number;
+	status: number;
+	created_at: string;
+  }
+  
+  export interface PlanListResponse {
+	plans: Plan[];
+  }
