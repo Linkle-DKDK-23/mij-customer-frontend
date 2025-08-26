@@ -1,6 +1,7 @@
 // react要素をインポート
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getGenres, getCategories, getRecommendedCategories, getRecentCategories, Category, Genre } from '@/api/endpoints/categories';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
@@ -80,6 +81,8 @@ export default function ShareVideo() {
 	const [recommendedCategories, setRecommendedCategories] = useState<Category[]>([]);
 	const [recentCategories, setRecentCategories] = useState<Category[]>([]);
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+	const [showCategoryModal, setShowCategoryModal] = useState(false);
+	const [expandedGenres, setExpandedGenres] = useState<string[]>([]);
 
 	// フォームデータの状態管理
 	const [formData, setFormData] = useState<PostData>({
@@ -259,6 +262,21 @@ export default function ShareVideo() {
 	useEffect(() => {
 		updateFormData('genres', selectedCategories);
 	}, [selectedCategories]);
+
+	const getSelectedCategoryNames = () => {
+		return selectedCategories
+			.map(id => categories.find(cat => cat.id === id)?.name)
+			.filter(Boolean)
+			.join(', ');
+	};
+
+	const handleCategorySelect = (categoryId: string) => {
+		if (selectedCategories.includes(categoryId)) {
+			setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
+		} else {
+			setSelectedCategories([...selectedCategories, categoryId]);
+		}
+	};
 
 	// ジャンル選択処理
 	const handleGenreChange = (genre: string, checked: boolean) => {
@@ -576,92 +594,137 @@ export default function ShareVideo() {
 			</div>
 
 			{/* カテゴリー選択 */}
-			<div className="space-y-4 pr-5 pl-5">
+			<div className="space-y-2 pr-5 pl-5">
 				<Label className="text-sm font-medium font-bold">
 					<span className="text-primary mr-1">*</span>ジャンル&amp;カテゴリー（必ず1つは指定してください）
 				</Label>
-
-				{/* おすすめジャンル */}
-				<div className="space-y-2">
-					<h3 className="text-sm font-medium">おすすめジャンル</h3>
-					<div className="grid grid-cols-2 gap-2">
-						{recommendedCategories.map((category) => (
-							<div key={category.id} className="flex items-center space-x-2">
-								<Checkbox
-									id={`recommended-${category.id}`}
-									checked={selectedCategories.includes(category.id)}
-									onCheckedChange={(checked) => {
-										if (checked) {
-											setSelectedCategories([...selectedCategories, category.id]);
-										} else {
-											setSelectedCategories(selectedCategories.filter(id => id !== category.id));
-										}
-									}}
-								/>
-								<Label htmlFor={`recommended-${category.id}`} className="text-sm">
-									{category.name}
-								</Label>
+				
+				<Dialog open={showCategoryModal} onOpenChange={setShowCategoryModal}>
+					<DialogTrigger asChild>
+						<Input
+							readOnly
+							placeholder="カテゴリーを選択してください"
+							value={selectedCategories.length > 0 ? `${selectedCategories.length}つのカテゴリーを選択` : ''}
+							className="cursor-pointer"
+						/>
+					</DialogTrigger>
+					<DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+						<div className="space-y-6">
+							<div className="text-center">
+								<h2 className="text-lg font-medium">ジャンル選択</h2>
 							</div>
-						))}
-					</div>
-				</div>
 
-				{/* 直近使用したジャンル */}
-				{recentCategories.length > 0 && (
-					<div className="space-y-2">
-						<h3 className="text-sm font-medium">直近使用したジャンル</h3>
-						<div className="grid grid-cols-2 gap-2">
-							{recentCategories.map((category) => (
-								<div key={category.id} className="flex items-center space-x-2">
-									<Checkbox
-										id={`recent-${category.id}`}
-										checked={selectedCategories.includes(category.id)}
-										onCheckedChange={(checked) => {
-											if (checked) {
-												setSelectedCategories([...selectedCategories, category.id]);
-											} else {
-												setSelectedCategories(selectedCategories.filter(id => id !== category.id));
-											}
-										}}
-									/>
-									<Label htmlFor={`recent-${category.id}`} className="text-sm">
-										{category.name}
-									</Label>
-								</div>
-							))}
-						</div>
-					</div>
-				)}
-
-				{/* カテゴリーから探す */}
-				<div className="space-y-2">
-					<h3 className="text-sm font-medium">カテゴリーから探す</h3>
-					{genres.map((genre) => (
-						<div key={genre.id} className="space-y-2">
-							<h4 className="text-xs font-medium text-gray-600">{genre.name}</h4>
-							<div className="grid grid-cols-2 gap-2 ml-4">
-								{categories.filter(cat => cat.genre_id === genre.id).map((category) => (
-									<div key={category.id} className="flex items-center space-x-2">
-										<Checkbox
-											id={`browse-${category.id}`}
-											checked={selectedCategories.includes(category.id)}
-											onCheckedChange={(checked) => {
-												if (checked) {
-													setSelectedCategories([...selectedCategories, category.id]);
-												} else {
-													setSelectedCategories(selectedCategories.filter(id => id !== category.id));
-												}
-											}}
-										/>
-										<Label htmlFor={`browse-${category.id}`} className="text-sm">
-											{category.name}
-										</Label>
+							{/* おすすめのジャンル */}
+							<div className="space-y-3">
+								<div className="flex items-center space-x-2">
+									<div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center">
+										<span className="text-pink-500 text-sm">😊</span>
 									</div>
-								))}
+									<h3 className="text-sm font-medium">おすすめのジャンル</h3>
+								</div>
+								<div className="grid grid-cols-2 gap-2">
+									{recommendedCategories.map((category) => (
+										<button
+											key={category.id}
+											onClick={() => handleCategorySelect(category.id)}
+											className={`px-3 py-2 rounded-full border text-sm transition-colors ${
+												selectedCategories.includes(category.id)
+													? 'bg-pink-50 border-pink-300 text-pink-700'
+													: 'bg-white border-gray-200 text-gray-700 hover:border-pink-200'
+											}`}
+										>
+											{category.name}
+										</button>
+									))}
+								</div>
+							</div>
+
+							{/* 直近使用したジャンル */}
+							{recentCategories.length > 0 && (
+								<div className="space-y-3">
+									<div className="flex items-center space-x-2">
+										<div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center">
+											<span className="text-pink-500 text-sm">🕒</span>
+										</div>
+										<h3 className="text-sm font-medium">直近使用したジャンル</h3>
+									</div>
+									<div className="flex flex-wrap gap-2">
+										{recentCategories.map((category) => (
+											<button
+												key={category.id}
+												onClick={() => handleCategorySelect(category.id)}
+												className={`px-3 py-2 rounded-full border text-sm transition-colors ${
+													selectedCategories.includes(category.id)
+														? 'bg-pink-50 border-pink-300 text-pink-700'
+														: 'bg-white border-gray-200 text-gray-700 hover:border-pink-200'
+												}`}
+											>
+												{category.name}
+											</button>
+										))}
+									</div>
+								</div>
+							)}
+
+							{/* カテゴリーから探す */}
+							<div className="space-y-3">
+								<div className="flex items-center space-x-2">
+									<div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center">
+										<span className="text-pink-500 text-sm">🔍</span>
+									</div>
+									<h3 className="text-sm font-medium">カテゴリーから探す</h3>
+								</div>
+								<div className="space-y-2">
+									{genres.map((genre) => (
+										<div key={genre.id} className="border-b border-gray-100 last:border-b-0">
+											<button
+												onClick={() => {
+													if (expandedGenres.includes(genre.id)) {
+														setExpandedGenres(expandedGenres.filter(id => id !== genre.id));
+													} else {
+														setExpandedGenres([...expandedGenres, genre.id]);
+													}
+												}}
+												className="w-full flex items-center justify-between py-3 text-left hover:bg-gray-50"
+											>
+												<div>
+													<div className="font-medium text-pink-600">{genre.name}</div>
+													<div className="text-xs text-gray-500">
+														{genre.name === '見た目' ? '巨乳、美身など出演者の魅力に応じたジャンル' :
+														 genre.name === 'プレイ' ? '絶頂位、フェラなどプレイ内容に応じたジャンル' :
+														 genre.name === 'タイプ' ? '素人、人妻など役柄のコンセプトに応じたジャンル' :
+														 genre.name === 'シチュエーション' ? 'カップル、エステなど撮影状況に応じたジャンル' :
+														 genre.name === 'コスチューム' ? '制服、水着など衣装に応じたジャンル' : ''}
+													</div>
+												</div>
+												<div className="text-gray-400">
+													{expandedGenres.includes(genre.id) ? '▼' : '▶'}
+												</div>
+											</button>
+											{expandedGenres.includes(genre.id) && (
+												<div className="pb-3 grid grid-cols-2 gap-2">
+													{categories.filter(cat => cat.genre_id === genre.id).map((category) => (
+														<button
+															key={category.id}
+															onClick={() => handleCategorySelect(category.id)}
+															className={`px-3 py-2 rounded-full border text-sm transition-colors ${
+																selectedCategories.includes(category.id)
+																	? 'bg-pink-50 border-pink-300 text-pink-700'
+																	: 'bg-white border-gray-200 text-gray-700 hover:border-pink-200'
+															}`}
+														>
+															{category.name}
+														</button>
+													))}
+												</div>
+											)}
+										</div>
+									))}
+								</div>
 							</div>
 						</div>
-					))}
-				</div>
+					</DialogContent>
+				</Dialog>
 			</div>
 
 			{/* タグ入力 */}
