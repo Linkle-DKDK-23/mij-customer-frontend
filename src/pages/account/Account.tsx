@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Settings, Edit, ChevronRight, Gift, FileText, DollarSign, CreditCard } from 'lucide-react';
-import Header from '@/components/custome/Header';
-import BottomNavigation from '@/components/custome/BottomNavigation';
+import Header from '@/components/common/Header';
+import BottomNavigation from '@/components/common/BottomNavigation';
 import { useNavigate } from 'react-router-dom';
 import { getAccountInfo } from '@/api/endpoints/account';
 import { AccountInfo, UserProfile } from '@/api/types/account';

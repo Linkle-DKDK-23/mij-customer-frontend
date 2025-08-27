@@ -55,17 +55,17 @@ export interface Post {
 
 // 型定義
 export interface PostData {
-  title: string;
   description: string;
   genres: string[];
   tags: string;
   scheduled: boolean;
   scheduledDate?: Date;
   scheduledTime?: string;
+  formattedScheduledDateTime?: string;
   expiration: boolean;
   expirationDate?: Date;
   plan: boolean;
-  planDate?: string;
+  plan_ids?: string[];
   single: boolean;
   singleDate?: string;
   mainVideo: File | null;

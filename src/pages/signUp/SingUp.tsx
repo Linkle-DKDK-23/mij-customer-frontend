@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
-import AuthLayout from '@/components/auth/AuthLayout';
+import AuthLayout from '@/feateure/auth/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { SignUpForm } from '@/api/types/user';
 import { signUp } from '@/api/endpoints/user';

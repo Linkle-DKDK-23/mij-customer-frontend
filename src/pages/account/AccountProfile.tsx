@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Share, MessageCircle, Crown, Star, Link as LinkIcon } from 'lucide-react';
-import AccountLayout from '@/components/account/AccountLayout';
-import AccountNavigation from '@/components/account/AccountNavigation';
+import AccountLayout from '@/feateure/account/AccountLayout';
+import AccountNavigation from '@/feateure/account/AccountNavigation';
 import { getUserProfileByDisplayName } from '@/api/endpoints/user';
 import { UserProfile } from '@/api/types/profile';
-import BottomNavigation from '@/components/custome/BottomNavigation';
+import BottomNavigation from '@/components/common/BottomNavigation';
 
 const NO_IMAGE_URL = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgMTAwTDEwMCAxMDBaIiBzdHJva2U9IiM5Q0E0QUYiIHN0cm9rZS13aWR0aD0iMiIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzlDQTRBRiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
 

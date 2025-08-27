@@ -15,8 +15,8 @@ import {
   Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import BottomNavigation from '@/components/custome/BottomNavigation';
-import Header from '@/components/custome/Header';
+import BottomNavigation from '@/components/common/BottomNavigation';
+import Header from '@/components/common/Header';
 
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";

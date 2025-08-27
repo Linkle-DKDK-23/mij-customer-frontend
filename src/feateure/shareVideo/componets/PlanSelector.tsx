@@ -8,7 +8,7 @@ import { getPlans, createPlan } from '@/api/endpoints/plans';
 import { Plan, PlanCreateRequest } from '@/api/types/plan';
 
 interface PlanSelectorProps {
-  selectedPlanId?: string;
+  selectedPlanId?: string[];
   onPlanSelect: (planId: string, planName?: string) => void;
   onClose: () => void;
 }
@@ -57,7 +57,7 @@ export default function PlanSelector({ selectedPlanId, onPlanSelect, onClose }: 
     }
   };
 
-  const selectedPlan = plans.find(p => p.id === selectedPlanId);
+  const selectedPlan = plans.find(p => selectedPlanId?.includes(p.id));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -74,7 +74,7 @@ export default function PlanSelector({ selectedPlanId, onPlanSelect, onClose }: 
                 <div
                   key={plan.id}
                   className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedPlanId === plan.id
+                    selectedPlanId?.includes(plan.id)
                       ? 'border-primary bg-primary/5'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
@@ -88,7 +88,7 @@ export default function PlanSelector({ selectedPlanId, onPlanSelect, onClose }: 
                         ¥{plan.price.toLocaleString()}/月
                       </p>
                     </div>
-                    {selectedPlanId === plan.id && (
+                    {selectedPlanId?.includes(plan.id) && (
                       <Check className="h-5 w-5 text-primary" />
                     )}
                   </div>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import AccountLayout from '@/components/account/AccountLayout';
-import AccountHeader from '@/components/account/AccountHeader';
+import AccountLayout from '@/feateure/account/AccountLayout';
+import AccountHeader from '@/feateure/account/AccountHeader';
 
 interface Plan {
   id: string;

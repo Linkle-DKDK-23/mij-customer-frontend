@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, Camera } from 'lucide-react';
-import AccountHeader from '@/components/account/AccountHeader';
+import AccountHeader from '@/feateure/account/AccountHeader';
 import { updateAccountInfo, getAccountInfo } from '@/api/endpoints/account';
 import { AccountInfo } from '@/api/types/account';
 import { Label } from '@/components/ui/label';
@@ -13,14 +13,7 @@ import { AccountFileKind } from '@/constants/constants';
 import { accountPresignedUrl } from '@/api/endpoints/account';
 import { putToPresignedUrl } from '@/service/s3FileUpload';
 import { useNavigate } from 'react-router-dom';
-
-
-const mimeToExt = (mime: string): FileSpec['ext'] => {
-  if (mime === "image/png") return "png";
-  if (mime === "application/pdf") return "pdf";
-  return "jpg" as FileSpec['ext'];
-};
-
+import { mimeToImageExt } from '@/lib/media';
 
 export default function AccountEdit() {
   const navigate = useNavigate();
@@ -104,7 +97,7 @@ export default function AccountEdit() {
         return {
           kind: k,
           content_type: file.type as FileSpec['content_type'],
-          ext: mimeToExt(file.type),
+          ext: mimeToImageExt(file.type),
         };
       })
     };
