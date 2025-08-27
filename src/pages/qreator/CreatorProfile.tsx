@@ -10,15 +10,15 @@ import {
 
 
 // セクション
-import PostsSection from '@/components/creater/section/PostsSection';
-import PlansSection from '@/components/creater/section/PlansSection';
-import IndividualPurchaseSection from '@/components/creater/section/IndividualPurchaseSection';
-import GachaSection from '@/components/creater/section/GachaSection';
-import CreatorHeader from '@/components/creater/section/CreatorHeader';
-import PlanArea from '@/components/creater/section/PlanArea';
-import GachaPlan from '@/components/creater/section/GachaPlan';
-import TabsSection from '@/components/creater/section/TabsSection';
-import BottomNavigation from '@/components/custome/BottomNavigation';
+import PostsSection from '@/feateure/creater/section/PostsSection';
+import PlansSection from '@/feateure/creater/section/PlansSection';
+import IndividualPurchaseSection from '@/feateure/creater/section/IndividualPurchaseSection';
+import GachaSection from '@/feateure/creater/section/GachaSection';
+import CreatorHeader from '@/feateure/creater/section/CreatorHeader';
+import PlanArea from '@/feateure/creater/section/PlanArea';
+import GachaPlan from '@/feateure/creater/section/GachaPlan';
+import TabsSection from '@/feateure/creater/section/TabsSection';
+import BottomNavigation from '@/components/common/BottomNavigation';
 
 interface Post {
   id: string;

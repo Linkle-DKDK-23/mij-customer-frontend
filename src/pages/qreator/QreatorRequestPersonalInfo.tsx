@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Calendar, MapPin } from 'lucide-react';
-import VerificationLayout from '@/components/auth/VerificationLayout';
+import VerificationLayout from '@/feateure/auth/VerificationLayout';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

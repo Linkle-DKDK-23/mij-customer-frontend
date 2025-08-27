@@ -1,8 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Camera, CheckCircle } from 'lucide-react';
-import AuthLayout from '@/components/auth/AuthLayout';
-import VerificationLayout from '@/components/auth/VerificationLayout';
+import AuthLayout from '@/feateure/auth/AuthLayout';
+import VerificationLayout from '@/feateure/auth/VerificationLayout';
 import { QreatorRequestCertifierImageProps, IdentityUploadedFile, IdentityPresignedUrlRequest } from '@/api/types/identity';
 import { identityPresignedUrl, completeIdentityUpload } from '@/api/endpoints/identity';
 import { putToPresignedUrl } from '@/service/s3FileUpload';

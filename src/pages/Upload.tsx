@@ -3,7 +3,7 @@ import { presignedUrl } from '@/api/endpoints/video';
 import { useDropzone } from 'react-dropzone';
 import { PresignedUrlResponse } from '@/api/types/video';
 import { uploadToS3 } from '@/utils/uploadToS3';
-import { VideoPlayer } from '@/components/custome/videoPlayer';
+import { VideoPlayer } from '@/feateure/shareVideo/componets/videoPlayer';
 import { Button } from "@/components/ui/button";
 
 export default function VideoUpload() {

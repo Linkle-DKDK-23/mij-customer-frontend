@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import AccountLayout from '@/components/account/AccountLayout';
-import AccountHeader from '@/components/account/AccountHeader';
-import AccountNavigation from '@/components/account/AccountNavigation';
+import AccountLayout from '@/feateure/account/AccountLayout';
+import AccountHeader from '@/feateure/account/AccountHeader';
+import AccountNavigation from '@/feateure/account/AccountNavigation';
 
 interface Post {
   id: string;

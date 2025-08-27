@@ -6,3 +6,5 @@ export type PostVideoFileKind = "main" | "sample";
 
 export type PostImageFileKind = "thumbnail" | "ogp";
 
+
+
