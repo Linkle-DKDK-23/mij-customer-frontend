@@ -13,6 +13,7 @@ export async function putToPresignedUrl(
   headers: Record<string, string>,
   opts?: { onProgress?: (pct: number) => void }
 ): Promise<void> {
+
   const client = axios.create({ withCredentials: false, timeout: 60_000 });
   await client.put(item.upload_url, file, {
 		headers: headers,

@@ -1,13 +1,15 @@
 import { PostVideoFileKind, PostImageFileKind } from "@/constants/constants";
 import { VideoFileSpec, FileSpec } from "./commons";
 
-export interface PostVideoFileSpec {
+export interface PostVideoFileSpec {	
+	post_id: string;
 	kind: PostVideoFileKind;
 	content_type: VideoFileSpec['content_type'];
 	ext: VideoFileSpec['ext'];
 }
 
 export interface PostImageFileSpec {
+	post_id: string;
 	kind: PostImageFileKind;
 	content_type: FileSpec['content_type'];
 	ext: FileSpec['ext'];

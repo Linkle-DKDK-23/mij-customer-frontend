@@ -49,7 +49,7 @@ export interface MainVideoSectionProps {
 	onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onThumbnailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onRemove: () => void;
-	onUpload: () => void;
+	onUpload?: () => void;
 }
 
 

@@ -6,6 +6,7 @@ import { getGenres, getCategories, getRecommendedCategories, getRecentCategories
 import { PostData } from '@/api/types/postMedia';	
 import { CreatePostRequest } from '@/api/types/post';
 import { SHARE_VIDEO_CONSTANTS, SHARE_VIDEO_VALIDATION_MESSAGES } from '@/feateure/shareVideo/shareVideoConstans';
+import { PostFileKind } from '@/constants/constants';
 
 // セクションコンポーネントをインポート
 import MainVideoSection from '@/feateure/shareVideo/section/MainVideoSection';
@@ -30,6 +31,7 @@ import { postImagePresignedUrl, postVideoPresignedUrl } from '@/api/endpoints/po
 
 // エンドポイントをインポート
 import { createPost } from '@/api/endpoints/post';
+import { putToPresignedUrl } from '@/service/s3FileUpload';
 
 export default function ShareVideo() {
 
@@ -85,7 +87,12 @@ export default function ShareVideo() {
 
 	// 動画アップロード処理の状態
 	const [uploading, setUploading] = useState(false);
-	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+	const [uploadProgress, setUploadProgress] = useState<Record<PostFileKind, number>>({
+		main: 0,
+		sample: 0,
+		ogp: 0,
+		thumbnail: 0
+	});
 	const [uploadMessage, setUploadMessage] = useState<string>('');
 
 	// フォームデータの状態管理
@@ -195,7 +202,7 @@ export default function ShareVideo() {
 	};
 
 	// ファイル処理の共通化
-	const handleFileChange = (file: File | null, fileType: 'main' | 'sample' | 'ogp' | 'thumbnail') => {
+	const handleFileChange = (file: File | null, fileType: PostFileKind) => {
 		if (file) {
 			switch (fileType) {
 				case 'main':
@@ -222,7 +229,7 @@ export default function ShareVideo() {
 	};
 
 	// ファイル削除処理の共通化
-	const removeFile = (fileType: 'main' | 'sample' | 'ogp' | 'thumbnail') => {
+	const removeFile = (fileType: PostFileKind) => {
 		switch (fileType) {
 			case 'main':
 				setSelectedMainFile(null);
@@ -439,43 +446,6 @@ export default function ShareVideo() {
 		setUploading(true);
 		setUploadMessage('');
 
-		// 画像類のリクエスト内容整理
-		const PostImageFileKinds = ['thumbnail','ogp'] as const;
-    const imagePresignedUrlRequest: PostImagePresignedUrlRequest = {
-      files: PostImageFileKinds.map((k) => {
-        if (k === 'thumbnail' && thumbnail) {
-          return {
-            kind: k,
-            content_type: 'image/jpeg' as FileSpec['content_type'],
-            ext: 'jpg' as const,
-          };
-        }
-        if (k === 'ogp' && ogp) {
-          // ogpも同様にbase64文字列
-          return {
-            kind: k,
-            content_type: 'image/jpeg' as FileSpec['content_type'],
-            ext: 'jpg' as const,
-          };
-        }
-      })
-    };
-
-		// 動画類のリクエスト内容整理
-		const videoPresignedUrlRequest: PostVideoPresignedUrlRequest = {
-			files: [
-				{
-					kind: 'main',
-					content_type: 'video/mp4' as VideoFileSpec['content_type'],
-					ext: 'mp4' as const,
-				},
-				{
-					kind: 'sample',
-					content_type: 'video/mp4' as VideoFileSpec['content_type'],
-					ext: 'mp4' as const,
-				}
-			]
-		};
 
 		try {
 
@@ -496,57 +466,53 @@ export default function ShareVideo() {
 			}
 
 			const response = await createPost(postData);
-			console.log('response', response);
-			return
-			
 
-
-			// ここでpresigned URLを取得するAPIを呼び出し
-			const presignRes = await postImagePresignedUrl(imagePresignedUrlRequest);
-			console.log('presignRes', presignRes);
-
-			console.log('formData', formData);
-
-			return;
-			
+			// 画像のpresigned URLを取得
+			const { imagePresignedUrl, videoPresignedUrl } = await getPresignedUrl(response.id);
 
 			// 2) S3 PUT（presigned URLを使用）
-			const uploadVideo = async (file: File, kind: string) => {
-				// プログレスバーのシミュレーション
-				for (let i = 0; i <= 100; i += 10) {
-					setUploadProgress(prev => ({ ...prev, [kind]: i }));
-					await new Promise(resolve => setTimeout(resolve, 100));
-				}
+			const uploadFile = async (file: File, kind: PostFileKind, presignedData: any) => {
+				const header = presignedData.required_headers;
+				
+				await putToPresignedUrl(presignedData, file, header, {
+					onProgress: (pct) => setUploadProgress(prev => ({ ...prev, [kind]: pct })),
+				});
 			};
+
+			console.log('videoPresignedUrl', videoPresignedUrl);
+			console.log('imagePresignedUrl', imagePresignedUrl);
 
 			// メイン動画をアップロード
-			await uploadVideo(selectedMainFile, 'main');
+			if (selectedMainFile && videoPresignedUrl.uploads?.main) {
+				await uploadFile(selectedMainFile, 'main', videoPresignedUrl.uploads.main);
+			}
 			
 			// サンプル動画があればアップロード
-			if (selectedSampleFile) {
-				await uploadVideo(selectedSampleFile, 'sample');
+			if (selectedSampleFile && videoPresignedUrl.uploads?.sample) {
+				await uploadFile(selectedSampleFile, 'sample', videoPresignedUrl.uploads.sample);
 			}
 
-			// 3) 投稿データを送信
-			const finalFormData: PostData = {
-				...formData,
-				mainVideo: selectedMainFile,
-				sampleVideo: selectedSampleFile,
-				ogpImage: ogp,
-				thumbnail: thumbnail,
-				scheduled: scheduled,
-				scheduledDate: scheduled ? formData.scheduledDate : undefined,
-				expiration: expiration,
-				expirationDate: expiration ? formData.expirationDate : undefined,
-				plan: plan,
-				single: single,
-			};
+			return;
 
-			console.log('送信するデータ:', finalFormData);
+			// サムネイル画像があればアップロード
+			if (thumbnail && imagePresignedUrl.uploads?.thumbnail) {
+				// base64文字列をBlobに変換してFileオブジェクトに変換
+				const thumbnailBlob = await fetch(thumbnail).then(r => r.blob());
+				const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', { type: 'image/jpeg' });
+				await uploadFile(thumbnailFile, 'thumbnail', imagePresignedUrl.uploads.thumbnail);
+			}
 
-			// ここで投稿APIを呼び出し
-			// const response = await createPost(finalFormData);
-			// console.log('投稿成功:', response);
+			// OGP画像があればアップロード
+			if (ogp && imagePresignedUrl.uploads?.ogp) {
+				// base64文字列をBlobに変換してFileオブジェクトに変換
+				const ogpBlob = await fetch(ogp).then(r => r.blob());
+				const ogpFile = new File([ogpBlob], 'ogp.jpg', { type: 'image/jpeg' });
+				await uploadFile(ogpFile, 'ogp', imagePresignedUrl.uploads.ogp);
+			}
+
+
+			return;
+
 
 			setUploadMessage('動画の投稿が完了しました！');
 		} catch (error) {
@@ -554,36 +520,65 @@ export default function ShareVideo() {
 			setUploadMessage('投稿に失敗しました。時間をおいて再試行してください。');
 		} finally {
 			setUploading(false);
+			// プログレスバーをリセット
+			setUploadProgress({
+				main: 0,
+				sample: 0,
+				ogp: 0,
+				thumbnail: 0
+			});
 		}
 	};
 
-	const handleVideoUpload = async () => {
-		if (!selectedMainFile) {
-			setUploadMessage('動画ファイルを選択してください');
-			return;
+	// プレシジョンURLを取得
+	const getPresignedUrl = async (postId: string) => {
+		// 画像類のリクエスト内容整理
+		const imagePresignedUrlRequest: PostImagePresignedUrlRequest = {
+			files: [
+				...(thumbnail ? [{
+					post_id: postId,
+					kind: 'thumbnail' as const,
+					content_type: 'image/jpeg' as FileSpec['content_type'],
+					ext: 'jpg' as const,
+				}] : []),
+				...(ogp ? [{
+					post_id: postId,
+					kind: 'ogp' as const,
+					content_type: 'image/jpeg' as FileSpec['content_type'],
+					ext: 'jpg' as const,
+				}] : [])
+			]
+		};
+
+		console.log('selectedMainFile', selectedMainFile);
+
+		// 動画類のリクエスト内容整理
+		const videoPresignedUrlRequest: PostVideoPresignedUrlRequest = {
+			files: [
+				{
+					post_id: postId,
+					kind: 'main' as const,
+					content_type: selectedMainFile?.type as VideoFileSpec['content_type'] || 'video/mp4',
+					ext: mimeToExt(selectedMainFile?.type || 'video/mp4') as VideoFileSpec['ext'],
+				},
+				...(selectedSampleFile ? [{
+					post_id: postId,
+					kind: 'sample' as const,
+					content_type: selectedSampleFile.type as VideoFileSpec['content_type'],
+					ext: mimeToExt(selectedSampleFile.type) as VideoFileSpec['ext'],
+				}] : [])
+			]
+		};
+
+		const imagePresignedUrl = await postImagePresignedUrl(imagePresignedUrlRequest);
+
+		const videoPresignedUrl = await postVideoPresignedUrl(videoPresignedUrlRequest);
+
+		return {
+			imagePresignedUrl,
+			videoPresignedUrl,
 		}
-
-		setUploading(true);
-		setUploadMessage('');
-
-		try {
-			// ここで実際のアップロード処理を実装
-			// 例: S3へのアップロード、APIへの送信など
-			
-			// プログレスバーのシミュレーション
-			for (let i = 0; i <= 100; i += 10) {
-				setUploadProgress(prev => ({ ...prev, main: i }));
-				await new Promise(resolve => setTimeout(resolve, 100));
-			}
-
-			setUploadMessage('動画のアップロードが完了しました');
-		} catch (error) {
-			console.error('アップロードエラー:', error);
-			setUploadMessage('アップロードに失敗しました');
-		} finally {
-			setUploading(false);
-		}
-	};
+	}
 
 
 	return (
@@ -602,7 +597,6 @@ export default function ShareVideo() {
 				onFileChange={handleMainVideoChange}
 				onThumbnailChange={handleThumbnailChange}
 				onRemove={removeVideo}
-				onUpload={handleVideoUpload}
 			/>
 
 			{selectedMainFile && (
