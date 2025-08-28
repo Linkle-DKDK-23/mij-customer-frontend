@@ -45,7 +45,7 @@ export default function MainVideoSection({
 			</div>
 
 			{/* アップロード処理 */}
-			{selectedMainFile && (
+			{selectedMainFile && onUpload && (
 				<div className="space-y-4 p-5 border-t border-primary pt-5">
 					<Button
 						onClick={onUpload}

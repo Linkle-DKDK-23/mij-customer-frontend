@@ -12,6 +12,7 @@ export const mimeToExt = (mime: string): string => {
   if (mime === "video/mov") return "mov";
   if (mime === "video/wmv") return "wmv";
   if (mime === "video/MOV") return "MOV";
+  if (mime === "video/quicktime") return "mov";
   return "mp4";
 };
 
