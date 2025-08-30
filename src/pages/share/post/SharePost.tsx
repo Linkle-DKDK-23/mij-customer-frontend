@@ -12,6 +12,7 @@ import { PostFileKind } from '@/constants/constants';
 import MainVideoSection from '@/feateure/shareVideo/section/MainVideoSection';
 import SampleVideoSection from '@/feateure/shareVideo/section/SampleVideoSection';
 import OgpImageSection from '@/feateure/shareVideo/section/OgpImageSection';
+import ImagePostSection from '@/feateure/shareVideo/section/ImagePostSection';
 import DescriptionSection from '@/feateure/shareVideo/section/DescriptionSection';
 import CategorySection from '@/feateure/shareVideo/section/CategorySection';
 import TagsSection from '@/feateure/shareVideo/section/TagsSection';
@@ -35,6 +36,8 @@ import { putToPresignedUrl } from '@/service/s3FileUpload';
 
 export default function ShareVideo() {
 
+	const [postType, setPostType] = useState<'video' | 'image'>('video');
+
 	// メイン動画関連の状態
 	const [selectedMainFile, setSelectedMainFile] = useState<File | null>(null);
 	const [previewMainUrl, setPreviewMainUrl] = useState<string | null>(null)
@@ -48,6 +51,7 @@ export default function ShareVideo() {
 	const [ogp, setOgp] = useState<string | null>(null);
 	const [ogpPreview, setOgpPreview] = useState<string | null>(null);
 	const [thumbnail, setThumbnail] = useState<string | null>(null);
+	const [selectedImages, setSelectedImages] = useState<File[]>([]);
 	
 	// 動画設定の状態
 	const [isSample, setIsSample] = useState<'upload' | 'cut_out'>('upload');
@@ -91,7 +95,8 @@ export default function ShareVideo() {
 		main: 0,
 		sample: 0,
 		ogp: 0,
-		thumbnail: 0
+		thumbnail: 0,
+		images: 0
 	});
 	const [uploadMessage, setUploadMessage] = useState<string>('');
 
@@ -113,6 +118,7 @@ export default function ShareVideo() {
 		sampleVideo: null,
 		ogpImage: null,
 		thumbnail: null,
+		images: [],
 		singlePrice: '',
 	});
 
@@ -329,6 +335,18 @@ export default function ShareVideo() {
 		console.log('showCutOutModal')
 	}
 
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		if (files) {
+			const newImages = Array.from(files);
+			setSelectedImages(prev => [...prev, ...newImages]);
+		}
+	};
+
+	const removeImage = (index: number) => {
+		setSelectedImages(prev => prev.filter((_, i) => i !== index));
+	};
+
 	// トグルスイッチの状態変更処理
 	const onToggleSwitch = (field: 'scheduled' | 'expiration' | 'plan' | 'single', value: boolean) => {
 		// ローカル状態を更新
@@ -410,8 +428,13 @@ export default function ShareVideo() {
 	const handleSubmitPost = async () => {
 
 		// バリデーション
-		if (!selectedMainFile) {
+		if (postType === 'video' && !selectedMainFile) {
 			setUploadMessage(SHARE_VIDEO_VALIDATION_MESSAGES.MAIN_VIDEO_REQUIRED);
+			return;
+		}
+
+		if (postType === 'image' && selectedImages.length === 0) {
+			setUploadMessage('画像を選択してください。');
 			return;
 		}
 		if (!formData.description.trim()) {
@@ -479,34 +502,42 @@ export default function ShareVideo() {
 				});
 			};
 
-			// メイン動画をアップロード
-			if (selectedMainFile && videoPresignedUrl.uploads?.main) {
-				await uploadFile(selectedMainFile, 'main', videoPresignedUrl.uploads.main);
-			}
-			
-			// サンプル動画があればアップロード
-			if (selectedSampleFile && videoPresignedUrl.uploads?.sample) {
-				await uploadFile(selectedSampleFile, 'sample', videoPresignedUrl.uploads.sample);
-			}
+			if (postType === 'video') {
+				// メイン動画をアップロード
+				if (selectedMainFile && videoPresignedUrl.uploads?.main) {
+					await uploadFile(selectedMainFile, 'main', videoPresignedUrl.uploads.main);
+				}
+				
+				// サンプル動画があればアップロード
+				if (selectedSampleFile && videoPresignedUrl.uploads?.sample) {
+					await uploadFile(selectedSampleFile, 'sample', videoPresignedUrl.uploads.sample);
+				}
 
-			// サムネイル画像があればアップロード
-			if (thumbnail && imagePresignedUrl.uploads?.thumbnail) {
-				// base64文字列をBlobに変換してFileオブジェクトに変換
-				const thumbnailBlob = await fetch(thumbnail).then(r => r.blob());
-				const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', { type: 'image/jpeg' });
-				await uploadFile(thumbnailFile, 'thumbnail', imagePresignedUrl.uploads.thumbnail);
-			}
+				// サムネイル画像があればアップロード
+				if (thumbnail && imagePresignedUrl.uploads?.thumbnail) {
+					// base64文字列をBlobに変換してFileオブジェクトに変換
+					const thumbnailBlob = await fetch(thumbnail).then(r => r.blob());
+					const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', { type: 'image/jpeg' });
+					await uploadFile(thumbnailFile, 'thumbnail', imagePresignedUrl.uploads.thumbnail);
+				}
 
-			// OGP画像があればアップロード
-			if (ogp && imagePresignedUrl.uploads?.ogp) {
-				// base64文字列をBlobに変換してFileオブジェクトに変換
-				const ogpBlob = await fetch(ogp).then(r => r.blob());
-				const ogpFile = new File([ogpBlob], 'ogp.jpg', { type: 'image/jpeg' });
-				await uploadFile(ogpFile, 'ogp', imagePresignedUrl.uploads.ogp);
+				// OGP画像があればアップロード
+				if (ogp && imagePresignedUrl.uploads?.ogp) {
+					// base64文字列をBlobに変換してFileオブジェクトに変換
+					const ogpBlob = await fetch(ogp).then(r => r.blob());
+					const ogpFile = new File([ogpBlob], 'ogp.jpg', { type: 'image/jpeg' });
+					await uploadFile(ogpFile, 'ogp', imagePresignedUrl.uploads.ogp);
+				}
+			} else if (postType === 'image') {
+				if (selectedImages.length > 0 && imagePresignedUrl.uploads?.images) {
+					for (let i = 0; i < selectedImages.length; i++) {
+						await uploadFile(selectedImages[i], 'images', imagePresignedUrl.uploads.images);
+					}
+				}
 			}
 
 			return;
-			setUploadMessage('動画の投稿が完了しました！');
+			setUploadMessage(postType === 'video' ? '動画の投稿が完了しました！' : '画像の投稿が完了しました！');
 		} catch (error) {
 			console.error('投稿エラー:', error);
 			setUploadMessage('投稿に失敗しました。時間をおいて再試行してください。');
@@ -517,7 +548,8 @@ export default function ShareVideo() {
 				main: 0,
 				sample: 0,
 				ogp: 0,
-				thumbnail: 0
+				thumbnail: 0,
+				images: 0
 			});
 		}
 	};
@@ -538,6 +570,12 @@ export default function ShareVideo() {
 					kind: 'ogp' as const,
 					content_type: 'image/jpeg' as FileSpec['content_type'],
 					ext: 'jpg' as const,
+				}] : []),
+				...(postType === 'image' && selectedImages.length > 0 ? [{
+					post_id: postId,
+					kind: 'images' as const,
+					content_type: 'image/jpeg' as FileSpec['content_type'],
+					ext: 'jpg' as const,
 				}] : [])
 			]
 		};
@@ -547,13 +585,13 @@ export default function ShareVideo() {
 		// 動画類のリクエスト内容整理
 		const videoPresignedUrlRequest: PostVideoPresignedUrlRequest = {
 			files: [
-				{
+				...(postType === 'video' && selectedMainFile ? [{
 					post_id: postId,
 					kind: 'main' as const,
-					content_type: selectedMainFile?.type as VideoFileSpec['content_type'] || 'video/mp4',
-					ext: mimeToExt(selectedMainFile?.type || 'video/mp4') as VideoFileSpec['ext'],
-				},
-				...(selectedSampleFile ? [{
+					content_type: selectedMainFile.type as VideoFileSpec['content_type'] || 'video/mp4',
+					ext: mimeToExt(selectedMainFile.type || 'video/mp4') as VideoFileSpec['ext'],
+				}] : []),
+				...(postType === 'video' && selectedSampleFile ? [{
 					post_id: postId,
 					kind: 'sample' as const,
 					content_type: selectedSampleFile.type as VideoFileSpec['content_type'],
@@ -564,7 +602,7 @@ export default function ShareVideo() {
 
 		const imagePresignedUrl = await postImagePresignedUrl(imagePresignedUrlRequest);
 
-		const videoPresignedUrl = await postVideoPresignedUrl(videoPresignedUrlRequest);
+		const videoPresignedUrl = postType === 'video' && videoPresignedUrlRequest.files.length > 0 ? await postVideoPresignedUrl(videoPresignedUrlRequest) : { uploads: {} as any };
 
 		return {
 			imagePresignedUrl,
@@ -578,36 +616,72 @@ export default function ShareVideo() {
 			{/* タイトル */}
 			<h1 className="text-xl font-semibold text-center border-b-2 border-primary pb-4">新規投稿</h1>
 
-			{/* メイン動画セクション */}
-			<MainVideoSection
-				selectedMainFile={selectedMainFile}
-				previewMainUrl={previewMainUrl}
-				thumbnail={thumbnail}
-				uploading={uploading}
-				uploadProgress={uploadProgress}
-				uploadMessage={uploadMessage}
-				onFileChange={handleMainVideoChange}
-				onThumbnailChange={handleThumbnailChange}
-				onRemove={removeVideo}
-			/>
+			{/* セグメントボタン */}
+			<div className="flex bg-gray-100 rounded-lg p-1">
+				<button 
+					className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+						postType === 'video' ? 'bg-white text-primary shadow-sm' : 'text-gray-600'
+					}`}
+					onClick={() => setPostType('video')}
+				>
+					動画投稿
+				</button>
+				<button 
+					className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+						postType === 'image' ? 'bg-white text-primary shadow-sm' : 'text-gray-600'
+					}`}
+					onClick={() => setPostType('image')}
+				>
+					画像投稿
+				</button>
+			</div>
 
-			{selectedMainFile && (
+			{postType === 'video' ? (
 				<>
-					{/* サンプル動画セクション */}
-					<SampleVideoSection
-						isSample={isSample}
-						previewSampleUrl={previewSampleUrl}
-						sampleDuration={sampleDuration}
-						onSampleTypeChange={(value) => setIsSample(value)}
-						onFileChange={handleSampleVideoChange}
-						onRemove={removeSampleVideo}
-						onEdit={showCutOutModal}
+					{/* メイン動画セクション */}
+					<MainVideoSection
+						selectedMainFile={selectedMainFile}
+						previewMainUrl={previewMainUrl}
+						thumbnail={thumbnail}
+						uploading={uploading}
+						uploadProgress={uploadProgress}
+						uploadMessage={uploadMessage}
+						onFileChange={handleMainVideoChange}
+						onThumbnailChange={handleThumbnailChange}
+						onRemove={removeVideo}
 					/>
 
-					{/* OGP画像セクション */}
-					<OgpImageSection
-						ogp={ogp}
-						onFileChange={handleOgpChange}
+					{selectedMainFile && (
+						<>
+							{/* サンプル動画セクション */}
+							<SampleVideoSection
+								isSample={isSample}
+								previewSampleUrl={previewSampleUrl}
+								sampleDuration={sampleDuration}
+								onSampleTypeChange={(value) => setIsSample(value)}
+								onFileChange={handleSampleVideoChange}
+								onRemove={removeSampleVideo}
+								onEdit={showCutOutModal}
+							/>
+
+							{/* OGP画像セクション */}
+							<OgpImageSection
+								ogp={ogp}
+								onFileChange={handleOgpChange}
+							/>
+						</>
+					)}
+				</>
+			) : (
+				<>
+					{/* 画像投稿セクション */}
+					<ImagePostSection
+						selectedImages={selectedImages}
+						uploading={uploading}
+						uploadProgress={uploadProgress}
+						uploadMessage={uploadMessage}
+						onFileChange={handleImageChange}
+						onRemove={removeImage}
 					/>
 				</>
 			)}
