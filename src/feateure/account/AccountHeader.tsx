@@ -2,12 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Share, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface AccountHeaderProps {
-  title: string;
-  showBackButton?: boolean;
-  showActions?: boolean;
-}
+import { AccountHeaderProps } from '@/feateure/account/types';
 
 export default function AccountHeader({ title, showBackButton = false, showActions = false }: AccountHeaderProps) {
   const navigate = useNavigate();

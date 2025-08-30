@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import Upload from '@/pages/Upload';
 import ViewVideo from '@/pages/ViewVideo';
 import Top from '@/pages/top/Top';
-import ShareVideo from '@/pages/share/video/ShareVideo';
+import ShareVideo from '@/pages/share/post/SharePost';
 import CreatorProfile from '@/pages/qreator/CreatorProfile';
 import Account from '@/pages/account/Account';
 import AccountProfile from '@/pages/account/AccountProfile';

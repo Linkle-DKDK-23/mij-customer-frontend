@@ -479,9 +479,6 @@ export default function ShareVideo() {
 				});
 			};
 
-			console.log('videoPresignedUrl', videoPresignedUrl);
-			console.log('imagePresignedUrl', imagePresignedUrl);
-
 			// メイン動画をアップロード
 			if (selectedMainFile && videoPresignedUrl.uploads?.main) {
 				await uploadFile(selectedMainFile, 'main', videoPresignedUrl.uploads.main);
@@ -491,8 +488,6 @@ export default function ShareVideo() {
 			if (selectedSampleFile && videoPresignedUrl.uploads?.sample) {
 				await uploadFile(selectedSampleFile, 'sample', videoPresignedUrl.uploads.sample);
 			}
-
-			return;
 
 			// サムネイル画像があればアップロード
 			if (thumbnail && imagePresignedUrl.uploads?.thumbnail) {
@@ -510,10 +505,7 @@ export default function ShareVideo() {
 				await uploadFile(ogpFile, 'ogp', imagePresignedUrl.uploads.ogp);
 			}
 
-
 			return;
-
-
 			setUploadMessage('動画の投稿が完了しました！');
 		} catch (error) {
 			console.error('投稿エラー:', error);
