@@ -530,8 +530,12 @@ export default function ShareVideo() {
 				}
 			} else if (postType === 'image') {
 				if (selectedImages.length > 0 && imagePresignedUrl.uploads?.images) {
-					for (let i = 0; i < selectedImages.length; i++) {
-						await uploadFile(selectedImages[i], 'images', imagePresignedUrl.uploads.images);
+					const imageUploads = Array.isArray(imagePresignedUrl.uploads.images) 
+						? imagePresignedUrl.uploads.images 
+						: [imagePresignedUrl.uploads.images];
+					
+					for (let i = 0; i < selectedImages.length && i < imageUploads.length; i++) {
+						await uploadFile(selectedImages[i], 'images', imageUploads[i]);
 					}
 				}
 			}
@@ -571,12 +575,13 @@ export default function ShareVideo() {
 					content_type: 'image/jpeg' as FileSpec['content_type'],
 					ext: 'jpg' as const,
 				}] : []),
-				...(postType === 'image' && selectedImages.length > 0 ? [{
-					post_id: postId,
-					kind: 'images' as const,
-					content_type: 'image/jpeg' as FileSpec['content_type'],
-					ext: 'jpg' as const,
-				}] : [])
+				...(postType === 'image' && selectedImages.length > 0 ? 
+					selectedImages.map((image, index) => ({
+						post_id: postId,
+						kind: 'images' as const,
+						content_type: image.type as FileSpec['content_type'],
+						ext: mimeToImageExt(image.type),
+					})) : [])
 			]
 		};
 
