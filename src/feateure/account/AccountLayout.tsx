@@ -1,9 +1,5 @@
 import React from 'react';
-
-interface AccountLayoutProps {
-  children: React.ReactNode;
-  title?: string;
-}
+import { AccountLayoutProps } from '@/feateure/account/types';
 
 export default function AccountLayout({ children, title }: AccountLayoutProps) {
   return (

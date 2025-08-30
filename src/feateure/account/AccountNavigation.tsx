@@ -1,17 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { AccountNavigationProps } from '@/feateure/account/types';
 
-interface NavigationItem {
-  id: string;
-  label: string;
-  count?: number;
-  isActive?: boolean;
-}
-
-interface AccountNavigationProps {
-  items: NavigationItem[];
-  onItemClick: (id: string) => void;
-}
 
 export default function AccountNavigation({ items, onItemClick }: AccountNavigationProps) {
   return (
