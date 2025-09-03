@@ -74,4 +74,13 @@ export interface PostData {
   sampleVideo: File | null;
   ogpImage: string | null;
   thumbnail: string | null;
+  images: File[];
+}
+
+export interface PostMediaConvertRequest {
+  post_id: string;
+}
+
+export interface PostMediaConvertResponse {
+	status: 'success' | 'error';
 }

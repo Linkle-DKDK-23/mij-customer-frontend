@@ -34,6 +34,7 @@ export default function AppRouter() {
       <Route path="/top" element={<Top />} />
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/share/video" element={<ShareVideo />} />
+      <Route path="/share/post" element={<ShareVideo />} />
       <Route path="/creator/profile" element={<CreatorProfile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SingUp />} />

@@ -101,3 +101,12 @@ export interface TagsSectionProps {
 	tags: string;
 	onChange: (value: string) => void;
 }
+
+export interface ImagePostSectionProps {
+	selectedImages: File[];
+	uploading: boolean;
+	uploadProgress: Record<string, number>;
+	uploadMessage: string;
+	onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onRemove: (index: number) => void;
+}
