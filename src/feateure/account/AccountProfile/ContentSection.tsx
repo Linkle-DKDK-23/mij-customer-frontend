@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 
 interface Post {
   id: string;
-  title: string;
-  thumbnail_storage_key?: string;
+  description?: string;
+  thumbnail_url?: string;
   video_duration?: number;
   created_at: string;
 }
@@ -22,8 +22,8 @@ interface IndividualPurchase {
   amount: number;
   created_at: string;
   post?: {
-    title: string;
-    thumbnail_storage_key?: string;
+    description?: string;
+    thumbnail_url?: string;
   };
 }
 
@@ -71,9 +71,12 @@ export default function ContentSection({
               <div key={post.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 <div className="relative">
                   <img 
-                    src={post.thumbnail_storage_key || NO_IMAGE_URL} 
-                    alt={post.title} 
-                    className="w-full h-40 object-cover" 
+                    src={post.thumbnail_url || NO_IMAGE_URL} 
+                    alt={post.description || '投稿画像'} 
+                    className="w-full h-40 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = NO_IMAGE_URL;
+                    }}
                   />
                   {post.video_duration && (
                     <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
@@ -83,7 +86,7 @@ export default function ContentSection({
                 </div>
                 <div className="p-3">
                   <p className="text-xs text-gray-500 mb-1">{new Date(post.created_at).toLocaleDateString()}</p>
-                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{post.title}</h3>
+                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{post.description || '投稿'}</h3>
                 </div>
               </div>
             ))}
@@ -113,14 +116,14 @@ export default function ContentSection({
             {individualPurchases.map((item) => (
               <div key={item.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 <div className="relative">
-                  <img src={item.post?.thumbnail_storage_key || NO_IMAGE_URL} alt="購入アイテム" className="w-full h-40 object-cover" />
+                  <img src={item.post?.thumbnail_url || NO_IMAGE_URL} alt="購入アイテム" className="w-full h-40 object-cover" />
                   <div className="absolute top-2 right-2 bg-primary text-white text-sm px-2 py-1 rounded">
                     ¥{item.amount.toLocaleString()}
                   </div>
                 </div>
                 <div className="p-3">
                   <p className="text-xs text-gray-500 mb-1">{new Date(item.created_at).toLocaleDateString()}</p>
-                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{item.post?.title || '単品購入'}</h3>
+                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{item.post?.description || '単品購入'}</h3>
                 </div>
               </div>
             ))}
@@ -154,4 +157,4 @@ export default function ContentSection({
   };
 
   return renderContent();
-} 
+}  

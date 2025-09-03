@@ -1,7 +1,9 @@
 export interface ProfilePost {
   id: string;
-  title: string;
+  title?: string;
+  description?: string;
   thumbnail_storage_key?: string;
+  thumbnail_url?: string;
   video_duration?: number;
   created_at: string;
 }

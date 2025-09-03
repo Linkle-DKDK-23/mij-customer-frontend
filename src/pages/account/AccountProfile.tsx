@@ -85,10 +85,32 @@ export default function AccountProfile() {
         {/* Content Section */}
         <ContentSection 
           activeTab={activeTab}
-          posts={profile.posts}
-          plans={profile.plans}
-          individualPurchases={profile.individual_purchases}
-          gachaItems={profile.gacha_items}
+          posts={profile.posts.map(post => ({
+            id: post.id,
+            description: post.description || '',
+            thumbnail_url: post.thumbnail_url,
+            created_at: post.created_at
+          }))}
+          plans={profile.plans.map(plan => ({
+            id: plan.id,
+            name: plan.name,
+            description: plan.description,
+            price: 0
+          }))}
+          individualPurchases={profile.individual_purchases.map(purchase => ({
+            id: purchase.id,
+            amount: purchase.amount,
+            created_at: purchase.created_at,
+            post: purchase.post ? {
+              description: purchase.post.description || '',
+              thumbnail_url: purchase.post.thumbnail_url
+            } : undefined
+          }))}
+          gachaItems={profile.gacha_items.map(gacha => ({
+            id: gacha.id,
+            amount: gacha.amount,
+            created_at: gacha.created_at
+          }))}
         />
       </div>
       <BottomNavigation />
