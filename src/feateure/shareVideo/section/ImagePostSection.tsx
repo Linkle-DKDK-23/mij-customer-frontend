@@ -1,7 +1,8 @@
 import React from 'react';
-import ImageUploadArea from "../componets/ImageUploadArea";
-import ImagePreview from "../componets/ImagePreview";
-import { ImagePostSectionProps } from '../types';
+import ImageUploadArea from "@/feateure/shareVideo/componets/ImageUploadArea";
+import ThumbnailPreview from "@/feateure/shareVideo/componets/ThumbnailPreview";
+import ImagePreview from "@/feateure/shareVideo/componets/ImagePreview";
+import { ImagePostSectionProps } from '@/feateure/shareVideo/types';
 
 export default function ImagePostSection({
   selectedImages,
@@ -28,6 +29,9 @@ export default function ImagePostSection({
           <ImageUploadArea onFileChange={onFileChange} />
         </div>
       )}
+
+      
+      
 
       {uploading && (
         <div className="space-y-2">

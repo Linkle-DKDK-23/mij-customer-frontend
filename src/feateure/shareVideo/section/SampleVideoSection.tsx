@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SampleStreemUploadArea from "@/feateure/shareVideo/componets/SampleStreemUploadArea";
+import ThumbnailPreview from "@/feateure/shareVideo/componets/ThumbnailPreview";
 import { SampleVideoSectionProps } from '@/feateure/shareVideo/types';
 
 export default function SampleVideoSection({
