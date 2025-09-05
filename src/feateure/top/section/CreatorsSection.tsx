@@ -2,22 +2,7 @@ import React from 'react';
 import { ChevronRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-
-interface Creator {
-  id: string;
-  name: string;
-  avatar: string;
-  followers: number;
-  verified: boolean;
-  rank?: number;
-}
-
-interface CreatorsSectionProps {
-  title: string;
-  creators: Creator[];
-  showRank?: boolean;
-  onCreatorClick?: (creatorId: string) => void;
-}
+import {  CreatorsSectionProps } from '@/feateure/top/types';
 
 export default function CreatorsSection({ 
   title, 
@@ -27,11 +12,11 @@ export default function CreatorsSection({
 }: CreatorsSectionProps) {
   const navigate = useNavigate();
 
-  const handleCreatorClick = (creatorId: string) => {
+  const handleCreatorClick = (display_name: string) => {
     if (onCreatorClick) {
-      onCreatorClick(creatorId);
+      onCreatorClick(display_name);
     } else {
-      navigate(`/creator/profile`);
+      navigate(`/account/profile?display_name=${display_name}`);
     }
   };
 
@@ -53,12 +38,12 @@ export default function CreatorsSection({
               className="min-w-[240px] bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow flex-shrink-0"
             >
               <div className="text-center">
-                <div onClick={() => handleCreatorClick(creator.id)}>
+                <div onClick={() => handleCreatorClick(creator.display_name)}>
                   <div className="relative inline-block mb-3">
                     <img
                       src={creator.avatar}
                       alt={creator.name}
-                      className="w-16 h-16 rounded-full mx-auto"
+                      className="w-24 h-24 rounded-full mx-auto"
                     />
                     {showRank && creator.rank && (
                       <div className="absolute -top-1 -left-1 bg-primary text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
@@ -73,7 +58,7 @@ export default function CreatorsSection({
                   <p className="text-xs text-gray-500 mb-3">{creator.followers.toLocaleString()} followers</p>
                 </div>
 
-                <Button size="sm" className="w-full bg-primary hover:bg-pink-600 text-white">
+                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-white">
                   フォロー
                 </Button>
               </div>

@@ -7,25 +7,43 @@ export interface Post {
   likes: number;
   creator: {
     name: string;
+    display_name: string;
     avatar: string;
     verified: boolean;
   };
   rank?: number;
 }
 
+export interface RecentPostsSectionProps {
+  posts: Post[];
+}
+
 export interface Creator {
   id: string;
   name: string;
+  display_name: string;
   avatar: string;
   followers: number;
   verified: boolean;
   rank?: number;
 }
 
+export interface CreatorsSectionProps {
+  title: string;
+  creators: Creator[];
+  showRank?: boolean;
+  onCreatorClick?: (creatorId: string) => void;
+}
+
 export interface Genre {
   id: string;
   name: string;
+  slug: string;
   postCount: number;
+}
+
+export interface RecommendedGenresSectionProps {
+  genres: Genre[];
 }
 
 export interface BannerItem {
@@ -33,3 +51,7 @@ export interface BannerItem {
   image: string;
   title: string;
 } 
+
+export interface BannerCarouselSectionProps {
+  bannerItems: BannerItem[];
+}

@@ -1,8 +1,4 @@
-interface Tab {
-  id: string;
-  label: string;
-  count: number;
-}
+import { Tab } from '@/feateure/creater/types';
 
 export default function TabsSection({ activeTab, setActiveTab, tabs }: { activeTab: string, setActiveTab: React.Dispatch<React.SetStateAction<string>>, tabs: Tab[] }) {
 	

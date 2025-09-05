@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/feateure/auth/AuthLayout';
-import AccountHeader from '@/feateure/account/AccountHeader';
+import AccountHeader from '@/feateure/account/component/AccountHeader';
 import { useNavigate } from 'react-router-dom';
 
 // ★ 追加：API呼び出しとCSRFセット関数をインポート

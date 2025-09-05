@@ -1,27 +1,19 @@
 import React from 'react';
 import { ChevronRight, Clock, Play, Eye, Heart, Bookmark, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { Post, RecentPostsSectionProps } from '@/feateure/top/types';
 
-interface Post {
-  id: string;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  views: number;
-  likes: number;
-  creator: {
-    name: string;
-    avatar: string;
-    verified: boolean;
+export default function RankingSection({ posts }: RecentPostsSectionProps) {
+
+  const navigate = useNavigate();
+
+  const handleCreatorClick = (display_name: string) => {
+    navigate(`/account/profile?display_name=${display_name}`);
   };
-  rank?: number;
-}
 
-interface RankingSectionProps {
-  posts: Post[];
-}
+  console.log('posts', posts);
 
-export default function RankingSection({ posts }: RankingSectionProps) {
   return (
     <section className="bg-white py-6 border-t border-gray-200">
       <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -32,7 +24,7 @@ export default function RankingSection({ posts }: RankingSectionProps) {
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-1">
           {posts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               <div className="relative">
@@ -60,8 +52,16 @@ export default function RankingSection({ posts }: RankingSectionProps) {
                     src={post.creator.avatar} 
                     alt={post.creator.name}
                     className="w-6 h-6 rounded-full"
+                    onClick={() => {
+                      handleCreatorClick(post.creator.display_name);
+                    }}
                   />
-                  <span className="text-xs text-gray-600 flex items-center">
+                  <span 
+                    onClick={() => {
+                      handleCreatorClick(post.creator.display_name);
+                    }}
+                    className="text-xs text-gray-600 flex items-center"
+                  >
                     {post.creator.name}
                     {post.creator.verified && <span className="text-yellow-500 ml-1">★</span>}
                   </span>

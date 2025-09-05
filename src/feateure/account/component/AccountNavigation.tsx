@@ -5,7 +5,6 @@ import { AccountNavigationProps } from '@/feateure/account/types';
 
 export default function AccountNavigation({ items, onItemClick }: AccountNavigationProps) {
   return (
-    // 縦幅を少し作る
     <div className="flex border-b border-gray-200 w-full justify-center">
       {items.map((item) => (
         <Button

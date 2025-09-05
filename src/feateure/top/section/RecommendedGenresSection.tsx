@@ -1,18 +1,16 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface Genre {
-  id: string;
-  name: string;
-  postCount: number;
-}
-
-interface RecommendedGenresSectionProps {
-  genres: Genre[];
-}
+import { RecommendedGenresSectionProps } from '@/feateure/top/types';
+import { useNavigate } from 'react-router-dom';
 
 export default function RecommendedGenresSection({ genres }: RecommendedGenresSectionProps) {
+  const navigate = useNavigate();
+
+  const handleGenreClick = (slug: string) => {
+    navigate(`/category?slug=${slug}`);
+  };
+
   return (
     <section className="bg-white py-6">
       <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -25,7 +23,11 @@ export default function RecommendedGenresSection({ genres }: RecommendedGenresSe
         </div>
         <div className="grid grid-cols-2 gap-4">
           {genres.map((genre) => (
-            <div key={genre.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition-colors">
+            <div 
+              key={genre.id} 
+              className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition-colors" 
+              onClick={() => handleGenreClick(genre.slug)}
+            >
               <h3 className="font-medium text-gray-900 text-sm">{genre.name}</h3>
               <p className="text-xs text-gray-500 mt-1">{genre.postCount.toLocaleString()} posts</p>
             </div>

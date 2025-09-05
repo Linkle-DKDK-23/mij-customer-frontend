@@ -1,5 +1,5 @@
 import React from 'react';
-import AccountHeader from '@/feateure/account/AccountHeader';
+import AccountHeader from '@/feateure/account/component/AccountHeader';
 
 // セクションコンポーネントをインポート
 import WithdrawalHeaderSection from '@/feateure/account/AccountSale/WithdrawalHeaderSection';

@@ -1,6 +1,6 @@
 export interface ProfilePost {
   id: string;
-  title?: string;
+  likes_count: number;
   description?: string;
   thumbnail_storage_key?: string;
   thumbnail_url?: string;
@@ -18,9 +18,11 @@ export interface ProfilePlan {
 
 export interface ProfilePurchase {
   id: string;
-  amount: number;
+  likes_count: number;
+  description?: string;
+  thumbnail_url?: string;
+  video_duration?: number;
   created_at: string;
-  post?: ProfilePost;
 }
 
 export interface ProfileGacha {

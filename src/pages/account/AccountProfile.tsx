@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AccountLayout from '@/feateure/account/AccountLayout';
-import AccountNavigation from '@/feateure/account/AccountNavigation';
+import AccountLayout from '@/feateure/account/component/AccountLayout';
+import AccountNavigation from '@/feateure/account/component/AccountNavigation';
 import { getUserProfileByDisplayName } from '@/api/endpoints/user';
 import { UserProfile } from '@/api/types/profile';
 import BottomNavigation from '@/components/common/BottomNavigation';
@@ -87,6 +87,7 @@ export default function AccountProfile() {
           activeTab={activeTab}
           posts={profile.posts.map(post => ({
             id: post.id,
+            likes_count: post.likes_count,
             description: post.description || '',
             thumbnail_url: post.thumbnail_url,
             created_at: post.created_at
@@ -99,12 +100,10 @@ export default function AccountProfile() {
           }))}
           individualPurchases={profile.individual_purchases.map(purchase => ({
             id: purchase.id,
-            amount: purchase.amount,
-            created_at: purchase.created_at,
-            post: purchase.post ? {
-              description: purchase.post.description || '',
-              thumbnail_url: purchase.post.thumbnail_url
-            } : undefined
+            likes_count: purchase.likes_count || 0,
+            description: purchase.description || '',
+            thumbnail_url: purchase.thumbnail_url || '',
+            created_at: purchase.created_at
           }))}
           gachaItems={profile.gacha_items.map(gacha => ({
             id: gacha.id,

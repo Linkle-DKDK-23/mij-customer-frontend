@@ -1,18 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Share, MessageCircle, LinkIcon } from "lucide-react";
-
-interface Creator {
-  id: string;
-  name: string;
-  username: string;
-  avatar: string;
-  bio: string;
-  postCount: number;
-  followerCount: number;
-  websiteUrl?: string;
-  isFollowing: boolean;
-  backgroundImage: string;
-}
+import { Creator } from '@/feateure/creater/types';
 
 export default function CreatorHeader({ creator }: { creator: Creator }) {
   return (

@@ -5,3 +5,8 @@ export const createPost = async (request: CreatePostRequest) => {
   const { data } = await apiClient.post('/post/create', request);
   return data;
 };
+
+export const getPostsByCategory = async (slug: string) => {
+  const { data } = await apiClient.get(`/category?slug=${slug}`);
+  return data;
+};

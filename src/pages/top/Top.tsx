@@ -12,7 +12,8 @@ import RecentPostsSection from '@/feateure/top/section/RecentPostsSection';
 
 // 型定義をインポート
 import { Post, Creator, Genre, BannerItem } from '@/feateure/top/types';
-import { getTopPageData, TopPageData } from '@/api/endpoints/top';
+import { getTopPageData } from '@/api/endpoints/top';
+import { TopPageData } from '@/api/types/type';
 
 const bannerItems: BannerItem[] = [
   { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
@@ -30,6 +31,8 @@ export default function Top() {
       try {
         setLoading(true);
         const data = await getTopPageData();
+
+        console.log('data', data);
         setTopPageData(data);
       } catch (err) {
         setError('トップページデータの取得に失敗しました');
@@ -46,6 +49,7 @@ export default function Top() {
     return genres.map(genre => ({
       id: genre.id,
       name: genre.name,
+      slug: genre.slug,
       postCount: genre.post_count
     }));
   };
@@ -60,6 +64,7 @@ export default function Top() {
       likes: 'likes_count' in post ? post.likes_count : 0,
       creator: {
         name: post.creator_name,
+        display_name: post.display_name,
         avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
         verified: false
       },
@@ -71,6 +76,7 @@ export default function Top() {
     return creators.map(creator => ({
       id: creator.id,
       name: creator.name,
+      display_name: creator.display_name,
       avatar: creator.avatar_url || 'https://picsum.photos/60/60?random=1',
       followers: creator.followers_count,
       verified: false,
