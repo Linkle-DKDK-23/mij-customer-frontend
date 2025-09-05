@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import AccountHeader from '@/feateure/account/AccountHeader';
+import AccountHeader from '@/feateure/account/component/AccountHeader';
 import { updateAccountInfo, getAccountInfo } from '@/api/endpoints/account';
 import { AccountInfo } from '@/api/types/account';
 import { ProfileData, AccountUploadedFile, AccountPresignedUrlRequest } from '@/api/types/account';

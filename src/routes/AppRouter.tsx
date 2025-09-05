@@ -24,6 +24,7 @@ import QreatorRequestPersonalInfo from '@/pages/qreator/QreatorRequestPersonalIn
 import QreatorRequestPlanSetup from '@/pages/qreator/QreatorRequestPlanSetup';
 import FeedSample from '@/pages/feed/FeedSample';
 import PostRanking from '@/pages/postRanking/PostRanking';
+import Category from '@/pages/category/Category';
 
 import PrivateRoute from '@/routes/PrivateRoute';
 
@@ -32,6 +33,7 @@ export default function AppRouter() {
     <Routes>
       {/* 公開ページ */}
       <Route path="/top" element={<Top />} />
+      <Route path="/category" element={<Category />} />
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/share/video" element={<ShareVideo />} />
       <Route path="/share/post" element={<ShareVideo />} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AccountHeader from '@/feateure/account/AccountHeader';
+import AccountHeader from '@/feateure/account/component/AccountHeader';
 
 // セクションコンポーネントをインポート
 import PlanHeaderSection from '@/feateure/account/AccountPlanSetting/PlanHeaderSection';

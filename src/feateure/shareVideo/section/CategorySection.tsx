@@ -2,7 +2,7 @@ import React from 'react';
 import { Label } from "@/components/ui/label";
 import { Category, Genre } from '@/api/endpoints/categories';
 import CategoryModal from '@/feateure/shareVideo/componets/CategoryModal';
-import { SHARE_VIDEO_CONSTANTS } from '@/feateure/shareVideo/shareVideoConstans';
+import { SHARE_VIDEO_CONSTANTS } from '@/feateure/shareVideo/constans/constans';
 import { CategorySectionProps } from '@/feateure/shareVideo/types';
 
 export default function CategorySection({

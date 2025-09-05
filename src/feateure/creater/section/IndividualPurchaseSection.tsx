@@ -1,13 +1,5 @@
 import { Clock } from 'lucide-react';
-
-interface IndividualPurchase {
-    id: string;
-    title: string;
-    thumbnail: string;
-    price: number;
-    duration?: string;
-    date: string;
-  }
+import { IndividualPurchase } from '@/feateure/creater/types';
 
 export default function IndividualPurchaseSection({ items }: { items: IndividualPurchase[] }) {
 	return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AccountLayout from '@/feateure/account/AccountLayout';
-import AccountNavigation from '@/feateure/account/AccountNavigation';
+import AccountLayout from '@/feateure/account/component/AccountLayout';
+import AccountNavigation from '@/feateure/account/component/AccountNavigation';
 import { getUserProfileByDisplayName } from '@/api/endpoints/user';
 import { UserProfile } from '@/api/types/profile';
 import BottomNavigation from '@/components/common/BottomNavigation';
@@ -85,10 +85,31 @@ export default function AccountProfile() {
         {/* Content Section */}
         <ContentSection 
           activeTab={activeTab}
-          posts={profile.posts}
-          plans={profile.plans}
-          individualPurchases={profile.individual_purchases}
-          gachaItems={profile.gacha_items}
+          posts={profile.posts.map(post => ({
+            id: post.id,
+            likes_count: post.likes_count,
+            description: post.description || '',
+            thumbnail_url: post.thumbnail_url,
+            created_at: post.created_at
+          }))}
+          plans={profile.plans.map(plan => ({
+            id: plan.id,
+            name: plan.name,
+            description: plan.description,
+            price: 0
+          }))}
+          individualPurchases={profile.individual_purchases.map(purchase => ({
+            id: purchase.id,
+            likes_count: purchase.likes_count || 0,
+            description: purchase.description || '',
+            thumbnail_url: purchase.thumbnail_url || '',
+            created_at: purchase.created_at
+          }))}
+          gachaItems={profile.gacha_items.map(gacha => ({
+            id: gacha.id,
+            amount: gacha.amount,
+            created_at: gacha.created_at
+          }))}
         />
       </div>
       <BottomNavigation />

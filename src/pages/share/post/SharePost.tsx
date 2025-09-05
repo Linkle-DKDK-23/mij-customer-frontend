@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
 import { CreatePostRequest } from '@/api/types/post';
-import { SHARE_VIDEO_CONSTANTS, SHARE_VIDEO_VALIDATION_MESSAGES } from '@/feateure/shareVideo/shareVideoConstans';
+import { SHARE_VIDEO_CONSTANTS, SHARE_VIDEO_VALIDATION_MESSAGES } from '@/feateure/shareVideo/constans/constans';
 import { PostFileKind } from '@/constants/constants';
 
 // セクションコンポーネントをインポート

@@ -1,14 +1,5 @@
 import { Play, Clock } from 'lucide-react';
-
-interface Post {
-  id: string;
-  title: string;
-  thumbnail: string;
-  price: number;
-  duration: string;
-  date: string;
-  isVideo?: boolean;
-}
+import { Post } from '@/feateure/creater/types';
 
 export default function PostsSection({ posts }: { posts: Post[] }) {
     // 投稿が3つ並びで表示する

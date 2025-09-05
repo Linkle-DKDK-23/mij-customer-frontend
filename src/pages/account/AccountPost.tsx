@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import AccountHeader from '@/feateure/account/AccountHeader';
-import AccountNavigation from '@/feateure/account/AccountNavigation';
+import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AccountNavigation from '@/feateure/account/component/AccountNavigation';
 
 // セクションコンポーネントをインポート
 import PostContentSection from '@/feateure/account/AccountPost/PostContentSection';
