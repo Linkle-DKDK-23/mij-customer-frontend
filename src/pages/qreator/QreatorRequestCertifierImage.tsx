@@ -8,6 +8,8 @@ import { identityPresignedUrl, completeIdentityUpload } from '@/api/endpoints/id
 import { putToPresignedUrl } from '@/service/s3FileUpload';
 import { IdentityFileKind } from '@/constants/constants';
 import { FileSpec } from '@/api/types/commons';
+import FileUploadGrid from '@/components/common/FileUploadGrid';
+import ErrorMessage from '@/components/common/ErrorMessage';
 
 const mimeToExt = (mime: string): FileSpec['ext'] => {
   if (mime === "image/png") return "png";
@@ -222,11 +224,48 @@ export default function QreatorRequestCertifierImage({
         <p className="text-sm text-gray-600">本人確認のため、以下の書類をアップロードしてください</p>
       </div>
 
-      <div className="space-y-4">
-        {uploadedFiles.map((file) => (
-          <Card key={file.id} file={file} />
-        ))}
-      </div>
+      <FileUploadGrid 
+        uploads={uploadedFiles.map(upload => ({
+          id: upload.id,
+          name: upload.name,
+          type: upload.type,
+          uploaded: upload.uploaded,
+          file: files[upload.type as IdentityFileKind],
+          progress: progress[upload.type as IdentityFileKind],
+          disabled: submitting,
+          accept: 'image/jpeg,image/png,application/pdf',
+          icon: upload.type === 'selfie' ? 'camera' : 'file',
+          showPreview: true, // 全てのファイルタイプでプレビューを表示
+          onFileSelect: (type: string, file: File | null) => {
+            setMessage('');
+            if (file) {
+              // フロント側バリデーション（最小）
+              const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
+              if (!allowed.includes(file.type)) {
+                setMessage('ファイル形式は JPEG/PNG/PDF のみです');
+                return;
+              }
+              if (file.size > 10 * 1024 * 1024) {
+                setMessage('ファイルサイズは 10MB 以下にしてください');
+                return;
+              }
+
+              setFiles(prev => ({ ...prev, [type]: file }));
+              setUploadedFiles(prev => prev.map(item =>
+                item.type === type ? { ...item, uploaded: false } : item
+              ));
+              setProgress(p => ({ ...p, [type]: 0 }));
+            } else {
+              setFiles(prev => ({ ...prev, [type]: null }));
+              setUploadedFiles(prev => prev.map(item =>
+                item.type === type ? { ...item, uploaded: false } : item
+              ));
+              setProgress(p => ({ ...p, [type]: 0 }));
+            }
+          }
+        }))}
+        columns={1}
+      />
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h4 className="font-medium text-yellow-900 mb-2">アップロード時の注意事項</h4>
@@ -254,9 +293,11 @@ export default function QreatorRequestCertifierImage({
       </div>
 
       {message && (
-        <div className="text-sm mt-2">
-          {message}
-        </div>
+        <ErrorMessage 
+          message={message} 
+          variant={message.includes('完了') ? 'success' : 'error'}
+          onClose={() => setMessage(null)}
+        />
       )}
     </div>
   );

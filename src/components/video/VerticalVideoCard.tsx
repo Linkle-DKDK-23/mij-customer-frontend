@@ -50,7 +50,10 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick }: Vert
   };
 
   return (
-    <div className="relative w-full h-screen bg-black flex items-center justify-center">
+    <div className="relative w-full
+                    h-[calc(100vh-var(--nav-h))]
+                    h-[calc(100vh-var(--nav-h)-env(safe-area-inset-bottom))]
+                    bg-black flex items-center justify-center">
       <div className="relative w-full h-full">
         <video
           ref={videoRef}

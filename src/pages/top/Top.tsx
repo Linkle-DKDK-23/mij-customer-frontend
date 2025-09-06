@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import Header from '@/components/common/Header';
+import { LoadingSpinner, ErrorMessage, PostsSection, PostCardProps } from '@/components/common';
+import { useNavigate } from 'react-router-dom';
 
 // セクションコンポーネントをインポート
 import BannerCarouselSection from '@/feateure/top/section/BannerCarouselSection';
 import PostLibraryNavigationSection from '@/feateure/top/section/PostLibraryNavigationSection';
 import RecommendedGenresSection from '@/feateure/top/section/RecommendedGenresSection';
-import RankingSection from '@/feateure/top/section/RankingSection';
 import CreatorsSection from '@/feateure/top/section/CreatorsSection';
-import RecentPostsSection from '@/feateure/top/section/RecentPostsSection';
 
 // 型定義をインポート
 import { Post, Creator, Genre, BannerItem } from '@/feateure/top/types';
@@ -22,6 +22,7 @@ const bannerItems: BannerItem[] = [
 ];
 
 export default function Top() {
+  const navigate = useNavigate();
   const [topPageData, setTopPageData] = useState<TopPageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +55,7 @@ export default function Top() {
     }));
   };
 
-  const convertToPosts = (posts: TopPageData['ranking_posts'] | TopPageData['recent_posts']): Post[] => {
+  const convertToPosts = (posts: TopPageData['ranking_posts'] | TopPageData['recent_posts']): PostCardProps[] => {
     return posts.map(post => ({
       id: post.id,
       title: post.description || '',
@@ -84,11 +85,19 @@ export default function Top() {
     }));
   };
 
+  const handlePostClick = (postId: string) => {
+    navigate(`/post/detail?post_id=${postId}`);
+  };
+
+  const handleCreatorClick = (displayName: string) => {
+    navigate(`/account/profile?display_name=${displayName}`);
+  };
+
   if (loading) {
     return (
       <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
         <div className="min-h-screen bg-gray-50 pb-20 flex items-center justify-center">
-          <div className="text-center">読み込み中...</div>
+          <LoadingSpinner size="lg" />
         </div>
       </div>
     );
@@ -97,8 +106,8 @@ export default function Top() {
   if (error) {
     return (
       <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
-        <div className="min-h-screen bg-gray-50 pb-20 flex items-center justify-center">
-          <div className="text-center text-red-500">{error}</div>
+        <div className="min-h-screen bg-gray-50 pb-20 flex items-center justify-center p-6">
+          <ErrorMessage message={error} variant="error" />
         </div>
       </div>
     );
@@ -108,7 +117,7 @@ export default function Top() {
     return (
       <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
         <div className="min-h-screen bg-gray-50 pb-20 flex items-center justify-center">
-          <div className="text-center">データが見つかりません</div>
+          <ErrorMessage message="データが見つかりません" variant="warning" />
         </div>
       </div>
     );
@@ -130,7 +139,14 @@ export default function Top() {
         <RecommendedGenresSection genres={convertToGenres(topPageData.genres)} />
 
         {/* ランキング */}
-        <RankingSection posts={convertToPosts(topPageData.ranking_posts)} />
+        <PostsSection
+          title="ランキング"
+          posts={convertToPosts(topPageData.ranking_posts)}
+          showRank={true}
+          columns={2}
+          onPostClick={handlePostClick}
+          onCreatorClick={handleCreatorClick}
+        />
 
         {/* トップクリエイター */}
         <CreatorsSection 
@@ -152,7 +168,14 @@ export default function Top() {
         />
 
         {/* 新着投稿 */}
-        <RecentPostsSection posts={convertToPosts(topPageData.recent_posts)} />
+        <PostsSection
+          title="新着投稿"
+          posts={convertToPosts(topPageData.recent_posts)}
+          showRank={false}
+          columns={2}
+          onPostClick={handlePostClick}
+          onCreatorClick={handleCreatorClick}
+        />
 
         {/* Fixed Bottom Navigation */}
         <BottomNavigation />

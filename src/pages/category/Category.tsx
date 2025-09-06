@@ -5,7 +5,8 @@ import { getPostsByCategory } from '@/api/endpoints/post';
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import { PostCategory } from '@/feateure/category/types';
-import CategoryListSection from '@/feateure/category/section/CategoryListSection';
+import PostsSection from '@/components/common/PostsSection';
+import { PostCardProps } from '@/components/common/PostCard';
 	
 export default function Category() {
 	const [searchParams] = useSearchParams();
@@ -31,22 +32,34 @@ export default function Category() {
 	}, [slug]);
 
 
-	const convertToPosts = (posts: PostCategory[]) => {
-		return posts.map((post) => ({
-			id: post.id,
-			description: post.description,
-			thumbnail_url: post.thumbnail_url,
-			likes_count: post.likes_count,
-			creator_name: post.creator_name,
-			display_name: post.display_name,
-			creator_avatar_url: post.creator_avatar_url,
-		}));
-	};
+  const convertToPosts = (posts: PostCategory[]): PostCardProps[] => {
+    return posts.map(post => ({
+      id: post.id,
+      title: post.description || '',
+      thumbnail: post.thumbnail_url || 'https://picsum.photos/300/200?random=1',
+      duration: '00:00',
+      views: 0,
+      likes: post.likes_count,
+      creator: {
+        name: post.creator_name,
+        display_name: post.display_name,
+        avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
+        verified: false
+      },
+      rank: undefined
+    }));
+  };
 
   return (
     <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
 			<Header />
-			<CategoryListSection posts={convertToPosts(posts)} />
+			<PostsSection
+				title="カテゴリー別ランキング"
+				posts={convertToPosts(posts)}
+				showRank={false}
+				columns={2}
+				onPostClick={() => {}}
+			/>
 			<BottomNavigation />
 		</div>
   );

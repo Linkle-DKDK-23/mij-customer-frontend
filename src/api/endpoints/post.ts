@@ -10,3 +10,8 @@ export const getPostsByCategory = async (slug: string) => {
   const { data } = await apiClient.get(`/category?slug=${slug}`);
   return data;
 };
+
+export const getPostDetail = async (postId: string) => {
+  const { data } = await apiClient.get(`/post/detail?post_id=${postId}`);
+  return data;
+};
