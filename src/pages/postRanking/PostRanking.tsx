@@ -2,22 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import FilterSection from '@/feateure/postRanking/section/FilterSection';
-import RankingListSection from '@/feateure/postRanking/section/RankingListSection';
-import { RankingResponse, RankingSection, TabItem } from '@/feateure/postRanking/types';
+import PostsSection from '@/components/common/PostsSection';
+import { RankingResponse, TabItem } from '@/feateure/postRanking/types';
 import { getRanking } from '@/api/endpoints/ranking';
-
-const rankingSections: RankingSection[] = [
-  {
-    id: 'overall',
-    title: '総合ランキング',
-    posts: []
-  },
-  {
-    id: 'amateur',
-    title: 'ハメ撮りランキング',
-    posts: []
-  }
-  ];
 
 export default function PostRanking() {
   const [activeTab, setActiveTab] = useState('posts');
@@ -80,11 +67,24 @@ export default function PostRanking() {
     setActiveTimePeriod(periodId);
   };
 
-  // Update ranking sections with current posts
-  const updatedRankingSections = rankingSections.map(section => ({
-    ...section,
-    posts: currentPosts
-  }));
+  // Convert ranking posts to PostCardProps format
+  const convertToPostCards = (posts: any[]) => {
+    return posts.map(post => ({
+      id: post.id,
+      title: post.description || '',
+      thumbnail: post.thumbnail_url || '',
+      duration: '00:00',
+      views: 0,
+      likes: post.likes_count || 0,
+      creator: {
+        name: post.creator_name || '',
+        display_name: post.display_name || '',
+        avatar: post.creator_avatar_url || '',
+        verified: false
+      },
+      rank: post.rank
+    }));
+  };
 
   return (
     <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
@@ -96,7 +96,13 @@ export default function PostRanking() {
           onTabClick={handleTabClick}
           onTimePeriodClick={handleTimePeriodClick}
         />
-        <RankingListSection sections={updatedRankingSections} posts={currentPosts} />
+        <PostsSection
+          title={activeTab === 'posts' ? '総合ランキング' : 'クリエイターランキング'}
+          posts={convertToPostCards(currentPosts)}
+          showRank={true}
+          columns={2}
+          onPostClick={() => {}}
+        />
         <BottomNavigation />
       </div>
     </div>

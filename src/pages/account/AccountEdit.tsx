@@ -9,6 +9,8 @@ import { accountPresignedUrl } from '@/api/endpoints/account';
 import { putToPresignedUrl } from '@/service/s3FileUpload';
 import { useNavigate } from 'react-router-dom';
 import { mimeToImageExt } from '@/lib/media';
+import FileUploadGrid from '@/components/common/FileUploadGrid';
+import ErrorMessage from '@/components/common/ErrorMessage';
 
 // セクションコンポーネントをインポート
 import AccountEditHeaderSection from '@/feateure/account/AccountEdit/section/AccountEditHeaderSection';
@@ -193,14 +195,36 @@ export default function AccountEdit() {
         <MessageSection message={message} />
 
         {/* File Upload Section */}
-        <FileUploadSection 
-          uploadedFiles={uploadedFiles}
-          files={files}
-          progress={progress}
-          submitting={submitting}
-          inputRefs={inputRefs}
-          onPick={onPick}
-          openPicker={openPicker}
+        <FileUploadGrid 
+          uploads={uploadedFiles.map(upload => ({
+            id: upload.id,
+            name: upload.name,
+            type: upload.type,
+            uploaded: upload.uploaded,
+            file: files[upload.type as AccountFileKind],
+            progress: progress[upload.type as AccountFileKind],
+            disabled: submitting,
+            accept: 'image/jpeg,image/png',
+            icon: 'image' as const,
+            showPreview: true,
+            onFileSelect: (type: string, file: File | null) => {
+              if (file) {
+                setFiles(prev => ({ ...prev, [type]: file }));
+                setUploadedFiles(prev => prev.map(item =>
+                  item.type === type ? { ...item, uploaded: false } : item
+                ));
+                setProgress(p => ({ ...p, [type]: 0 }));
+                setMessage('');
+              } else {
+                setFiles(prev => ({ ...prev, [type]: null }));
+                setUploadedFiles(prev => prev.map(item =>
+                  item.type === type ? { ...item, uploaded: false } : item
+                ));
+                setProgress(p => ({ ...p, [type]: 0 }));
+              }
+            }
+          }))}
+          columns={1}
         />
 
         {/* Profile Form Section */}

@@ -12,7 +12,9 @@ export default function RankingSection({ posts }: RecentPostsSectionProps) {
     navigate(`/account/profile?display_name=${display_name}`);
   };
 
-  console.log('posts', posts);
+  const handlePostClick = (post: Post) => {
+    navigate(`/post/detail?post_id=${post.id}`);
+  };
 
   return (
     <section className="bg-white py-6 border-t border-gray-200">
@@ -27,11 +29,12 @@ export default function RankingSection({ posts }: RecentPostsSectionProps) {
         <div className="grid grid-cols-2 gap-1">
           {posts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="relative">
+              <div className="relative" onClick={() => handlePostClick(post)}>
                 <img 
                   src={post.thumbnail} 
                   alt={post.title}
                   className="w-full aspect-square object-cover"
+                  onClick={() => handlePostClick(post)}
                 />
                 <div className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded flex items-center">
                   {post.rank === 1 && <Crown className="h-3 w-3 mr-1" />}

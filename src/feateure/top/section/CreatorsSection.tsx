@@ -3,6 +3,7 @@ import { ChevronRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import {  CreatorsSectionProps } from '@/feateure/top/types';
+import FollowButton from '@/components/social/FollowButton';
 
 export default function CreatorsSection({ 
   title, 
@@ -58,9 +59,7 @@ export default function CreatorsSection({
                   <p className="text-xs text-gray-500 mb-3">{creator.followers.toLocaleString()} followers</p>
                 </div>
 
-                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-white">
-                  フォロー
-                </Button>
+                <FollowButton userId={creator.id} />
               </div>
             </div>
           ))}

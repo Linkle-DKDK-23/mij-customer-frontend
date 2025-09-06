@@ -17,6 +17,12 @@ import AccountSaleWithDraw from '@/pages/account/AccountSaleWithDraw';
 import AccountPlanSetting from '@/pages/account/AccountPlanSetting';
 import Login from '@/pages/signUp/Login';
 import SingUp from '@/pages/signUp/SingUp';
+// Supabase認証ページ
+import SupabaseLogin from '@/pages/auth/SupabaseLogin';
+import SupabaseSignup from '@/pages/auth/SupabaseSignup';
+import ForgotPassword from '@/pages/auth/ForgotPassword';
+import ResetPassword from '@/pages/auth/ResetPassword';
+import AuthCallback from '@/pages/auth/AuthCallback';
 import QreatorRequest from '@/pages/qreator/QreatorRequest';
 import QreatorRequestCertifierImage from '@/pages/qreator/QreatorRequestCertifierImage';
 import QreatorRequestSmsVerification from '@/pages/qreator/QreatorRequestSmsVerification';
@@ -25,6 +31,8 @@ import QreatorRequestPlanSetup from '@/pages/qreator/QreatorRequestPlanSetup';
 import FeedSample from '@/pages/feed/FeedSample';
 import PostRanking from '@/pages/postRanking/PostRanking';
 import Category from '@/pages/category/Category';
+import PostDetail from '@/pages/postDetail/postDetail';
+import SocialTest from '@/pages/test/SocialTest';
 
 import PrivateRoute from '@/routes/PrivateRoute';
 
@@ -40,10 +48,18 @@ export default function AppRouter() {
       <Route path="/creator/profile" element={<CreatorProfile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SingUp />} />
+      
+      {/* Supabase認証ルート */}
+      <Route path="/auth/login" element={<SupabaseLogin />} />
+      <Route path="/auth/signup" element={<SupabaseSignup />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/feed" element={<FeedSample />} />
       <Route path="/ranking/posts" element={<PostRanking />} />
-
-      {/* 認証必須ページ（必要に応じて追加） */}
+      <Route path="/post/detail" element={<PostDetail />} />
+      <Route path="/test/social" element={<SocialTest />} />
+        {/* 認証必須ページ（必要に応じて追加） */}
       <Route
         path="/upload_test"
         element={
