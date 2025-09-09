@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Coins, User, Settings, CreditCard, HelpCircle } from 'lucide-react';
-import AccountLayout from '@/feateure/account/component/AccountLayout';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AccountLayout from '@/features/account/component/AccountLayout';
+import AccountHeader from '@/features/account/component/AccountHeader';
 
 interface SettingSection {
   id: string;

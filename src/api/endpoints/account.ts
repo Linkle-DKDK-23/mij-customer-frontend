@@ -3,7 +3,8 @@ import {
   AccountInfo, 
   AccountUpdateRequest, 
   AccountPresignedUrlRequest, 
-  AccountPresignedUrlResponse 
+  AccountPresignedUrlResponse,
+  AccountPostStatusResponse
 } from '@/api/types/account';
 
 /**
@@ -29,7 +30,11 @@ export const updateAccountInfo = (data: AccountUpdateRequest) => {
  * @returns AccountPresignedUrlResponse
  */
 export const accountPresignedUrl = async (request: AccountPresignedUrlRequest) => {
-  console.log(request);
   const { data } = await apiClient.post<AccountPresignedUrlResponse>('/account/presign-upload', request);
+  return data;
+};
+
+export const getAccountPosts = async (): Promise<AccountPostStatusResponse> => {
+  const { data } = await apiClient.get<AccountPostStatusResponse>('/account/posts');
   return data;
 };

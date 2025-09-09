@@ -2,7 +2,7 @@ import React from 'react';
 import { Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FileUploadSectionProps } from '@/feateure/account/AccountEdit/types';
+import { FileUploadSectionProps } from '@/features/account/AccountEdit/types';
 
 
 export default function FileUploadSection({ 

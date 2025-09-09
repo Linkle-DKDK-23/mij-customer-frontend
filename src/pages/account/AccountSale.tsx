@@ -1,12 +1,12 @@
 import React from 'react';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AccountHeader from '@/features/account/component/AccountHeader';
 
 // セクションコンポーネントをインポート
-import WithdrawalHeaderSection from '@/feateure/account/AccountSale/WithdrawalHeaderSection';
-import SalesSummarySection from '@/feateure/account/AccountSale/SalesSummarySection';
-import TodaySalesSection from '@/feateure/account/AccountSale/TodaySalesSection';
-import PeriodSalesSection from '@/feateure/account/AccountSale/PeriodSalesSection';
-import SalesHistorySection from '@/feateure/account/AccountSale/SalesHistorySection';
+import WithdrawalHeaderSection from '@/features/account/AccountSale/WithdrawalHeaderSection';
+import SalesSummarySection from '@/features/account/AccountSale/SalesSummarySection';
+import TodaySalesSection from '@/features/account/AccountSale/TodaySalesSection';
+import PeriodSalesSection from '@/features/account/AccountSale/PeriodSalesSection';
+import SalesHistorySection from '@/features/account/AccountSale/SalesHistorySection';
 
 interface SalesData {
   withdrawableAmount: number;

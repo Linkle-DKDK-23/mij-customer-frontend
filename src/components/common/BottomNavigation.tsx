@@ -7,11 +7,6 @@ export default function BottomNavigation() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const moveToPost = () => {
-    if (user) {
-      navigate(`/share/video`);
-    }
-  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
@@ -33,7 +28,7 @@ export default function BottomNavigation() {
           </div>
           <div 
             className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
-            onClick={moveToPost}
+            onClick={() => navigate('/feed')}
           >
             <TrendingUp className="h-6 w-6" />
             <span className="text-xs mt-1 text-center">投稿</span>

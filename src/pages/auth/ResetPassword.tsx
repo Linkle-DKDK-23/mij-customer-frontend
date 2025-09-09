@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, CheckCircle } from 'lucide-react';
-import AuthLayout from '@/feateure/auth/AuthLayout';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AuthLayout from '@/features/auth/AuthLayout';
+import AccountHeader from '@/features/account/component/AccountHeader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorMessage } from '@/components/common';
 

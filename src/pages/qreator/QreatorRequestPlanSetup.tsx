@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Check } from 'lucide-react';
-import VerificationLayout from '@/feateure/auth/VerificationLayout';
+import VerificationLayout from '@/features/auth/VerificationLayout';
 
 interface PlanData {
   planType: 'basic' | 'premium' | 'pro';

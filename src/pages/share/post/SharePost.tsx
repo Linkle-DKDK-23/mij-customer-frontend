@@ -6,21 +6,21 @@ import { useNavigate } from 'react-router-dom';
 // 型定義
 import { PostData } from '@/api/types/postMedia';	
 import { CreatePostRequest } from '@/api/types/post';
-import { SHARE_VIDEO_CONSTANTS, SHARE_VIDEO_VALIDATION_MESSAGES } from '@/feateure/shareVideo/constans/constans';
+import { SHARE_VIDEO_CONSTANTS, SHARE_VIDEO_VALIDATION_MESSAGES } from '@/features/shareVideo/constans/constans';
 import { PostFileKind } from '@/constants/constants';
 
 // セクションコンポーネントをインポート
-import MainVideoSection from '@/feateure/shareVideo/section/MainVideoSection';
-import SampleVideoSection from '@/feateure/shareVideo/section/SampleVideoSection';
-import OgpImageSection from '@/feateure/shareVideo/section/OgpImageSection';
-import ImagePostSection from '@/feateure/shareVideo/section/ImagePostSection';
-import ThumbnailSection from '@/feateure/shareVideo/section/ThumbnailSection';
-import DescriptionSection from '@/feateure/shareVideo/section/DescriptionSection';
-import CategorySection from '@/feateure/shareVideo/section/CategorySection';
-import TagsSection from '@/feateure/shareVideo/section/TagsSection';
-import SettingsSection from '@/feateure/shareVideo/section/SettingsSection';
-import ConfirmationSection from '@/feateure/shareVideo/section/ConfirmationSection';
-import FooterSection from '@/feateure/shareVideo/section/FooterSection';
+import MainVideoSection from '@/features/shareVideo/section/MainVideoSection';
+import SampleVideoSection from '@/features/shareVideo/section/SampleVideoSection';
+import OgpImageSection from '@/features/shareVideo/section/OgpImageSection';
+import ImagePostSection from '@/features/shareVideo/section/ImagePostSection';
+import ThumbnailSection from '@/features/shareVideo/section/ThumbnailSection';
+import DescriptionSection from '@/features/shareVideo/section/DescriptionSection';
+import CategorySection from '@/features/shareVideo/section/CategorySection';
+import TagsSection from '@/features/shareVideo/section/TagsSection';
+import SettingsSection from '@/features/shareVideo/section/SettingsSection';
+import ConfirmationSection from '@/features/shareVideo/section/ConfirmationSection';
+import FooterSection from '@/features/shareVideo/section/FooterSection';
 
 // ユーティリティ
 import { formatDateTime, formatTime } from '@/lib/datetime';

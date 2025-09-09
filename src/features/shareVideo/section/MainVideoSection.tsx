@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import ThumbnailPreview from "@/feateure/shareVideo/componets/ThumbnailPreview";
+import ThumbnailPreview from "@/features/shareVideo/componets/ThumbnailPreview";
 import MainStreemUploadArea from "@/components/common/MainStreemUploadArea";
-import { MainVideoSectionProps } from '@/feateure/shareVideo/types';
+import { MainVideoSectionProps } from '@/features/shareVideo/types';
 
 export default function MainVideoSection({
 	selectedMainFile,

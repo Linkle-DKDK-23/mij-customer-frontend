@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePickerWithPopover } from "@/components/common/DatePickerWithPopover";
-import PlanSelector from '@/feateure/shareVideo/componets/PlanSelector';
-import { SettingsSectionProps } from '@/feateure/shareVideo/types';
+import PlanSelector from '@/features/shareVideo/componets/PlanSelector';
+import { SettingsSectionProps } from '@/features/shareVideo/types';
 
 export default function SettingsSection({
 	scheduled,

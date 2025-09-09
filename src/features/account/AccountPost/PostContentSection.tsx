@@ -6,7 +6,8 @@ interface Post {
   thumbnail: string;
   status: 'review' | 'revision' | 'private' | 'published' | 'deleted';
   date: string;
-  price?: number;
+  price: number | null;
+  currency: string | null;
 }
 
 interface PostContentSectionProps {
@@ -42,7 +43,6 @@ export default function PostContentSection({ posts, activeStatus, statusLabels }
             </div>
           </div>
           <div className="p-3">
-            <p className="text-xs text-gray-500 mb-1">{post.date}</p>
             <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{post.title}</h3>
           </div>
         </div>
