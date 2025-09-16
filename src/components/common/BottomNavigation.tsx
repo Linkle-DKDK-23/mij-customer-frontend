@@ -28,7 +28,7 @@ export default function BottomNavigation() {
           </div>
           <div 
             className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
-            onClick={() => navigate('/feed')}
+            onClick={() => navigate('/share/post')}
           >
             <TrendingUp className="h-6 w-6" />
             <span className="text-xs mt-1 text-center">投稿</span>

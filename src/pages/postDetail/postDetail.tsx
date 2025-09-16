@@ -29,6 +29,7 @@ import { getPostDetail } from '@/api/endpoints/post';
 interface Post {
   id: string;
   title: string;
+  description?: string;
   thumbnail: string;
   duration: string;
   views: number;
@@ -39,6 +40,7 @@ interface Post {
     verified: boolean;
   };
   rank?: number;
+  video_url?: string;
   videoUrl?: string;
 }
 
@@ -140,6 +142,8 @@ const bannerItems = [
 export default function PostDetail() {
   const [searchParams] = useSearchParams();
   const postId = searchParams.get('post_id');
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
 
 	const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
@@ -162,15 +166,37 @@ export default function PostDetail() {
 
   useEffect(() => {
 		const fetchPostDetail = async () => {
+			if (!postId) return;
+			
 			try {
+				setLoading(true);
 				const data = await getPostDetail(postId);
-				console.log('data', data);
+        console.log('data', data);
+				// setCurrentPost(data);
 			} catch (error) {
 				console.error('Failed to fetch post detail:', error);
+			} finally {
+				setLoading(false);
 			}
 		};
 		fetchPostDetail();
   }, [postId]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen bg-black flex items-center justify-center">
+        <div className="text-white">読み込み中...</div>
+      </div>
+    );
+  }
+
+  if (!currentPost) {
+    return (
+      <div className="w-full h-screen bg-black flex items-center justify-center">
+        <div className="text-white">投稿が見つかりません</div>
+      </div>
+    );
+  }
 
   return (
 		<div
@@ -187,21 +213,22 @@ export default function PostDetail() {
 					pb-[calc(var(--nav-h)+env(safe-area-inset-bottom))]
 				"
 			>
-				{mockFeedPosts.map((post, index) => (
-					<div key={post.id} className="keen-slider__slide">
-						<VerticalVideoCard
-							post={post}
-							isActive={index === currentVideoIndex}
-							onVideoClick={() => handleVideoClick(index)}
-						/>
-					</div>
-				))}
+				<div className="keen-slider__slide">
+					<VerticalVideoCard
+						post={{
+							...currentPost,
+							videoUrl: currentPost.video_url || 'https://video-dev.mijfans.jp/transcode-mc/f233a5e6-3b7d-4328-9487-04fa3784ae2e/eb211202-6a30-4f0a-84ca-8800a3c4bb00/f15e0a05-0714-4786-99ee-187e125ac8fb/hls/cd0b36d6-4239-46ae-8818-3df1cfc0ac02.m3u8'
+						}}
+						isActive={true}
+						onVideoClick={() => {}}
+					/>
+				</div>
 			</div>
 
 			{/* 絶対配置のまま */}
 			<div className="absolute bottom-0 left-0 right-0 z-50">
 				<BottomNavigation />
 			</div>
-		</div>
+			</div>
   );
 }

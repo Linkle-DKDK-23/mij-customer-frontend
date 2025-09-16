@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Heart, MessageCircle, Share, Bookmark, Play, Pause } from 'lucide-react';
+import Hls from 'hls.js';
 
 interface Post {
   id: string;
@@ -25,6 +26,43 @@ interface VerticalVideoCardProps {
 export default function VerticalVideoCard({ post, isActive, onVideoClick }: VerticalVideoCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !post.videoUrl) return;
+
+    // HLS.jsを使用してm3u8ファイルを再生
+    if (post.videoUrl.includes('.m3u8')) {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hlsRef.current = hls;
+        hls.loadSource(post.videoUrl);
+        hls.attachMedia(video);
+        
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          console.log('HLS manifest parsed successfully');
+        });
+
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.error('HLS error:', data);
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari等のネイティブHLS対応ブラウザ
+        video.src = post.videoUrl;
+      }
+    } else {
+      // 通常の動画ファイルの場合
+      video.src = post.videoUrl;
+    }
+
+    return () => {
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+    };
+  }, [post.videoUrl]);
 
   useEffect(() => {
     if (isActive && videoRef.current) {
@@ -55,19 +93,22 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick }: Vert
                     h-[calc(100vh-var(--nav-h)-env(safe-area-inset-bottom))]
                     bg-black flex items-center justify-center">
       <div className="relative w-full h-full">
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover"
-          poster={post.thumbnail}
-          loop
-          muted
-          playsInline
-          onClick={handleVideoClick}
-        >
-          <source src={post.videoUrl || post.thumbnail} type="video/mp4" />
-        </video>
+{post.videoUrl ? (
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            loop
+            muted
+            playsInline
+            onClick={handleVideoClick}
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+            <p className="text-white text-center">動画が利用できません</p>
+          </div>
+        )}
 
-        {!isPlaying && (
+        {post.videoUrl && !isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
             <Play className="h-16 w-16 text-white opacity-80" />
           </div>

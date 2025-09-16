@@ -10,4 +10,5 @@ export interface CreatePostRequest {
 	plan_ids?: string[];
 	single: boolean;
   price?: number;
+	post_type: 'video' | 'image';
 }

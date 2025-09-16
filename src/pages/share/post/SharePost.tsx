@@ -429,6 +429,8 @@ export default function ShareVideo() {
 	// 投稿データをまとめて送信（AccountEdit.tsxと同じ処理フロー）
 	const handleSubmitPost = async () => {
 
+		// TODO: 投稿プランを選択してないと422になる
+
 		// バリデーション
 		if (postType === 'video' && !selectedMainFile) {
 			setUploadMessage(SHARE_VIDEO_VALIDATION_MESSAGES.MAIN_VIDEO_REQUIRED);
@@ -488,6 +490,7 @@ export default function ShareVideo() {
 				plan_ids: formData.plan_ids,
 				single: formData.single,
 				price: formData.singlePrice ? Number(formData.singlePrice) : undefined,
+				post_type: postType,
 			}
 
 			const response = await createPost(postData);
