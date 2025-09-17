@@ -5,13 +5,13 @@ import { LoadingSpinner, ErrorMessage, PostsSection, PostCardProps } from '@/com
 import { useNavigate } from 'react-router-dom';
 
 // セクションコンポーネントをインポート
-import BannerCarouselSection from '@/feateure/top/section/BannerCarouselSection';
-import PostLibraryNavigationSection from '@/feateure/top/section/PostLibraryNavigationSection';
-import RecommendedGenresSection from '@/feateure/top/section/RecommendedGenresSection';
-import CreatorsSection from '@/feateure/top/section/CreatorsSection';
+import BannerCarouselSection from '@/features/top/section/BannerCarouselSection';
+import PostLibraryNavigationSection from '@/features/top/section/PostLibraryNavigationSection';
+import RecommendedGenresSection from '@/features/top/section/RecommendedGenresSection';
+import CreatorsSection from '@/features/top/section/CreatorsSection';
 
 // 型定義をインポート
-import { Post, Creator, Genre, BannerItem } from '@/feateure/top/types';
+import { Post, Creator, Genre, BannerItem } from '@/features/top/types';
 import { getTopPageData } from '@/api/endpoints/top';
 import { TopPageData } from '@/api/types/type';
 
@@ -32,8 +32,6 @@ export default function Top() {
       try {
         setLoading(true);
         const data = await getTopPageData();
-
-        console.log('data', data);
         setTopPageData(data);
       } catch (err) {
         setError('トップページデータの取得に失敗しました');

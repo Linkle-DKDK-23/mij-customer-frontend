@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AccountHeader from '@/features/account/component/AccountHeader';
 import { updateAccountInfo, getAccountInfo } from '@/api/endpoints/account';
 import { AccountInfo } from '@/api/types/account';
 import { ProfileData, AccountUploadedFile, AccountPresignedUrlRequest } from '@/api/types/account';
@@ -13,10 +13,10 @@ import FileUploadGrid from '@/components/common/FileUploadGrid';
 import ErrorMessage from '@/components/common/ErrorMessage';
 
 // セクションコンポーネントをインポート
-import AccountEditHeaderSection from '@/feateure/account/AccountEdit/section/AccountEditHeaderSection';
-import MessageSection from '@/feateure/account/AccountEdit/section/MessageSection';
-import FileUploadSection from '@/feateure/account/AccountEdit/section/FileUploadSection';
-import ProfileFormSection from '@/feateure/account/AccountEdit/section/ProfileFormSection';
+import AccountEditHeaderSection from '@/features/account/AccountEdit/section/AccountEditHeaderSection';
+import MessageSection from '@/features/account/AccountEdit/section/MessageSection';
+import FileUploadSection from '@/features/account/AccountEdit/section/FileUploadSection';
+import ProfileFormSection from '@/features/account/AccountEdit/section/ProfileFormSection';
 
 export default function AccountEdit() {
   const navigate = useNavigate();

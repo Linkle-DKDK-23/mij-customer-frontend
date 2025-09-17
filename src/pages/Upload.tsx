@@ -5,9 +5,9 @@ import { uploadToS3 } from '@/utils/uploadToS3';
 import { Button } from "@/components/ui/button";
 
 // セクションコンポーネントをインポート
-import FileUploadSection from '@/feateure/upload/section/FileUploadSection';
-import ProgressSection from '@/feateure/upload/section/ProgressSection';
-import VideoPlayerSection from '@/feateure/upload/section/VideoPlayerSection';
+import FileUploadSection from '@/features/upload/section/FileUploadSection';
+import ProgressSection from '@/features/upload/section/ProgressSection';
+import VideoPlayerSection from '@/features/upload/section/VideoPlayerSection';
 
 export default function VideoUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

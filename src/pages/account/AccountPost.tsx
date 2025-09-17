@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
-import AccountNavigation from '@/feateure/account/component/AccountNavigation';
+import React, { useState, useEffect } from 'react';
+import AccountHeader from '@/features/account/component/AccountHeader';
+import AccountNavigation from '@/features/account/component/AccountNavigation';
 
 // セクションコンポーネントをインポート
-import PostContentSection from '@/feateure/account/AccountPost/PostContentSection';
+import PostContentSection from '@/features/account/AccountPost/PostContentSection';
+import { getAccountPosts } from '@/api/endpoints/account';
+import { AccountPostResponse } from '@/api/types/account';
 
 interface Post {
   id: string;
@@ -11,37 +13,20 @@ interface Post {
   thumbnail: string;
   status: 'review' | 'revision' | 'private' | 'published' | 'deleted';
   date: string;
-  price?: number;
+  price: number; // Remove the ? to make it required
+  currency: string | null;
+}
+
+// API response structure
+interface AccountPostsResponse {
+  pending_posts: AccountPostResponse[];
+  rejected_posts: AccountPostResponse[];
+  unpublished_posts: AccountPostResponse[];
+  deleted_posts: AccountPostResponse[];
+  approved_posts: AccountPostResponse[];
 }
 
 type PostStatus = 'review' | 'revision' | 'private' | 'published' | 'deleted';
-
-const mockPosts: Post[] = [
-  {
-    id: '1',
-    title: 'サンプル投稿1',
-    thumbnail: 'https://picsum.photos/300/200?random=120',
-    status: 'published',
-    date: '2025/08/01',
-    price: 1000
-  },
-  {
-    id: '2',
-    title: 'サンプル投稿2',
-    thumbnail: 'https://picsum.photos/300/200?random=121',
-    status: 'review',
-    date: '2025/08/02',
-    price: 1500
-  },
-  {
-    id: '3',
-    title: 'サンプル投稿3',
-    thumbnail: 'https://picsum.photos/300/200?random=122',
-    status: 'private',
-    date: '2025/08/03',
-    price: 800
-  }
-];
 
 const statusLabels: Record<PostStatus, string> = {
   review: '審査中',
@@ -51,16 +36,86 @@ const statusLabels: Record<PostStatus, string> = {
   deleted: '削除'
 };
 
-const statusCounts = {
-  review: mockPosts.filter(p => p.status === 'review').length,
-  revision: mockPosts.filter(p => p.status === 'revision').length,
-  private: mockPosts.filter(p => p.status === 'private').length,
-  published: mockPosts.filter(p => p.status === 'published').length,
-  deleted: mockPosts.filter(p => p.status === 'deleted').length
+// Map API status to component status
+const mapApiStatusToComponentStatus = (apiStatus: keyof AccountPostsResponse): PostStatus => {
+  switch (apiStatus) {
+    case 'pending_posts':
+      return 'review';
+    case 'rejected_posts':
+      return 'revision';
+    case 'unpublished_posts':
+      return 'private';
+    case 'approved_posts':
+      return 'published';
+    case 'deleted_posts':
+      return 'deleted';
+    default:
+      return 'published';
+  }
+};
+
+// Map API response to component format
+const mapApiPostToComponentPost = (apiPost: AccountPostResponse, status: PostStatus): Post => {
+  return {
+    id: apiPost.id,
+    title: apiPost.description,
+    thumbnail: apiPost.thumbnail_url || '/assets/no-image.svg',
+    status: status,
+    date: new Date().toLocaleDateString('ja-JP'),
+    price: apiPost.price || 0, // Provide default value
+    currency: apiPost.currency
+  };
 };
 
 export default function AccountPost() {
   const [activeStatus, setActiveStatus] = useState<PostStatus>('published');
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [statusCounts, setStatusCounts] = useState({
+    review: 0,
+    revision: 0,
+    private: 0,
+    published: 0,
+    deleted: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await getAccountPosts();
+
+        console.log(response);
+        
+        // Calculate counts for each status
+        const counts = {
+          review: response.pending_posts.length,
+          revision: response.rejected_posts.length,
+          private: response.unpublished_posts.length,
+          published: response.approved_posts.length,
+          deleted: response.deleted_posts.length
+        };
+        setStatusCounts(counts);
+
+        // Map all posts to component format
+        const allPosts: Post[] = [
+          ...response.pending_posts.map(post => mapApiPostToComponentPost(post, 'review')),
+          ...response.rejected_posts.map(post => mapApiPostToComponentPost(post, 'revision')),
+          ...response.unpublished_posts.map(post => mapApiPostToComponentPost(post, 'private')),
+          ...response.approved_posts.map(post => mapApiPostToComponentPost(post, 'published')),
+          ...response.deleted_posts.map(post => mapApiPostToComponentPost(post, 'deleted'))
+        ];
+        
+        setPosts(allPosts);
+      } catch (error) {
+        console.error('Failed to fetch posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPosts();
+  }, []);
 
   const navigationItems = [
     { id: 'review', label: '審査中', count: statusCounts.review, isActive: activeStatus === 'review' },
@@ -74,7 +129,18 @@ export default function AccountPost() {
     setActiveStatus(statusId as PostStatus);
   };
 
-  const filteredPosts = mockPosts.filter(post => post.status === activeStatus);
+  const filteredPosts = posts.filter(post => post.status === activeStatus);
+
+  if (loading) {
+    return (
+      <div className="bg-white">
+        <AccountHeader title="投稿の管理" showBackButton />
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">

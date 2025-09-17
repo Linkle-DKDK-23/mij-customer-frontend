@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { TabNavigationSectionProps } from '@/feateure/account/Account/types';
+import { TabNavigationSectionProps } from '@/features/account/Account/types';
 
 export default function TabNavigationSection({ items, onItemClick }: TabNavigationSectionProps) {
   return (

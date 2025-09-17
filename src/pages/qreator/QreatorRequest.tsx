@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Phone, FileText, CreditCard, User } from 'lucide-react';
-import AuthLayout from '@/feateure/auth/AuthLayout';
+import AuthLayout from '@/features/auth/AuthLayout';
 import QreatorRequestSmsVerification from './QreatorRequestSmsVerification';
 import QreatorRequestPersonalInfo from './QreatorRequestPersonalInfo';
 import QreatorRequestCertifierImage from './QreatorRequestCertifierImage';

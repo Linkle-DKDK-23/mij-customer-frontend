@@ -1,8 +1,8 @@
 import React from 'react';
 import { Label } from "@/components/ui/label";
-import OgpPreview from "@/feateure/shareVideo/componets/OgpPreview";
-import OgpUploadArea from "@/feateure/shareVideo/componets/OgpUploadArea,";
-import { OgpImageSectionProps } from '@/feateure/shareVideo/types';
+import OgpPreview from "@/features/shareVideo/componets/OgpPreview";
+import OgpUploadArea from "@/features/shareVideo/componets/OgpUploadArea,";
+import { OgpImageSectionProps } from '@/features/shareVideo/types';
 
 export default function OgpImageSection({
 	ogp,

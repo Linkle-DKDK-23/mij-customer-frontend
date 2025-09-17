@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { UserProfile } from '@/feateure/account/Account/types';
+import { UserProfile } from '@/features/account/Account/types';
 
 interface ProfileSectionProps {
   profile: UserProfile;

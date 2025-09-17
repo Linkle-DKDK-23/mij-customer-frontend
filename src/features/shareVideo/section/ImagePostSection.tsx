@@ -1,8 +1,8 @@
 import React from 'react';
-import ImageUploadArea from "@/feateure/shareVideo/componets/ImageUploadArea";
-import ThumbnailPreview from "@/feateure/shareVideo/componets/ThumbnailPreview";
-import ImagePreview from "@/feateure/shareVideo/componets/ImagePreview";
-import { ImagePostSectionProps } from '@/feateure/shareVideo/types';
+import ImageUploadArea from "@/features/shareVideo/componets/ImageUploadArea";
+import ThumbnailPreview from "@/features/shareVideo/componets/ThumbnailPreview";
+import ImagePreview from "@/features/shareVideo/componets/ImagePreview";
+import { ImagePostSectionProps } from '@/features/shareVideo/types';
 
 export default function ImagePostSection({
   selectedImages,

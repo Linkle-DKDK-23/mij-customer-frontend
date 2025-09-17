@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSectionProps } from '@/feateure/account/AccountEdit/types';
+import { MessageSectionProps } from '@/features/account/AccountEdit/types';
 
 export default function MessageSection({ message }: MessageSectionProps) {
   if (!message) return null;

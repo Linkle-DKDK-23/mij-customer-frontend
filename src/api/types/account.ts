@@ -73,3 +73,23 @@ export interface AccountPresignedUrlResponse {
     };
   };
 }
+
+export interface AccountPostResponse {
+    id: string
+    description: string
+    thumbnail_url: string | null
+    likes_count: number
+    creator_name: string
+    display_name: string
+    creator_avatar_url: string | null
+	price: number | null
+	currency: string | null
+}
+
+export interface AccountPostStatusResponse {
+    pending_posts: AccountPostResponse[]
+    rejected_posts: AccountPostResponse[]
+    unpublished_posts: AccountPostResponse[]
+    deleted_posts: AccountPostResponse[]
+    approved_posts: AccountPostResponse[]
+}

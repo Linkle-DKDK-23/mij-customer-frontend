@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import AccountHeader from '@/feateure/account/component/AccountHeader';
+import AccountHeader from '@/features/account/component/AccountHeader';
 
 // セクションコンポーネントをインポート
-import PlanHeaderSection from '@/feateure/account/AccountPlanSetting/PlanHeaderSection';
-import EmptyPlanSection from '@/feateure/account/AccountPlanSetting/EmptyPlanSection';
-import PlanListSection from '@/feateure/account/AccountPlanSetting/PlanListSection';
-import PlanTipsSection from '@/feateure/account/AccountPlanSetting/PlanTipsSection';
+import PlanHeaderSection from '@/features/account/AccountPlanSetting/PlanHeaderSection';
+import EmptyPlanSection from '@/features/account/AccountPlanSetting/EmptyPlanSection';
+import PlanListSection from '@/features/account/AccountPlanSetting/PlanListSection';
+import PlanTipsSection from '@/features/account/AccountPlanSetting/PlanTipsSection';
 
 interface Plan {
   id: string;

@@ -4,7 +4,7 @@ import { getPostsByCategory } from '@/api/endpoints/post';
 
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
-import { PostCategory } from '@/feateure/category/types';
+import { PostCategory } from '@/features/category/types';
 import PostsSection from '@/components/common/PostsSection';
 import { PostCardProps } from '@/components/common/PostCard';
 	

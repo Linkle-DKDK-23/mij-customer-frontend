@@ -2,8 +2,8 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ProfileFormSectionProps } from '@/feateure/account/AccountEdit/types';
-import { ProfileData } from '@/feateure/account/AccountEdit/types';
+import { ProfileFormSectionProps } from '@/features/account/AccountEdit/types';
+import { ProfileData } from '@/features/account/AccountEdit/types';
 
 export default function ProfileFormSection({ profileData, onInputChange }: ProfileFormSectionProps) {
   return (

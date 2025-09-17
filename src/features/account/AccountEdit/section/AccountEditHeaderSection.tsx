@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { AccountEditHeaderSectionProps } from '@/feateure/account/AccountEdit/types';
+import { AccountEditHeaderSectionProps } from '@/features/account/AccountEdit/types';
 
 export default function AccountEditHeaderSection({ loading, onSave }: AccountEditHeaderSectionProps) {
   return (

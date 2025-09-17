@@ -1,6 +1,7 @@
 // src/routes/AppRouter.tsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '@/providers/AuthProvider';
 
 import Upload from '@/pages/Upload';
 import ViewVideo from '@/pages/ViewVideo';
@@ -60,76 +61,24 @@ export default function AppRouter() {
       <Route path="/post/detail" element={<PostDetail />} />
       <Route path="/test/social" element={<SocialTest />} />
         {/* 認証必須ページ（必要に応じて追加） */}
+      <Route path="/upload_test" element={<PrivateRoute><Upload /></PrivateRoute>} />
+      <Route path="/account" element={<Account />} />
+      <Route path="/account/profile" element={<AccountProfile />} />
+      <Route path="/account/edit" element={<AccountEdit />} />
+      <Route path="/account/settings" element={<AccountSetting />} />
+      <Route path="/account/post" element={<AccountPost />} />
+      <Route path="/account/sale" element={<AccountSale />} />
+      <Route path="/account/sale-withdraw" element={<AccountSaleWithDraw />} />
       <Route
-        path="/upload_test"
         element={
-          <PrivateRoute>
-            <Upload />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account"
-        element={
-          <PrivateRoute>
-            <Account />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/profile"
-        element={
-          <PrivateRoute>
-            <AccountProfile />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/edit"
-        element={
-          <PrivateRoute>
-            <AccountEdit />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/settings"
-        element={
-          <PrivateRoute>
-            <AccountSetting />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/post"
-        element={
-          <PrivateRoute>
-            <AccountPost />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/sale"
-        element={
-          <PrivateRoute>
-            <AccountSale />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/account/sale-withdraw"
-        element={
-          <PrivateRoute>
             <AccountSaleWithDraw />
-          </PrivateRoute>
         }
       />
+      
       <Route
         path="/account/plan"
         element={
-          <PrivateRoute>
             <AccountPlanSetting />
-          </PrivateRoute>
         }
       />
       <Route

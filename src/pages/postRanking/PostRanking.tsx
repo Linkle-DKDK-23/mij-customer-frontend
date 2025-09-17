@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
-import FilterSection from '@/feateure/postRanking/section/FilterSection';
+import FilterSection from '@/features/postRanking/section/FilterSection';
 import PostsSection from '@/components/common/PostsSection';
-import { RankingResponse, TabItem } from '@/feateure/postRanking/types';
+import { RankingResponse, TabItem } from '@/features/postRanking/types';
 import { getRanking } from '@/api/endpoints/ranking';
 
 export default function PostRanking() {

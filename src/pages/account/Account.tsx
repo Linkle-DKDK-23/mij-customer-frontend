@@ -4,16 +4,16 @@ import BottomNavigation from '@/components/common/BottomNavigation';
 import { getAccountInfo } from '@/api/endpoints/account';
 
 // セクションコンポーネントをインポート
-import ProfileSection from '@/feateure/account/section/ProfileSection';
-import AccountSettingsSection from '@/feateure/account/section/AccountSettingsSection';
-import AccountNavigation from '@/feateure/account/component/AccountNavigation';
-import CouponManagementSection from '@/feateure/account/section/CouponManagementSection';
-import PostManagementSection from '@/feateure/account/section/PostManagementSection';
-import SalesSection from '@/feateure/account/section/SalesSection';
-import PlanManagementSection from '@/feateure/account/section/PlanManagementSection';
+import ProfileSection from '@/features/account/section/ProfileSection';
+import AccountSettingsSection from '@/features/account/section/AccountSettingsSection';
+import AccountNavigation from '@/features/account/component/AccountNavigation';
+import CouponManagementSection from '@/features/account/section/CouponManagementSection';
+import PostManagementSection from '@/features/account/section/PostManagementSection';
+import SalesSection from '@/features/account/section/SalesSection';
+import PlanManagementSection from '@/features/account/section/PlanManagementSection';
 
 // 型定義をインポート
-import { AccountInfo, UserProfile } from '@/feateure/account/types';
+import { AccountInfo, UserProfile } from '@/features/account/types';
 
 export default function Account() {
   const [loading, setLoading] = useState(true);
@@ -56,6 +56,23 @@ export default function Account() {
   }, []);
 
 
+
+  if (loading) {
+    return (
+      <div className="bg-white">
+        <Header />
+        <div className="max-w-md mx-auto pt-16">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">アカウント情報を読み込み中...</p>
+            </div>
+          </div>
+        </div>
+        <BottomNavigation />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">

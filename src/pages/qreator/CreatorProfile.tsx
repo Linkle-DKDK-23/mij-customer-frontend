@@ -10,14 +10,14 @@ import {
 
 
 // セクション
-import PostsSection from '@/feateure/creater/section/PostsSection';
-import PlansSection from '@/feateure/creater/section/PlansSection';
-import IndividualPurchaseSection from '@/feateure/creater/section/IndividualPurchaseSection';
-import GachaSection from '@/feateure/creater/section/GachaSection';
-import CreatorHeader from '@/feateure/creater/section/CreatorHeader';
-import PlanArea from '@/feateure/creater/section/PlanArea';
-import GachaPlan from '@/feateure/creater/section/GachaPlan';
-import TabsSection from '@/feateure/creater/section/TabsSection';
+import PostsSection from '@/features/creater/section/PostsSection';
+import PlansSection from '@/features/creater/section/PlansSection';
+import IndividualPurchaseSection from '@/features/creater/section/IndividualPurchaseSection';
+import GachaSection from '@/features/creater/section/GachaSection';
+import CreatorHeader from '@/features/creater/section/CreatorHeader';
+import PlanArea from '@/features/creater/section/PlanArea';
+import GachaPlan from '@/features/creater/section/GachaPlan';
+import TabsSection from '@/features/creater/section/TabsSection';
 import BottomNavigation from '@/components/common/BottomNavigation';
 
 interface Post {

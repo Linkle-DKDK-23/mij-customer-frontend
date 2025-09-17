@@ -2,9 +2,9 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import SampleStreemUploadArea from "@/feateure/shareVideo/componets/SampleStreemUploadArea";
-import ThumbnailPreview from "@/feateure/shareVideo/componets/ThumbnailPreview";
-import { SampleVideoSectionProps } from '@/feateure/shareVideo/types';
+import SampleStreemUploadArea from "@/features/shareVideo/componets/SampleStreemUploadArea";
+import ThumbnailPreview from "@/features/shareVideo/componets/ThumbnailPreview";
+import { SampleVideoSectionProps } from '@/features/shareVideo/types';
 
 export default function SampleVideoSection({
 	isSample,

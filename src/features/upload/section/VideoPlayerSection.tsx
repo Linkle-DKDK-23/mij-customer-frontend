@@ -1,5 +1,5 @@
 import React from 'react';
-import { VideoPlayer } from '@/feateure/shareVideo/componets/videoPlayer';
+import { VideoPlayer } from '@/features/shareVideo/componets/videoPlayer' ;
 
 interface VideoPlayerSectionProps {
   videoId: string;

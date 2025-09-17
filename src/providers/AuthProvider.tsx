@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "@/api/axios";
-import { AuthCtx } from "@/providers/AuthContext";
-import { AuthContextValue, User } from "@/api/types/auth";
+import { AuthCtx, AuthContextValue, User } from "@/providers/AuthContext";
 import { me as meApi } from "@/api/endpoints/auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -10,13 +9,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const reload = async () => {
     try {
-      const me = await meApi();
+      const me = await meApi();      
       setUser(me.data);
-    } catch {
-      setUser(null);
+      // アクセス成功時にローカルストレージに最終アクセス時刻を保存
+      localStorage.setItem('lastAccessTime', Date.now().toString());
+    } catch (error: any) {
+      console.error('Auth reload error:', error);
+      // 401エラーまたは48時間期限切れエラーをハンドル
+      if (error?.response?.status === 401) {
+        setUser(null);
+        localStorage.removeItem('lastAccessTime');
+        // セッション期限切れの場合はログイン画面にリダイレクト
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      } else {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  // 48時間チェック（クライアントサイド）
+  const checkInactivity = () => {
+    const lastAccessTime = localStorage.getItem('lastAccessTime');
+    if (lastAccessTime) {
+      const now = Date.now();
+      const timeDiff = now - parseInt(lastAccessTime);
+      const hoursSinceLastAccess = timeDiff / (1000 * 60 * 60);
+      
+      if (hoursSinceLastAccess > 48) {
+        // 48時間経過している場合、ユーザーをログアウトしてログイン画面に遷移
+        setUser(null);
+        localStorage.removeItem('lastAccessTime');
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return true;
+      }
+    }
+    return false;
   };
 
   // 初期ロード
@@ -25,8 +58,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // フェイルセーフ：何かあってもローディングを落とす
       setLoading(false);
     }, 5000);
-    reload().finally(() => clearTimeout(timeout));
+
+    // まずクライアントサイドで48時間チェック
+    if (!checkInactivity()) {
+      // 期限切れでない場合のみサーバーに問い合わせ
+      reload().finally(() => clearTimeout(timeout));
+    } else {
+      setLoading(false);
+      clearTimeout(timeout);
+    }
+    
     return () => clearTimeout(timeout);
+  }, []);
+
+  // 定期的な非アクティブチェック（10分間隔）
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkInactivity();
+    }, 10 * 60 * 1000); // 10分間隔
+
+    return () => clearInterval(interval);
   }, []);
 
   const value: AuthContextValue = { user, loading, reload, setUser };
