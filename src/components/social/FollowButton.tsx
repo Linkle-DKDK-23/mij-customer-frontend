@@ -22,7 +22,6 @@ export default function FollowButton({
     const fetchFollowStatus = async () => {
       try {
         const response = await getFollowStatus(userId);
-        console.log(response);
         setFollowing(response.data.following);
       } catch (error) {
         console.error('Failed to fetch follow status:', error);

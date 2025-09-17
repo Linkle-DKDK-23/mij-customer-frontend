@@ -32,8 +32,6 @@ export default function Top() {
       try {
         setLoading(true);
         const data = await getTopPageData();
-
-        console.log('data', data);
         setTopPageData(data);
       } catch (err) {
         setError('トップページデータの取得に失敗しました');
