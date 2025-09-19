@@ -30,7 +30,7 @@ import { mimeToImageExt, mimeToExt } from '@/lib/media';
 import { Button } from "@/components/ui/button";
 import { FileSpec, VideoFileSpec } from '@/api/types/commons';
 import { PostImagePresignedUrlRequest, PostVideoPresignedUrlRequest } from '@/api/types/postMedia';
-import { postImagePresignedUrl, postVideoPresignedUrl, postMediaConvert } from '@/api/endpoints/postMedia';
+import { postImagePresignedUrl, postVideoPresignedUrl } from '@/api/endpoints/postMedia';
 
 // エンドポイントをインポート
 import { createPost } from '@/api/endpoints/post';
@@ -558,15 +558,6 @@ export default function ShareVideo() {
 					await uploadFile(thumbnailFile, 'thumbnail', imagePresignedUrl.uploads.thumbnail);
 				}
 					}
-				}
-			}
-
-			if (postType === 'video') {
-				// 画像を選択している場合は別リクエストを送る
-				const convertResponse = await postMediaConvert({ post_id: response.id });
-				if (convertResponse.status === 'error') {
-					setUploadMessage('画像の変換に失敗しました。');
-					return;
 				}
 			}
 

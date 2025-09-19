@@ -58,7 +58,7 @@ export default function Top() {
       id: post.id,
       title: post.description || '',
       thumbnail: post.thumbnail_url || 'https://picsum.photos/300/200?random=1',
-      duration: '00:00',
+      duration: post.duration || 0,
       views: 0,
       likes: 'likes_count' in post ? post.likes_count : 0,
       creator: {
@@ -67,7 +67,7 @@ export default function Top() {
         avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
         verified: false
       },
-      rank: 'rank' in post ? post.rank : undefined
+      rank: 'rank' in post ? post.rank : undefined,
     }));
   };
 

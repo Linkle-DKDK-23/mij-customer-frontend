@@ -14,6 +14,7 @@ export interface TopPageData {
 		display_name: string;
 		creator_avatar_url?: string;
 		rank: number;
+		duration: string;
 	}>;
 	top_creators: Array<{
 		id: string;
@@ -37,5 +38,6 @@ export interface TopPageData {
 		creator_name: string;
 		display_name: string;
 		creator_avatar_url?: string;
+		duration?: string;
 	}>;
 }

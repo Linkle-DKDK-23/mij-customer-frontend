@@ -41,7 +41,7 @@ export default function AppRouter() {
   return (
     <Routes>
       {/* 公開ページ */}
-      <Route path="/top" element={<Top />} />
+      <Route path="/" element={<Top />} />
       <Route path="/category" element={<Category />} />
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/share/video" element={<ShareVideo />} />

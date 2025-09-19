@@ -17,6 +17,7 @@ export interface PostDetailData {
 	created_at: string;
 	creator: {
 		name: string;
+		slug: string;
 		avatar: string;
 		verified: boolean;
 	};
@@ -40,5 +41,16 @@ export interface PostDetailData {
 			kind: string;
 			storage_key: string;
 		};
+	};
+	subscription: {
+		amount: number;
+		currency: string;
+		interval: string | null;
+		plan_name: string;
+		plan_description: string;
+	};
+	single: {
+		amount: number;
+		currency: string;
 	};
 }
