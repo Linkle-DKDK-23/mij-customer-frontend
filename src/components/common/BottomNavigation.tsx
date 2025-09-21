@@ -14,7 +14,7 @@ export default function BottomNavigation() {
         <div className="flex items-center justify-around py-2 px-4">
           <div 
             className="flex flex-col items-center py-2 text-primary cursor-pointer w-16"
-            onClick={() => navigate('/top')}
+            onClick={() => navigate('/')}
           >
             <Home className="h-6 w-6" />
             <span className="text-xs mt-1 font-medium text-center">ホーム</span>

@@ -1,32 +1,75 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Heart, MessageCircle, Share, Bookmark, Play } from 'lucide-react';
+import { Heart, MessageCircle, Share, Bookmark, Play, ArrowLeft, Video, ArrowRight, Maximize, Minimize } from 'lucide-react';
 import Hls from 'hls.js';
 import { PostDetailData } from '@/api/types/post';
+import { Button } from '@/components/ui/button';
 
 interface VerticalVideoCardProps {
   post: PostDetailData;
   isActive: boolean;
   onVideoClick: () => void;
+  onPurchaseClick: () => void;
 }
 
-export default function VerticalVideoCard({ post, isActive, onVideoClick }: VerticalVideoCardProps) {
+export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurchaseClick }: VerticalVideoCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [bufferedEnd, setBufferedEnd] = useState(0);
   const [dragging, setDragging] = useState(false);
-
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const barWrapRef = useRef<HTMLDivElement>(null);
 
-  // mm:ss
-  const formatTime = (t: number) => {
-    if (!Number.isFinite(t)) return '0:00';
-    const m = Math.floor(t / 60);
-    const s = Math.floor(t % 60);
-    return `${m}:${s.toString().padStart(2, '0')}`;
+  // 時間をフォーマットする関数
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  // main_video_durationをフォーマットする関数（分のみ表示、分がない場合は秒のみ）
+  const formatMainVideoDuration = (duration: string): string => {
+    const [minutes, seconds] = duration.split(':').map(Number);
+    
+    if (minutes > 0) {
+      return `${minutes}分`;
+    } else {
+      return `${seconds}秒`;
+    }
+  };
+
+  // 全画面表示の処理
+  const toggleFullscreen = async () => {
+    if (!videoRef.current) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        // 全画面表示
+        await videoRef.current.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        // 全画面解除
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('全画面表示エラー:', error);
+    }
+  };
+
+  // 全画面状態の監視
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // バッファ終端を取得
   const updateBuffered = useCallback(() => {
@@ -153,6 +196,21 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick }: Vert
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const bufferedPct = duration > 0 ? (bufferedEnd / duration) * 100 : 0;
 
+  // 購入ボタンのクリック処理
+  const handlePurchaseClick = (e: React.MouseEvent) => {
+    console.log('handlePurchaseClick');
+    e.stopPropagation();
+    if (onPurchaseClick) {
+      onPurchaseClick();
+    }
+  };
+
+  // 全画面ボタンのクリック処理
+  const handleFullscreenClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFullscreen();
+  };
+
   return (
     <div className="relative w-full h-[calc(100vh-var(--nav-h)-env(safe-area-inset-bottom))] bg-black flex items-center justify-center">
       <div className="relative w-full h-full">
@@ -178,87 +236,128 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick }: Vert
           </div>
         )}
 
-        {/* プログレス（myfans風：薄いバッファ＋白い進捗＋ドラッグ可能） */}
-        {post.video_url && duration > 0 && (
-          <div
-            className="absolute right-2 left-2 z-50 w-90% bottom-1"
-          >
-            <div
-              ref={barWrapRef}
-              className="relative h-3 flex items-center"
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-            >
-              {/* バックグラウンド（トラック） */}
-              <div className="absolute inset-0 rounded-full bg-white/20 h-1.5" />
-              {/* バッファ済み */}
-              <div
-                className="absolute top-0 left-0 h-1.5 rounded-full bg-white/35"
-                style={{ width: `${bufferedPct}%` }}
-              />
-              {/* 再生済み */}
-              <div
-                className="absolute top-0 left-0 h-1.5 rounded-full bg-white"
-                style={{ width: `${progressPct}%` }}
-              />
-              {/* ハンドル（つまみ） */}
-              <div
-                className="absolute -top-1.5 h-4 w-4 rounded-full bg-white shadow"
-                style={{ left: `calc(${progressPct}% - 8px)` }}
-              />
-            </div>
-
-            <div className="mt-1.5 flex justify-between text-white/80 text-[11px] tabular-nums">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
-          </div>
-        )}
-
         {/* 右側のアクション */}
         <div className="absolute right-4 bottom-16 flex flex-col space-y-6 z-50">
+          {/* アイコン */}
+          <div className="flex flex-col items-center space-y-2">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <img src={post.creator.avatar} alt={post.creator.name} className="w-full h-full object-cover rounded-full" />
+            </div>
+          </div>
+          {/* いいね */}
           <div className="flex flex-col items-center space-y-2">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <Heart className="h-6 w-6 text-white" />
             </div>
             <span className="text-white text-xs font-medium">{post.likes.toLocaleString()}</span>
           </div>
-          <div className="flex flex-col items-center space-y-2">
+          {/* コメント */}
+          {/* <div className="flex flex-col items-center space-y-2">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <MessageCircle className="h-6 w-6 text-white" />
             </div>
             <span className="text-white text-xs font-medium">コメント</span>
-          </div>
+          </div> */}
+          {/* 保存 */}
           <div className="flex flex-col items-center space-y-2">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <Bookmark className="h-6 w-6 text-white" />
             </div>
             <span className="text-white text-xs font-medium">保存</span>
           </div>
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <Share className="h-6 w-6 text-white" />
+          {/* 全画面ボタン */}
+          {post.video_url && (
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleFullscreenClick}
+                className="w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full p-0 backdrop-blur-sm"
+              >
+                {isFullscreen ? (
+                  <Minimize className="h-5 w-5 text-white" />
+                ) : (
+                  <Maximize className="h-5 w-5 text-white" />
+                )}
+              </Button>
             </div>
-            <span className="text-white text-xs font-medium">シェア</span>
-          </div>
+          )}
         </div>
 
-        {/* クリエイター情報・タイトル */}
-        <div className="absolute bottom-20 left-4 right-20">
-          <div className="flex items-center space-x-3 mb-3">
-            <img
-              src={post.creator.avatar}
-              alt={post.creator.name}
-              className="w-10 h-10 rounded-full border-2 border-white"
-            />
-            <div>
-              <p className="text-white font-semibold text-sm">{post.creator.name}</p>
-              <p className="text-white text-xs opacity-80">{post.views.toLocaleString()} 回視聴</p>
+        {/* 左下のコンテンツエリア（クリエイター情報・タイトル） */}
+        <div className="absolute bottom-0 left-0 right-20 flex flex-col space-y-4 z-40">
+          {/* クリエイター情報・タイトル */}
+          <div className="px-4 pb-4 flex flex-col space-y-4">
+            {!post.purchased && (
+              <Button 
+                className="w-fit flex items-center space-x-1 bg-primary text-white text-xs font-bold"
+                onClick={handlePurchaseClick}
+              >
+                <Video className="h-4 w-4" />
+                <span>本編{formatMainVideoDuration(post.main_video_duration)}を購入する</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>  
+            )}
+            
+            <div className="flex items-center space-x-3">
+              <div>
+                <p className="text-white font-semibold text-sm">{post.creator.slug}</p>
+              </div>
+            </div>
+            <p className="text-white text-sm leading-relaxed">{post.title}</p>
+            {/* カテゴリータグを表示 */}
+            <div className="flex flex-wrap gap-2">
+              {post.categories.map((category) => (
+                <span key={category.id} className="text-white text-xs bg-primary px-2 py-1 rounded-full">{category.name}</span>
+              ))}
             </div>
           </div>
-          <p className="text-white text-sm leading-relaxed">{post.title}</p>
+
+          {/* 時間表示をプログレスバーの左上に配置 */}
+          {post.video_url && duration > 0 && (
+            <div className="px-4 pb-4">
+              <div className="px-2 py-1 bg-primary/50 w-fit text-white text-md tabular-nums rounded-md mb-2">
+                <span>
+                  {post.purchased ? '再生時間：' : 'サンプル：'}
+                  {formatTime(currentTime)}/{formatTime(duration)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* プログレスバー（画面横幅いっぱいに表示） */}
+        {post.video_url && duration > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 w-full z-30">
+            <div className="w-full">
+              <div
+                ref={barWrapRef}
+                className="relative h-3 flex items-center"
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+              >
+                {/* バックグラウンド（トラック） */}
+                <div className="absolute inset-0 rounded-full bg-white/20 h-1.5" />
+                {/* バッファ済み */}
+                <div
+                  className="absolute top-0 left-0 h-1.5 rounded-full bg-white/35"
+                  style={{ width: `${bufferedPct}%` }}
+                />
+                {/* 再生済み */}
+                <div
+                  className="absolute top-0 left-0 h-1.5 rounded-full bg-white"
+                  style={{ width: `${progressPct}%` }}
+                />
+                {/* ハンドル（つまみ） */}
+                <div
+                  className="absolute -top-1.5 h-4 w-4 rounded-full bg-primary shadow"
+                  style={{ left: `calc(${progressPct}% - 8px)` }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

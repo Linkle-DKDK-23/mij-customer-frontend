@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import {  CreatorsSectionProps } from '@/feateure/top/types';
+import {  CreatorsSectionProps } from '@/features/top/types';
 import FollowButton from '@/components/social/FollowButton';
 
 export default function CreatorsSection({ 
