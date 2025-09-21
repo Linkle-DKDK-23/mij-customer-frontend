@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Heart, MessageCircle, Share, Bookmark, Play, ArrowLeft, Video, ArrowRight } from 'lucide-react';
+import { Heart, MessageCircle, Share, Bookmark, Play, ArrowLeft, Video, ArrowRight, Maximize, Minimize } from 'lucide-react';
 import Hls from 'hls.js';
 import { PostDetailData } from '@/api/types/post';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
   const [duration, setDuration] = useState(0);
   const [bufferedEnd, setBufferedEnd] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const barWrapRef = useRef<HTMLDivElement>(null);
@@ -38,6 +39,37 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
       return `${seconds}秒`;
     }
   };
+
+  // 全画面表示の処理
+  const toggleFullscreen = async () => {
+    if (!videoRef.current) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        // 全画面表示
+        await videoRef.current.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        // 全画面解除
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('全画面表示エラー:', error);
+    }
+  };
+
+  // 全画面状態の監視
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // バッファ終端を取得
   const updateBuffered = useCallback(() => {
@@ -173,6 +205,12 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
     }
   };
 
+  // 全画面ボタンのクリック処理
+  const handleFullscreenClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFullscreen();
+  };
+
   return (
     <div className="relative w-full h-[calc(100vh-var(--nav-h)-env(safe-area-inset-bottom))] bg-black flex items-center justify-center">
       <div className="relative w-full h-full">
@@ -227,20 +265,40 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
             </div>
             <span className="text-white text-xs font-medium">保存</span>
           </div>
+          {/* 全画面ボタン */}
+          {post.video_url && (
+            <div className="flex flex-col items-center space-y-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleFullscreenClick}
+                className="w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full p-0 backdrop-blur-sm"
+              >
+                {isFullscreen ? (
+                  <Minimize className="h-5 w-5 text-white" />
+                ) : (
+                  <Maximize className="h-5 w-5 text-white" />
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* 左下のコンテンツエリア（クリエイター情報・タイトル） */}
         <div className="absolute bottom-0 left-0 right-20 flex flex-col space-y-4 z-40">
           {/* クリエイター情報・タイトル */}
           <div className="px-4 pb-4 flex flex-col space-y-4">
-            <Button 
-              className="w-fit flex items-center space-x-1 bg-primary text-white text-xs font-bold"
-              onClick={handlePurchaseClick}
-            >
-              <Video className="h-4 w-4" />
-              <span>本編{formatMainVideoDuration(post.main_video_duration)}を購入する</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            {!post.purchased && (
+              <Button 
+                className="w-fit flex items-center space-x-1 bg-primary text-white text-xs font-bold"
+                onClick={handlePurchaseClick}
+              >
+                <Video className="h-4 w-4" />
+                <span>本編{formatMainVideoDuration(post.main_video_duration)}を購入する</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>  
+            )}
+            
             <div className="flex items-center space-x-3">
               <div>
                 <p className="text-white font-semibold text-sm">{post.creator.slug}</p>
@@ -259,7 +317,10 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
           {post.video_url && duration > 0 && (
             <div className="px-4 pb-4">
               <div className="px-2 py-1 bg-primary/50 w-fit text-white text-md tabular-nums rounded-md mb-2">
-                <span>サンプル：{formatTime(currentTime)}/{formatTime(duration)}</span>
+                <span>
+                  {post.purchased ? '再生時間：' : 'サンプル：'}
+                  {formatTime(currentTime)}/{formatTime(duration)}
+                </span>
               </div>
             </div>
           )}

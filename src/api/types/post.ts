@@ -28,6 +28,7 @@ export interface PostDetailData {
 	likes: number;
 	thumbnail: string;
 	title: string;
+	purchased: boolean;
 	updated_at: string;
 	video_url: string;
 	views: number;
@@ -43,6 +44,7 @@ export interface PostDetailData {
 		};
 	};
 	subscription: {
+		id: string;
 		amount: number;
 		currency: string;
 		interval: string | null;
@@ -50,6 +52,7 @@ export interface PostDetailData {
 		plan_description: string;
 	};
 	single: {
+		id: string;
 		amount: number;
 		currency: string;
 	};

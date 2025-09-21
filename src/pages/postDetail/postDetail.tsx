@@ -7,17 +7,26 @@ import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { getPostDetail } from '@/api/endpoints/post';
 import PurchaseDialog from '@/components/common/PurchaseDialog';
-import PaymentDialog from '@/components/common/PaymentDialog';
+import SelectPaymentDialog from '@/components/common/SelectPaymentDialog';
+import CreditPaymentDialog from '@/components/common/CreditPaymentDialog';
+import { createPurchase } from '@/api/endpoints/purchases';
 
 export default function PostDetail() {
   const [searchParams] = useSearchParams();
   const postId = searchParams.get('post_id');
   const [currentPost, setCurrentPost] = useState<PostDetailData | null>(null);
   const [loading, setLoading] = useState(true);
-	const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
-	const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-	const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-	const [purchaseType, setPurchaseType] = useState<'single' | 'subscription' | null>(null);
+  
+  // ダイアログの状態をオブジェクトで管理
+  const [dialogs, setDialogs] = useState({
+    purchase: false,
+    payment: false,
+    creditPayment: false,
+		bankTransfer: false
+  });
+  
+  const [purchaseType, setPurchaseType] = useState<'single' | 'subscription' | null>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     vertical: true,
     slides: {
@@ -37,48 +46,72 @@ export default function PostDetail() {
   };
 
   const handlePurchaseClick = () => {
-    setShowPurchaseDialog(true);
+    setDialogs(prev => ({ ...prev, purchase: true }));
   };
 
   const handlePurchaseConfirm = (type: 'single' | 'subscription') => {
-		setPurchaseType(type);
-    setShowPurchaseDialog(false);
-    // 実際の購入処理は後で実装
-    setShowPaymentDialog(true);
+    setPurchaseType(type);
+    setDialogs(prev => ({ ...prev, purchase: false, payment: true }));
   };
 
   const handlePaymentMethodSelect = (method: string) => {
-    console.log("選択された支払い方法:", method);
-    // ここで実際の決済処理を実装
-    // 例: クレジットカード決済、コンビニ決済など
+    if (method === 'credit_card') {
+      setDialogs(prev => ({ ...prev, payment: false, creditPayment: true }));
+    } else if (method === 'bank_transfer') {
+      setDialogs(prev => ({ ...prev, payment: false, bankTransfer: true }));
+    } else {
+      // 他の支払い方法の処理
+      setDialogs(prev => ({ ...prev, payment: false }));
+    }		
   };
 
-  const handlePaymentDialogClose = () => {
-    setShowPaymentDialog(false);
+  // 共通のダイアログクローズ関数
+  const closeDialog = (dialogName: keyof typeof dialogs) => {
+    setDialogs(prev => ({ ...prev, [dialogName]: false }));
   };
 
+  // fetchPostDetail関数を抽出
+  const fetchPostDetail = async () => {
+    if (!postId) return;
+    
+    try {
+      setLoading(true);
+      const data = await getPostDetail(postId);
+      setCurrentPost(data);
+    } catch (error) {
+      console.error('Failed to fetch post detail:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const handlePayment = async () => {
+		// TODO: 自動で購入動画に切り替わるように修正
+    const formData = {
+      post_id: currentPost?.id,
+      plan_id: purchaseType === 'single' ? currentPost?.single.id : currentPost?.subscription.id,
+    }
 
-  const handlePurchaseDialogClose = () => {
-    setShowPurchaseDialog(false);
+    try {
+      const res = await createPurchase(formData);
+
+      if (res.status === 200) {
+
+				await fetchPostDetail();
+				setTimeout(() => {
+					closeDialog('creditPayment');
+					closeDialog('payment');
+					closeDialog('purchase');
+					closeDialog('bankTransfer');
+				}, 100); // 少し遅延させる
+      }
+    } catch (error) {
+      console.error('Failed to create purchase:', error);
+    }
   };
 
   useEffect(() => {
-		const fetchPostDetail = async () => {
-			if (!postId) return;
-			
-			try {
-				setLoading(true);
-				const data = await getPostDetail(postId);
-				console.log('data', data);
-				setCurrentPost(data);
-			} catch (error) {
-				console.error('Failed to fetch post detail:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchPostDetail();
+    fetchPostDetail();
   }, [postId]);
 
   if (loading) {
@@ -132,22 +165,33 @@ export default function PostDetail() {
 			{/* 購入ダイアログ */}
 			{currentPost && (
 				<PurchaseDialog
-					isOpen={showPurchaseDialog}
-					onClose={handlePurchaseDialogClose}
+					isOpen={dialogs.purchase}
+					onClose={() => closeDialog('purchase')}
 					post={currentPost}
 					onPurchase={handlePurchaseConfirm}
 				/>
 			)}
 			{/* 支払いダイアログ */}
 			{currentPost && (
-				<PaymentDialog
-					isOpen={showPaymentDialog}
-					onClose={handlePaymentDialogClose}
+				<SelectPaymentDialog
+					isOpen={dialogs.payment}
+					onClose={() => closeDialog('payment')}
 					post={currentPost}
 					onPaymentMethodSelect={handlePaymentMethodSelect}
 					purchaseType={purchaseType}
 				/>
 			)}
+			{/* クレジットカード決済ダイアログ */}
+			{currentPost && dialogs.creditPayment && (
+				<CreditPaymentDialog
+					isOpen={dialogs.creditPayment}
+					onClose={() => closeDialog('creditPayment')}
+					onPayment={handlePayment}
+					post={currentPost}
+					purchaseType={purchaseType}
+				/>
+			)}
+
 		</div>
   );
 }

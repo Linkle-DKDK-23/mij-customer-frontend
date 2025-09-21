@@ -7,7 +7,7 @@ export { default as FileUploadGrid } from './FileUploadGrid';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as PurchaseDialog } from './PurchaseDialog';
-export { default as PaymentDialog } from './PaymentDialog';
+export { default as SelectPaymentDialog } from './SelectPaymentDialog';
 
 // Type exports
 export type { PostCardProps } from './PostCard';

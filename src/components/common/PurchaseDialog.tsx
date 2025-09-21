@@ -1,7 +1,7 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, CreditCard, Lock } from 'lucide-react';
+import { CreditCard, Lock } from 'lucide-react';
 import { PostDetailData } from '@/api/types/post';
 import { formatPrice } from '@/lib/utils';
 
@@ -15,9 +15,12 @@ interface PurchaseDialogProps {
 export default function PurchaseDialog({ isOpen, onClose, post, onPurchase }: PurchaseDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay className="bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <DialogOverlay className="bg-black/30 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <DialogContent className="fixed bottom-0 left-0 right-0 top-auto translate-y-0 translate-x-0 max-w-none w-full h-auto max-h-[80vh] rounded-t-2xl border-0 bg-white p-0 shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300">
         <DialogTitle className="sr-only">購入確認</DialogTitle>
+        <DialogDescription className="sr-only">
+          コンテンツの購入を確認し、支払い方法を選択してください
+        </DialogDescription>
         <div className="flex flex-col">
           {/* ヘッダー */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
