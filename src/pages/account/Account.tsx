@@ -30,7 +30,7 @@ export default function Account() {
   const mockUser: UserProfile = {
     name: accountInfo?.slug || '',
     username: accountInfo?.display_name || '',
-    avatar: accountInfo?.avatar_url ? `https://cdn-dev.mijfans.jp/${accountInfo.avatar_url}` : '/src/assets/no-image.svg',
+    avatar: accountInfo?.avatar_url || '/src/assets/no-image.svg',
     followingCount: accountInfo?.following_count || 0,
     followerCount: accountInfo?.followers_count || 0,
     totalLikes: accountInfo?.total_likes || 0

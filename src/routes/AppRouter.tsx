@@ -34,6 +34,9 @@ import PostRanking from '@/pages/postRanking/PostRanking';
 import Category from '@/pages/category/Category';
 import PostDetail from '@/pages/postDetail/postDetail';
 import SocialTest from '@/pages/test/SocialTest';
+import Terms from '@/pages/legal/Terms';
+import PrivacyPolicy from '@/pages/legal/PrivacyPolicy';
+import LegalNotice from '@/pages/legal/LegalNotice';
 
 import PrivateRoute from '@/routes/PrivateRoute';
 
@@ -69,6 +72,9 @@ export default function AppRouter() {
       <Route path="/account/post" element={<AccountPost />} />
       <Route path="/account/sale" element={<AccountSale />} />
       <Route path="/account/sale-withdraw" element={<AccountSaleWithDraw />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/legal-notice" element={<LegalNotice />} />
       <Route
         element={
             <AccountSaleWithDraw />
@@ -84,9 +90,9 @@ export default function AppRouter() {
       <Route
         path="/creator/request"
         element={
-          <PrivateRoute>
+          // <PrivateRoute>
             <QreatorRequest />
-          </PrivateRoute>
+          // </PrivateRoute>
         }
       />
       <Route

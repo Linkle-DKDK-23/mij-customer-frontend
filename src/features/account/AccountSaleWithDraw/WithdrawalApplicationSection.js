@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function WithdrawalApplicationSection({ fee }) {
+    return (_jsxs("div", { className: "bg-white border border-gray-200 rounded-lg p-6", children: [_jsx("h3", { className: "text-lg font-semibold text-gray-900 mb-4", children: "\u51FA\u91D1\u7533\u8ACB" }), _jsxs("div", { className: "space-y-4", children: [_jsxs("div", { className: "flex items-center justify-between", children: [_jsx("span", { className: "text-gray-600", children: "\u624B\u6570\u6599" }), _jsxs("span", { className: "text-gray-900", children: [fee, "\u5186"] })] }), _jsxs("div", { className: "flex items-center justify-between", children: [_jsx("span", { className: "text-gray-600", children: "\u632F\u8FBC\u91D1\u984D" }), _jsx("span", { className: "text-gray-900", children: "0\u5186" })] })] })] }));
+}

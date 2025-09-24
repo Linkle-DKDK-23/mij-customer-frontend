@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DescriptionSectionProps } from '@/feateure/shareVideo/types';
+import { DescriptionSectionProps } from '@/features/shareVideo/types';
 
 export default function DescriptionSection({
 	description,

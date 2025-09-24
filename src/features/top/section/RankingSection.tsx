@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronRight, Clock, Play, Eye, Heart, Bookmark, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Post, RecentPostsSectionProps } from '@/feateure/top/types';
+import { Post, RecentPostsSectionProps } from '@/features/top/types';
 
 export default function RankingSection({ posts }: RecentPostsSectionProps) {
 

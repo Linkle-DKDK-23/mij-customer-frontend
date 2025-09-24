@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plan } from '@/feateure/creater/types';
+import { Plan } from '@/features/creater/types';
 
 export default function PlanArea({ plans }: { plans: Plan[] }) {
   return (

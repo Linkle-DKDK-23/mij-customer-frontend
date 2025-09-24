@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RecommendedGenresSectionProps } from '@/feateure/top/types';
+import { RecommendedGenresSectionProps } from '@/features/top/types';
 import { useNavigate } from 'react-router-dom';
 
 export default function RecommendedGenresSection({ genres }: RecommendedGenresSectionProps) {

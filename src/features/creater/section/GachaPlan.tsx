@@ -1,5 +1,5 @@
 import { Star, Crown } from 'lucide-react';
-import { GachaItem } from '@/feateure/creater/types';
+import { GachaItem } from '@/features/creater/types';
 
 export default function GachaPlan({ items }: { items: GachaItem[] }) {
   return (

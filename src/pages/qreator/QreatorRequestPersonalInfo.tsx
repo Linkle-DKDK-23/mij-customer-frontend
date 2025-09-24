@@ -86,19 +86,19 @@ export default function QreatorRequestPersonalInfo({ onNext, onBack, currentStep
   };
 
   const handleSubmit = async () => {
+    console.log('VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
     if (!formData.name || !formData.first_name_kana || !formData.last_name_kana || !formData.birth_date || !formData.phone_number || !formData.gender_slug || formData.gender_slug.length === 0) {
       alert('必須項目をすべて入力してください');
       return;
     }
-    // 次のステップに入力情報を引き継ぐ
-    onNext();
 
-    // await registerCreator(formData).then(() => {
-    //   onNext(formData);
-    // }).catch((error) => {
-    //   alert('登録に失敗しました');
-    //   console.error(error);
-    // });
+    await registerCreator(formData).then(() => {
+      console.log("registerCreator success");
+      onNext();
+    }).catch((error) => {
+      alert('登録に失敗しました');
+      console.error(error);
+    });
   };
 
   return (

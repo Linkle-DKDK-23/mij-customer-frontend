@@ -14,14 +14,14 @@ export default function ProfileHeaderSection({ coverUrl, avatarUrl, displayName 
       <div 
         className="h-32 bg-gradient-to-r from-blue-400 to-purple-500"
         style={{
-          backgroundImage: coverUrl ? `url(https://cdn-dev.mijfans.jp/${coverUrl})` : undefined,
+          backgroundImage: coverUrl ? `${coverUrl}` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
       ></div>
       <div className="absolute -bottom-10 left-6">
         <img 
-          src={avatarUrl ? `https://cdn-dev.mijfans.jp/${avatarUrl}` : '/src/assets/no-image.svg'} 
+          src={avatarUrl || '/src/assets/no-image.svg'} 
           alt={displayName}
           className="w-20 h-20 rounded-full border-4 border-white object-cover"
         />

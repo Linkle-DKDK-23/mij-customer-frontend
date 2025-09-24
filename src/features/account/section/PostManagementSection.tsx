@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PostManagementSectionProps } from '@/feateure/account/section/types';
+import { PostManagementSectionProps } from '@/features/account/section/types';
 
 export default function PostManagementSection({ accountInfo }: PostManagementSectionProps) {
   const navigate = useNavigate();

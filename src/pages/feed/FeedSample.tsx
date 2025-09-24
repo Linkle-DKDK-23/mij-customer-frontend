@@ -1,127 +1,98 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  Search, 
-  Bell, 
-  Menu, 
-  ShoppingCart, 
-  Bookmark, 
-  Heart, 
-  History, 
-  ChevronRight, 
-  Play, 
-  Clock, 
-  Eye, 
+import {
+  Search,
+  Bell,
+  Menu,
+  ShoppingCart,
+  Bookmark,
+  Heart,
+  History,
+  ChevronRight,
+  Play,
+  Clock,
+  Eye,
   Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import Header from '@/components/common/Header';
 import VerticalVideoCard from '@/components/video/VerticalVideoCard';
+import { PostDetailData } from '@/api/types/post';
 
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { cn } from "@/lib/utils";
 
-interface Post {
-  id: string;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  views: number;
-  likes: number;
-  creator: {
-    name: string;
-    avatar: string;
-    verified: boolean;
-  };
-  rank?: number;
-  videoUrl?: string;
-}
-
-const mockFeedPosts: Post[] = [
+const mockFeedPosts: PostDetailData[] = [
   {
     id: '1',
     title: '【限定公開】プライベート動画集 Vol.1 - 夏の思い出を特別にお届け♡',
     thumbnail: 'https://picsum.photos/400/600?random=101',
-    duration: '12:34',
+    description: '夏の思い出を特別にお届けする限定動画です',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    main_video_duration: '12:34',
+    sample_video_duration: '0:30',
     views: 15420,
     likes: 892,
+    purchased: false,
+    video_url: 'https://picsum.photos/400/600?random=101',
     creator: {
       name: 'あやか',
+      slug: 'ayaka',
       avatar: 'https://picsum.photos/100/100?random=201',
       verified: true
     },
-    videoUrl: 'https://picsum.photos/400/600?random=101'
+    categories: [],
+    media_assets: {},
+    subscription: {
+      id: '1',
+      amount: 1000,
+      currency: 'JPY',
+      interval: 'month',
+      plan_name: 'ベーシックプラン',
+      plan_description: 'ベーシックプランの説明'
+    },
+    single: {
+      id: '1',
+      amount: 500,
+      currency: 'JPY'
+    }
   },
   {
     id: '2',
     title: '夏の思い出 ビーチフォト撮影 - 海辺での特別な一日をシェア',
     thumbnail: 'https://picsum.photos/400/600?random=102',
-    duration: '8:45',
+    description: '海辺での特別な一日をシェア',
+    created_at: '2024-01-02T00:00:00Z',
+    updated_at: '2024-01-02T00:00:00Z',
+    main_video_duration: '8:45',
+    sample_video_duration: '0:30',
     views: 23100,
     likes: 1340,
+    purchased: false,
+    video_url: 'https://picsum.photos/400/600?random=102',
     creator: {
       name: 'みお',
+      slug: 'mio',
       avatar: 'https://picsum.photos/100/100?random=202',
       verified: false
     },
-    videoUrl: 'https://picsum.photos/400/600?random=102'
-  },
-  {
-    id: '3',
-    title: 'コスプレ撮影会の裏側 - メイキング映像を初公開！',
-    thumbnail: 'https://picsum.photos/400/600?random=103',
-    duration: '15:22',
-    views: 8750,
-    likes: 567,
-    creator: {
-      name: 'ゆい',
-      avatar: 'https://picsum.photos/100/100?random=203',
-      verified: true
+    categories: [],
+    media_assets: {},
+    subscription: {
+      id: '2',
+      amount: 800,
+      currency: 'JPY',
+      interval: 'month',
+      plan_name: 'スタンダードプラン',
+      plan_description: 'スタンダードプランの説明'
     },
-    videoUrl: 'https://picsum.photos/400/600?random=103'
-  },
-  {
-    id: '4',
-    title: 'お料理配信 パスタ作り - 簡単レシピを紹介します♪',
-    thumbnail: 'https://picsum.photos/400/600?random=104',
-    duration: '20:15',
-    views: 12300,
-    likes: 789,
-    creator: {
-      name: 'さくら',
-      avatar: 'https://picsum.photos/100/100?random=204',
-      verified: false
-    },
-    videoUrl: 'https://picsum.photos/400/600?random=104'
-  },
-  {
-    id: '5',
-    title: 'ダンス練習動画 新曲振り付け - 一緒に踊りましょう！',
-    thumbnail: 'https://picsum.photos/400/600?random=105',
-    duration: '6:30',
-    views: 19800,
-    likes: 1120,
-    creator: {
-      name: 'りな',
-      avatar: 'https://picsum.photos/100/100?random=205',
-      verified: true
-    },
-    videoUrl: 'https://picsum.photos/400/600?random=105'
-  },
-  {
-    id: '6',
-    title: 'メイクアップチュートリアル - 今日のメイクのポイント解説',
-    thumbnail: 'https://picsum.photos/400/600?random=106',
-    duration: '11:45',
-    views: 16500,
-    likes: 934,
-    creator: {
-      name: 'えみ',
-      avatar: 'https://picsum.photos/100/100?random=206',
-      verified: false
-    },
-    videoUrl: 'https://picsum.photos/400/600?random=106'
+    single: {
+      id: '2',
+      amount: 300,
+      currency: 'JPY'
+    }
   }
 ];
 
@@ -157,10 +128,11 @@ export default function FeedSample() {
       <div ref={sliderRef} className="keen-slider h-full">
         {mockFeedPosts.map((post, index) => (
           <div key={post.id} className="keen-slider__slide">
-            <VerticalVideoCard 
-              post={post} 
+            <VerticalVideoCard
+              post={post}
               isActive={index === currentVideoIndex}
               onVideoClick={() => handleVideoClick(index)}
+              onPurchaseClick={() => {}}
             />
           </div>
         ))}

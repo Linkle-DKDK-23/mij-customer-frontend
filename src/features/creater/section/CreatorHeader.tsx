@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Share, MessageCircle, LinkIcon } from "lucide-react";
-import { Creator } from '@/feateure/creater/types';
+import { Creator } from '@/features/creater/types';
 
 export default function CreatorHeader({ creator }: { creator: Creator }) {
   return (

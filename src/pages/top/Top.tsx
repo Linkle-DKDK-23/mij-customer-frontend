@@ -15,11 +15,11 @@ import { Post, Creator, Genre, BannerItem } from '@/features/top/types';
 import { getTopPageData } from '@/api/endpoints/top';
 import { TopPageData } from '@/api/types/type';
 
-const bannerItems: BannerItem[] = [
-  { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
-  { id: '2', image: 'https://picsum.photos/800/200?random=32', title: 'New Releases' },
-  { id: '3', image: 'https://picsum.photos/800/200?random=33', title: 'Popular Now' }
-];
+// const bannerItems: BannerItem[] = [
+//   { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
+//   { id: '2', image: 'https://picsum.photos/800/200?random=32', title: 'New Releases' },
+//   { id: '3', image: 'https://picsum.photos/800/200?random=33', title: 'Popular Now' }
+// ];
 
 export default function Top() {
   const navigate = useNavigate();
@@ -128,7 +128,7 @@ export default function Top() {
         <Header />
 
         {/* Banner Carousel */}
-        <BannerCarouselSection bannerItems={bannerItems} />
+        {/* <BannerCarouselSection bannerItems={bannerItems} /> */}
 
         {/* Post Library Navigation */}
         <PostLibraryNavigationSection />

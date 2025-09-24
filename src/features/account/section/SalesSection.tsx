@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SalesSectionProps } from '@/feateure/account/section/types';
+import { SalesSectionProps } from '@/features/account/section/types';
 
 export default function SalesSection({ accountInfo }: SalesSectionProps) {
   const navigate = useNavigate();

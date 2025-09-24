@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronRight, Clock, Play, Eye, Heart, Bookmark, Crown } from 'lucide-react';
-import { PostCategory } from '@/feateure/category/types';
+import { PostCategory } from '@/features/category/types';
 import { Button } from '@/components/ui/button';
 
 export default function CategoryListSection({ posts }: { posts: PostCategory[] }) {

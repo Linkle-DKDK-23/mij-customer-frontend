@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { cn } from "@/lib/utils";
-import { BannerCarouselSectionProps } from '@/feateure/top/types';
+import { BannerCarouselSectionProps } from '@/features/top/types';
 
 export default function BannerCarouselSection({ bannerItems }: BannerCarouselSectionProps) {
   const timer = useRef<NodeJS.Timeout | null>(null);
