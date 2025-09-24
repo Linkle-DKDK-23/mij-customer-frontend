@@ -1,7 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Label } from "@/components/ui/label";
-import OgpPreview from "@/features/shareVideo/componets/OgpPreview";
-import OgpUploadArea from "@/features/shareVideo/componets/OgpUploadArea,";
-export default function OgpImageSection({ ogp, onFileChange, }) {
-    return (_jsxs("div", { className: "space-y-2 pr-5 pl-5 border-t border-b border-primary pt-5 pb-5", children: [_jsxs(Label, { htmlFor: "ogp-image", className: "text-sm font-medium font-bold", children: [_jsx("span", { className: "text-primary mr-1", children: "*" }), "OGP\u753B\u50CF\u3092\u8A2D\u5B9A\u3059\u308B"] }), ogp ? (_jsx(OgpPreview, { ogp: ogp, onChange: onFileChange })) : (_jsx(OgpUploadArea, { onFileChange: onFileChange })), _jsxs("ul", { className: "list-disc pl-5 text-xs text-muted-foreground space-y-1 mt-2", children: [_jsx("li", { children: "OGP\u753B\u50CF\u3068\u306FSNS\u306A\u3069\u3067\u30EA\u30F3\u30AF\u3092\u8CBC\u3063\u305F\u969B\u306B\u8868\u793A\u3055\u308C\u308B\u753B\u50CF\u3067\u3059\u3002\u63A8\u5968\u30B5\u30A4\u30BA\u306F1200\u2715630\u30D4\u30AF\u30BB\u30EB\u3067\u3059\u3002" }), _jsx("li", { children: "\u8A2D\u5B9A\u3059\u308B\u3068\u5BE9\u67FB\u5BFE\u8C61\u3068\u306A\u308A\u3001\u5229\u7528\u898F\u7D04\u9055\u53CD\u304C\u3042\u3063\u305F\u5834\u5408\u306F\u3001\u4E88\u544A\u306A\u304F\u30A2\u30AB\u30A6\u30F3\u30C8\u304C\u51CD\u7D50\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308A\u307E\u3059\u3002" })] })] }));
-}

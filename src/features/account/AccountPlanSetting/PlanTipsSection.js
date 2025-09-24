@@ -1,4 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-export default function PlanTipsSection() {
-    return (_jsxs("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: [_jsx("h4", { className: "font-medium text-blue-900 mb-2", children: "\u30D7\u30E9\u30F3\u4F5C\u6210\u306E\u30B3\u30C4" }), _jsxs("ul", { className: "text-sm text-blue-800 space-y-1", children: [_jsx("li", { children: "\u2022 \u9B45\u529B\u7684\u306A\u30D7\u30E9\u30F3\u540D\u3068\u8AAC\u660E\u6587\u3092\u8A2D\u5B9A\u3057\u307E\u3057\u3087\u3046" }), _jsx("li", { children: "\u2022 \u9069\u5207\u306A\u4FA1\u683C\u8A2D\u5B9A\u3067\u30D5\u30A1\u30F3\u304C\u52A0\u5165\u3057\u3084\u3059\u304F\u3057\u307E\u3057\u3087\u3046" }), _jsx("li", { children: "\u2022 \u5B9A\u671F\u7684\u306A\u30B3\u30F3\u30C6\u30F3\u30C4\u66F4\u65B0\u3067\u30D5\u30A1\u30F3\u3092\u6E80\u8DB3\u3055\u305B\u307E\u3057\u3087\u3046" })] })] }));
-}

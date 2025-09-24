@@ -1,5 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Gift, ChevronRight } from 'lucide-react';
-export default function CouponManagementSection() {
-    return (_jsx("div", { className: "bg-blue-50 border border-blue-200 rounded-lg p-4", children: _jsxs("div", { className: "flex items-center justify-between", children: [_jsxs("div", { className: "flex items-center space-x-3", children: [_jsx("div", { className: "bg-blue-500 p-2 rounded-lg", children: _jsx(Gift, { className: "h-5 w-5 text-white" }) }), _jsxs("div", { children: [_jsx("h3", { className: "font-medium text-gray-900", children: "\u30AF\u30FC\u30DD\u30F3\u7BA1\u7406" }), _jsxs("p", { className: "text-sm text-gray-600", children: ["\u4FDD\u6709\u30AF\u30FC\u30DD\u30F3\u306E\u78BA\u8A8D\u3001\u30AF\u30FC\u30DD\u30F3\u306E\u767A\u884C\u3001\u7BA1\u7406\u3001", _jsx("br", {}), "\u5229\u7528\u72B6\u6CC1\u3092\u78BA\u8A8D\u3067\u304D\u307E\u3059\u3002"] })] })] }), _jsx(ChevronRight, { className: "h-5 w-5 text-gray-400" })] }) }));
-}

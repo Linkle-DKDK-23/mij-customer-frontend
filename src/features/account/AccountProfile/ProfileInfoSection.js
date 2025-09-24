@@ -1,6 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Link as LinkIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-export default function ProfileInfoSection({ slug, displayName, bio, postCount, followerCount, websiteUrl }) {
-    return (_jsx("div", { className: "px-6 pt-10 pb-4", children: _jsxs("div", { className: "flex items-start justify-between", children: [_jsxs("div", { className: "flex-1", children: [_jsx("h1", { className: "text-xl font-bold text-gray-900", children: slug }), _jsxs("p", { className: "text-gray-600", children: ["@", displayName] }), bio && _jsx("p", { className: "text-gray-700 mt-2", children: bio }), _jsxs("div", { className: "flex items-center space-x-4 mt-3 text-sm text-gray-500", children: [_jsxs("span", { children: [postCount, "\u6295\u7A3F"] }), _jsxs("span", { children: [followerCount, "\u30D5\u30A9\u30ED\u30EF\u30FC"] })] }), websiteUrl && (_jsxs("a", { href: websiteUrl, className: "flex items-center space-x-1 text-primary text-sm mt-2", children: [_jsx(LinkIcon, { className: "h-4 w-4" }), _jsx("span", { children: websiteUrl })] }))] }), _jsx(Button, { className: "bg-primary hover:bg-primary/90", children: "\u30D5\u30A9\u30ED\u30FC" })] }) }));
-}
