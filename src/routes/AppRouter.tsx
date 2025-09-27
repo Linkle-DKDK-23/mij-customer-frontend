@@ -24,20 +24,30 @@ import SupabaseSignup from '@/pages/auth/SupabaseSignup';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import AuthCallback from '@/pages/auth/AuthCallback';
+
+// クリエイター登録ページ
+import CreatorList from '@/pages/qreator/CreatorList';
 import QreatorRequest from '@/pages/qreator/QreatorRequest';
 import QreatorRequestCertifierImage from '@/pages/qreator/QreatorRequestCertifierImage';
 import QreatorRequestSmsVerification from '@/pages/qreator/QreatorRequestSmsVerification';
 import QreatorRequestPersonalInfo from '@/pages/qreator/QreatorRequestPersonalInfo';
 import QreatorRequestPlanSetup from '@/pages/qreator/QreatorRequestPlanSetup';
+
+// ランキングページ
 import FeedSample from '@/pages/feed/FeedSample';
-import PostRanking from '@/pages/postRanking/PostRanking';
+import PostRanking from '@/pages/post/PostRanking';
 import Category from '@/pages/category/Category';
-import PostDetail from '@/pages/postDetail/postDetail';
+import PostNewArrivals from '@/pages/post/postNewArrivals';
+
+
+// 投稿詳細ページ
+import PostDetail from '@/pages/post/postDetail';
 import SocialTest from '@/pages/test/SocialTest';
 import Terms from '@/pages/legal/Terms';
 import PrivacyPolicy from '@/pages/legal/PrivacyPolicy';
 import LegalNotice from '@/pages/legal/LegalNotice';
-
+import Search from '@/pages/Search/Search';
+import AccountNotifications from '@/pages/account/AccountNotifications';
 import PrivateRoute from '@/routes/PrivateRoute';
 
 export default function AppRouter() {
@@ -61,6 +71,7 @@ export default function AppRouter() {
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/feed" element={<FeedSample />} />
       <Route path="/ranking/posts" element={<PostRanking />} />
+      <Route path="/post/new-arrivals" element={<PostNewArrivals />} />
       <Route path="/post/detail" element={<PostDetail />} />
       <Route path="/test/social" element={<SocialTest />} />
         {/* 認証必須ページ（必要に応じて追加） */}
@@ -75,6 +86,8 @@ export default function AppRouter() {
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/legal-notice" element={<LegalNotice />} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/account/notifications" element={<AccountNotifications />} />
       <Route
         element={
             <AccountSaleWithDraw />
@@ -103,6 +116,7 @@ export default function AppRouter() {
           </PrivateRoute>
         }
       />
+      <Route path="/creator/list" element={<CreatorList />} />
       <Route
         path="/creator/request/sms"
         element={

@@ -14,6 +14,7 @@ import CreatorsSection from '@/features/top/section/CreatorsSection';
 import { Post, Creator, Genre, BannerItem } from '@/features/top/types';
 import { getTopPageData } from '@/api/endpoints/top';
 import { TopPageData } from '@/api/types/type';
+import PostGrid from '@/components/common/PostGrid';
 
 // const bannerItems: BannerItem[] = [
 //   { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
@@ -90,6 +91,7 @@ export default function Top() {
   const handleCreatorClick = (displayName: string) => {
     navigate(`/account/profile?display_name=${displayName}`);
   };
+  
 
   if (loading) {
     return (
@@ -144,6 +146,7 @@ export default function Top() {
           columns={2}
           onPostClick={handlePostClick}
           onCreatorClick={handleCreatorClick}
+          onMoreClick={() => navigate('/ranking/posts')}
         />
 
         {/* トップクリエイター */}
@@ -151,19 +154,20 @@ export default function Top() {
           title="トップクリエイター" 
           creators={convertToCreators(topPageData.top_creators)} 
           showRank={true}
+          showMoreButton={true}
         />
 
         {/* 新人クリエイター */}
-        <CreatorsSection 
+        {/* <CreatorsSection 
           title="新人クリエイター" 
           creators={convertToCreators(topPageData.new_creators)} 
-        />
+        /> */}
 
         {/* 注目クリエイター */}
-        <CreatorsSection 
+        {/* <CreatorsSection 
           title="注目クリエイター" 
           creators={convertToCreators(topPageData.new_creators)} 
-        />
+        /> */}
 
         {/* 新着投稿 */}
         <PostsSection
@@ -173,6 +177,8 @@ export default function Top() {
           columns={2}
           onPostClick={handlePostClick}
           onCreatorClick={handleCreatorClick}
+          showMoreButton={true}
+          onMoreClick={() => navigate('/post/new-arrivals')}
         />
 
         {/* Fixed Bottom Navigation */}

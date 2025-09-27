@@ -25,15 +25,15 @@ export default function SelectPaymentDialog({ isOpen, onClose, post, onPaymentMe
       name: 'クレジットカード',
       description: 'Visa、Mastercard、JCB、American Express',
       icon: CreditCard,
-      popular: true,
-    },
-    {
-      id: 'bank_transfer',
-      name: '銀行振込',
-      description: '指定口座の振込',
-      icon: Store,
       popular: false,
     },
+    // {
+    //   id: 'bank_transfer',
+    //   name: '銀行振込',
+    //   description: '指定口座の振込',
+    //   icon: Store,
+    //   popular: false,
+    // },
   ];
 
   const handleMethodSelect = (methodId: string) => {
@@ -164,15 +164,26 @@ export default function SelectPaymentDialog({ isOpen, onClose, post, onPaymentMe
 						<div className="p-4 space-y-3 border-t border-gray-200">
 							<h3 className="text-sm font-medium text-gray-700 mb-3">支払い金額 <span className="text-gray-500 text-xs">手数料10％含む</span> </h3>
 							<div className="text-sm text-gray-600">
-                <div className="text-gray-600 flex items-center justify-between">
-                  <h5 className="text-sm font-bold text-gray-500">合計</h5>
-                  {purchaseType === 'single' && (
-                    <h1 className="text-4xl font-bold">￥{formatPrice(post?.single?.amount ?? 0)}</h1>
-                  )}
-                  {purchaseType === 'subscription' && (
-                    <h1 className="text-4xl font-bold">￥{formatPrice(post?.subscription?.amount ?? 0)}</h1>
-                  )}
-                </div>
+                {purchaseType === 'single' && post?.single && (
+                  <div className="space-y-2">
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-sm font-bold text-gray-500">合計</h5>
+                        <h1 className="text-4xl font-bold">￥{formatPrice(Math.round(post.single.amount * 1.1))}</h1>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {purchaseType === 'subscription' && post?.subscription && (
+                  <div className="space-y-2">
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-sm font-bold text-gray-500">合計</h5>
+                        <h1 className="text-4xl font-bold">￥{formatPrice(Math.round(post.subscription.amount * 1.1))}</h1>
+                      </div>
+                    </div>
+                  </div>
+                )}
 							</div>
 						</div>
 

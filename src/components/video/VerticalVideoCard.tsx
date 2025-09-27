@@ -294,7 +294,7 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
                 onClick={handlePurchaseClick}
               >
                 <Video className="h-4 w-4" />
-                <span>本編{formatMainVideoDuration(post.main_video_duration)}を購入する</span>
+                <span>本編{formatMainVideoDuration(post.main_video_duration)}を視聴する</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>  
             )}

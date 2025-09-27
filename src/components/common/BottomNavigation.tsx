@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Rss, TrendingUp, MessageCircle, User } from 'lucide-react';
+import { Home, Rss, TrendingUp, MessageCircle, User, Video, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthContext';
 
@@ -18,25 +18,27 @@ export default function BottomNavigation() {
             <Home className="h-6 w-6" />
             <span className="text-xs mt-1 font-medium text-center">ホーム</span>
           </div>
-          <div 
+          {/* <div 
             className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
             onClick={() => navigate('/feed')}
           >
             <Rss className="h-6 w-6" />
             <span className="text-xs mt-1 text-center">カテゴリ</span>
-          </div>
-          <div 
-            className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
-            onClick={() => navigate('/share/post')}
-          >
-            <TrendingUp className="h-6 w-6" />
-            <span className="text-xs mt-1 text-center">投稿</span>
-          </div>
+          </div> */}
+          {user?.role === 2 && (
+            <div 
+              className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
+              onClick={() => navigate('/share/post')}
+            >
+              <Video className="h-6 w-6" />
+              <span className="text-xs mt-1 text-center">投稿</span>
+            </div>
+          )}
           <div 
             className="flex flex-col items-center py-2 text-gray-500 hover:text-primary cursor-pointer w-16"
             onClick={() => navigate('/ranking/posts')}
           >
-            <MessageCircle className="h-6 w-6" />
+            <Crown className="h-6 w-6" />
             <span className="text-xs mt-1 text-center">ランキング</span>
           </div>
           <div 

@@ -21,7 +21,6 @@ export default function Category() {
 		const fetchCategory = async () => {
 			try {
 				const response = await getPostsByCategory(slug);
-				console.log('response', response);
 				setPosts(response);
 			} catch (error) {
 				console.error('Error fetching category:', error);
@@ -30,6 +29,14 @@ export default function Category() {
 
 		fetchCategory();
 	}, [slug]);
+
+	const handlePostClick = (postId: string) => {
+		navigate(`/post/detail?post_id=${postId}`);
+	};
+
+  const handleCreatorClick = (displayName: string) => {
+    navigate(`/account/profile?display_name=${displayName}`);
+  };
 
 
   const convertToPosts = (posts: PostCategory[]): PostCardProps[] => {
@@ -55,10 +62,12 @@ export default function Category() {
 			<Header />
 			<PostsSection
 				title="カテゴリー別ランキング"
+				showMoreButton={false}
 				posts={convertToPosts(posts)}
+				onCreatorClick={handleCreatorClick}
 				showRank={false}
 				columns={2}
-				onPostClick={() => {}}
+				onPostClick={handlePostClick}
 			/>
 			<BottomNavigation />
 		</div>

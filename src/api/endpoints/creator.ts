@@ -47,3 +47,8 @@ export const uploadIdentityDocument = async (
   const response = await apiClient.post('/creators/identity-documents', documentData);
   return response.data;
 };
+
+export const getCreatorList = async (): Promise<CreatorOut> => {
+  const response = await apiClient.get('/creators/list');
+  return response.data;
+};

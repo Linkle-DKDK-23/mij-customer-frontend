@@ -78,12 +78,19 @@ export default function LegalNotice() {
               </div>
             </div>
 
-            <div className="pb-6 sm:pb-8">
+            <div className="border-b border-gray-200 pb-6 sm:pb-8">
               <div className="text-lg sm:text-xl font-bold mb-2 text-black">その他費用</div>
               <div className="text-base sm:text-lg">
                 当社が代理受領した料金を「クリエイター」が指定する振込先口座に振り込む際、振込手数料として330円（税込）を当社にお支払いいただきます。
                 <br /><br />
                 なお、ご指定いただいた振込先口座情報の不備・誤記によって誤った振込先への振込がなされてしまった場合に、当社が任意で行う組戻し手続に際し、組戻し手数料として880円（税込）を当社にお支払いいただきます。
+              </div>
+            </div>
+            <div className="pb-6 sm:pb-8">
+              <div className="text-lg sm:text-xl font-bold mb-2 text-black">映像送信型性風俗特殊営業届</div>
+              <div className="text-base sm:text-lg">
+              茨城県公安委員会<br />
+              第1160611号
               </div>
             </div>
           </div>

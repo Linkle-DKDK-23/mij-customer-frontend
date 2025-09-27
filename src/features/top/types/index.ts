@@ -33,6 +33,8 @@ export interface CreatorsSectionProps {
   creators: Creator[];
   showRank?: boolean;
   onCreatorClick?: (creatorId: string) => void;
+  showMoreButton?: boolean;
+  scrollable?: boolean;
 }
 
 export interface Genre {

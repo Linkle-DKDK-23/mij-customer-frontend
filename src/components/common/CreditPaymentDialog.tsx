@@ -101,9 +101,9 @@ export default function CreditPaymentDialog({ isOpen, onClose, post, onPayment, 
                   <span className="text-sm text-gray-600">支払い金額</span>
                   {/* purchaseTypeの内容によって表示する金額を分岐 */}
                   {purchaseType === 'single' ? (
-                    <h1 className="text-3xl font-bold text-gray-900">¥{formatPrice(post.single.amount)}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">¥{formatPrice(Math.round(post.single.amount * 1.1))}</h1>
                   ) : purchaseType === 'subscription' ? (
-                    <h1 className="text-3xl font-bold text-gray-900">¥{formatPrice(post.subscription.amount)}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">¥{formatPrice(Math.round(post.subscription.amount * 1.1))}</h1>
                   ) : null}
                 </div>
               </div>

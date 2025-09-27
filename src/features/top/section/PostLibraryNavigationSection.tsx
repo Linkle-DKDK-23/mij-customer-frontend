@@ -49,7 +49,7 @@ export default function PostLibraryNavigationSection() {
               className="font-medium text-xs"
               onClick={() => handleClick('/legal-notice')}
             >
-              特定商法取引法に基づく表記
+              特定商取引法に基づく表記
             </span>
           </div>
           <div className="flex flex-col items-center space-y-1 text-gray-700 hover:text-primary cursor-pointer">

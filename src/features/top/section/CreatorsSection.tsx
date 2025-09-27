@@ -9,7 +9,9 @@ export default function CreatorsSection({
   title, 
   creators, 
   showRank = false,
-  onCreatorClick 
+  onCreatorClick,
+  showMoreButton = true,
+  scrollable = true
 }: CreatorsSectionProps) {
   const navigate = useNavigate();
 
@@ -26,17 +28,30 @@ export default function CreatorsSection({
       <div className="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-          <Button variant="ghost" size="sm" className="text-primary hover:text-pink-600">
-            もっと見る
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
+          {showMoreButton && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary hover:text-pink-600"
+              onClick={() => navigate('/creator/list')}
+            >
+              もっと見る
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          )}
         </div>
 
-        <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
+        <div className={scrollable 
+          ? "flex overflow-x-auto space-x-4 pb-2 scrollbar-hide" 
+          : "grid grid-cols-2 gap-4"
+        }>
           {creators.map((creator) => (
             <div
               key={creator.id}
-              className="min-w-[240px] bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow flex-shrink-0"
+              className={scrollable
+                ? "min-w-[240px] bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow flex-shrink-0"
+                : "bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+              }
             >
               <div className="text-center">
                 <div onClick={() => handleCreatorClick(creator.display_name)}>

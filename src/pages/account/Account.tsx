@@ -11,6 +11,7 @@ import CouponManagementSection from '@/features/account/section/CouponManagement
 import PostManagementSection from '@/features/account/section/PostManagementSection';
 import SalesSection from '@/features/account/section/SalesSection';
 import PlanManagementSection from '@/features/account/section/PlanManagementSection';
+import { useAuth } from '@/providers/AuthContext';
 
 // 型定義をインポート
 import { AccountInfo, UserProfile } from '@/features/account/types';
@@ -19,13 +20,21 @@ export default function Account() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'admin' | 'joined' | 'individual' | 'likes'>('admin');
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+
+  const { user } = useAuth();
   
-  const navigationItems = [
-    { id: 'admin', label: '管理画面', count: 0, isActive: activeTab === 'admin' },
+  const baseNavigationItems = [
     { id: 'joined', label: '加入中', count: 0, isActive: activeTab === 'joined' },
     { id: 'individual', label: '単品購入', count: 0, isActive: activeTab === 'individual' },
     { id: 'likes', label: 'いいね', count: 0, isActive: activeTab === 'likes' }
   ];
+
+  const navigationItems = user?.role === 2 
+    ? [
+        { id: 'admin', label: '管理画面', count: 0, isActive: activeTab === 'admin' },
+        ...baseNavigationItems
+      ]
+    : baseNavigationItems;
 
   const mockUser: UserProfile = {
     name: accountInfo?.slug || '',
@@ -89,7 +98,7 @@ export default function Account() {
         <AccountNavigation items={navigationItems} onItemClick={handleTabClick} />
 
         {/* Management Content */}
-        {activeTab === 'admin' && (
+        {activeTab === 'admin' && user?.role === 2 && (
           <div className="px-6 space-y-4 mb-40">
             {/* Coupon Management */}
             <CouponManagementSection />

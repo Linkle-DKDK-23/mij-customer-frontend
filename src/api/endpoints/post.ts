@@ -7,11 +7,16 @@ export const createPost = async (request: CreatePostRequest) => {
 };
 
 export const getPostsByCategory = async (slug: string) => {
-  const { data } = await apiClient.get(`/category?slug=${slug}`);
+  const { data } = await apiClient.get(`/category/?slug=${slug}`);
   return data;
 };
 
 export const getPostDetail = async (postId: string) => {
   const { data } = await apiClient.get(`/post/detail?post_id=${postId}`);
+  return data;
+};
+
+export const getNewArrivals = async () => {
+  const { data } = await apiClient.get(`/post/new-arrivals`);
   return data;
 };

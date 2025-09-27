@@ -8,7 +8,6 @@ import axios, {
 import { log } from "node:console";
 
 const BASE_URL = (import.meta as { env: { VITE_API_BASE_URL?: string } }).env.VITE_API_BASE_URL
-console.log("axios.ts BASE_URL:", BASE_URL);
 if (!BASE_URL) {
   throw new Error("VITE_API_BASE_URL is not set");
 }
@@ -35,16 +34,9 @@ const apiClient = axios.create({
   baseURL: BASE_URL,
   withCredentials: true, // Cookie送受信 必須
 });
-console.log("axios instance baseURL:", apiClient.defaults.baseURL);
 
 // ---- Request: 非GETに X-CSRF-Token を必ず付与 ----
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  console.log("REQUEST DEBUG:", {
-    url: config.url,
-    baseURL: config.baseURL,
-    fullURL: `${config.baseURL}${config.url}`
-  });
-
   const method = (config.method ?? "get").toUpperCase();
   const needsCsrf = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 
