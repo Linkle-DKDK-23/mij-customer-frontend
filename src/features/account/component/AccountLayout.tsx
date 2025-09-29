@@ -1,5 +1,5 @@
 import React from 'react';
-import { AccountLayoutProps } from '@/feateure/account/types';
+import { AccountLayoutProps } from '@/features/account/types';
 
 export default function AccountLayout({ children, title }: AccountLayoutProps) {
   return (

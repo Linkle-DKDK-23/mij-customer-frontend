@@ -562,7 +562,7 @@ export default function ShareVideo() {
 			}
 
 			setUploadMessage(postType === 'video' ? '動画の投稿が完了しました！' : '画像の投稿が完了しました！');
-			navigate(`/top`);
+			navigate(`/`);
 			return;
 		} catch (error) {
 			console.error('投稿エラー:', error);

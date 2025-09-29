@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlanManagementSectionProps } from '@/feateure/account/section/types';
+import { PlanManagementSectionProps } from '@/features/account/section/types';
 
 export default function PlanManagementSection({ accountInfo }: PlanManagementSectionProps) {
   const navigate = useNavigate();

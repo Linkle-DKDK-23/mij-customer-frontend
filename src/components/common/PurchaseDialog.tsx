@@ -55,58 +55,45 @@ export default function PurchaseDialog({ isOpen, onClose, post, onPurchase }: Pu
             </div>
 
             {/* 価格情報 */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                {post.single !== null && (
-                  <>
-                    <span className="text-sm text-gray-600">単品購入価格</span>
-                    <span className="text-lg font-bold text-gray-900">¥{formatPrice(post.single.amount)}</span>
-                  </>
-                )}
-                {post.subscription !== null && (
-                  <>
-                    <span className="text-sm text-gray-600">プラン価格</span>
-                    <span className="text-lg font-bold text-gray-900">¥{formatPrice(post.subscription.amount)}</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* 注意事項 */}
-            <div className="bg-blue-50 rounded-lg p-3">
-              <div className="flex items-start space-x-2">
-                <Lock className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-blue-800">
-                  <p className="font-medium">購入後の注意事項</p>
-                  <ul className="mt-1 space-y-1 text-xs">
-                    <li>• 購入後は無期限で視聴可能です</li>
-                    <li>• ダウンロードはできません</li>
-                    <li>• 返金はできません</li>
-                  </ul>
+            <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+              {post.single !== null && (
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-600">単品販売</span>
+                    <div className="text-lg font-bold text-gray-900">¥{formatPrice(post.single.amount)}</div>
+                  </div>
+                  <div className="ml-4">
+                    <Button
+                      onClick={() => onPurchase('single')}
+                      className="bg-primary text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2"
+                    >
+                      <CreditCard className="h-5 w-5" />
+                      <span>購入する</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
+              {post.subscription !== null && (
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <span className="text-sm text-gray-600">プラン価格</span>
+                    <div className="text-lg font-bold text-gray-900">¥{formatPrice(post.subscription.amount)}</div>
+                  </div>
+                  <div className="ml-4">
+                    <Button
+                      onClick={() => onPurchase('subscription')}
+                      className="bg-primary text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2"
+                    >
+                      <CreditCard className="h-5 w-5" />
+                      <span>加入する</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 購入ボタン */}
             <div className="space-y-2">
-              {post.single !== null && (
-                <Button
-                  onClick={() => onPurchase('single')}
-                  className="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="h-5 w-5" />
-                  <span>¥{formatPrice(post.single.amount)}で購入する</span>
-              </Button>
-              )}
-              {post.subscription !== null && (
-                <Button
-                  onClick={() => onPurchase('subscription')}
-                  className="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="h-5 w-5" />
-                  <span>プラン¥{formatPrice(post.subscription.amount)}に加入して視聴する</span>
-                </Button>
-              )}
               <Button
                 variant="outline"
                 onClick={onClose}

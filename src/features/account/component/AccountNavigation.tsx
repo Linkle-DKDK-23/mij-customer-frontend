@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { AccountNavigationProps } from '@/feateure/account/types';
+import { AccountNavigationProps } from '@/features/account/types';
 
 
 export default function AccountNavigation({ items, onItemClick }: AccountNavigationProps) {

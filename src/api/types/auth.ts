@@ -11,6 +11,7 @@ export type TokenOut = {
 export type Me = {
   id: string;
   email: string;
+  role: number;
 };
 
 export type LoginIn = {
@@ -21,6 +22,7 @@ export type LoginIn = {
 export type User = {
   id: string;
   email: string;
+  role: number;
 };
 
 export type AuthContextValue = {

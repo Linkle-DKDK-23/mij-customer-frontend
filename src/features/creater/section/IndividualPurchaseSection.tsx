@@ -1,5 +1,5 @@
 import { Clock } from 'lucide-react';
-import { IndividualPurchase } from '@/feateure/creater/types';
+import { IndividualPurchase } from '@/features/creater/types';
 
 export default function IndividualPurchaseSection({ items }: { items: IndividualPurchase[] }) {
 	return (

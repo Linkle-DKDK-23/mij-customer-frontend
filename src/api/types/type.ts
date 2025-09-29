@@ -39,5 +39,6 @@ export interface TopPageData {
 		display_name: string;
 		creator_avatar_url?: string;
 		duration?: string;
+		likes_count?: number;
 	}>;
 }

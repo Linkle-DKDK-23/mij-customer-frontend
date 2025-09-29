@@ -1,5 +1,5 @@
 import { Play, Clock } from 'lucide-react';
-import { Post } from '@/feateure/creater/types';
+import { Post } from '@/features/creater/types';
 
 export default function PostsSection({ posts }: { posts: Post[] }) {
     // 投稿が3つ並びで表示する

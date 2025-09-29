@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { ConfirmationSectionProps } from '@/feateure/shareVideo/types';
+import { ConfirmationSectionProps } from '@/features/shareVideo/types';
 
 
 export default function ConfirmationSection({

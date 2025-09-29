@@ -39,7 +39,7 @@ export default function Login() {
       await meApi();
 
       // 4) 成功 → 遷移
-      navigate('/top');
+      navigate('/');
     } catch (err: any) {
       alert(err?.response?.data?.detail ?? 'ログイン失敗');
     } finally {

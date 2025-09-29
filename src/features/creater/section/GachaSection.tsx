@@ -1,6 +1,6 @@
 import { Star, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { GachaItem } from '@/feateure/creater/types';
+import { GachaItem } from '@/features/creater/types';
 
 export default function GachaSection({ items }: { items: GachaItem[] }) {
   return (

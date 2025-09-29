@@ -5,8 +5,9 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosRequestConfig,
 } from "axios";
+import { log } from "node:console";
 
-const BASE_URL = (import.meta as any).env.VITE_API_BASE_URL
+const BASE_URL = (import.meta as { env: { VITE_API_BASE_URL?: string } }).env.VITE_API_BASE_URL
 if (!BASE_URL) {
   throw new Error("VITE_API_BASE_URL is not set");
 }
@@ -19,6 +20,7 @@ export const setCsrfToken = (v: string | null) => {
 
 const getCookie = (name: string) => {
   // 例: "csrf_token=abc; other=..." から値を取得（URLエンコード考慮）
+
   const raw =
     document.cookie
       .split("; ")
@@ -39,7 +41,7 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const needsCsrf = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 
   if (needsCsrf) {
-    const token = csrfToken ?? getCookie("csrf_token"); // ← ここが重要（Cookieからも拾う）
+    const token = csrfToken ?? getCookie("csrf_token");
     if (token) {
       const headers =
         (config.headers as AxiosHeaders | undefined) ?? new AxiosHeaders();
@@ -76,20 +78,17 @@ apiClient.interceptors.response.use(
           refreshing = true;
           // Cookieのrefresh_tokenを使って再発行
           const r = await apiClient.post("/auth/refresh");
-          const newCsrf = (r.data as any)?.csrf_token ?? getCookie("csrf_token");
+          const newCsrf = (r.data as { csrf_token?: string })?.csrf_token ?? getCookie("csrf_token");
           setCsrfToken(newCsrf ?? null);
-        } catch (e) {
+        } catch {
           // 失敗：キュー解放してエラー返却
           flushQueue();
           refreshing = false;
           return Promise.reject(error);
+        } finally {
+          refreshing = false;
         }
-        // 成功：待機キュー解放
-        refreshing = false;
-        flushQueue();
       }
-      // 元リクエストを再送
-      return apiClient(original);
     }
     return Promise.reject(error);
   }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Share, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { AccountHeaderProps } from '@/feateure/account/types';
+import { AccountHeaderProps } from '@/features/account/types';
 
 export default function AccountHeader({ title, showBackButton = false, showActions = false }: AccountHeaderProps) {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function AccountHeader({ title, showBackButton = false, showActio
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => navigate('/account')}
+            onClick={() => navigate('/')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>

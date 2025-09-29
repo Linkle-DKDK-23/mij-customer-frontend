@@ -22,19 +22,6 @@ interface SettingItem {
 
 const settingSections: SettingSection[] = [
   {
-    id: 'coins',
-    title: '',
-    items: [
-      {
-        id: 'coin-purchase',
-        label: '保有コイン',
-        isButton: true,
-        buttonText: 'コイン購入',
-        buttonVariant: 'default'
-      }
-    ]
-  },
-  {
     id: 'account',
     title: 'アカウント',
     items: [

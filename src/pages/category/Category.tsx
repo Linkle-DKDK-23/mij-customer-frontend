@@ -21,8 +21,9 @@ export default function Category() {
 		const fetchCategory = async () => {
 			try {
 				const response = await getPostsByCategory(slug);
-				console.log('response', response);
-				setPosts(response);
+				// いいね数の多い順でソート
+				const sortedPosts = response.sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0));
+				setPosts(sortedPosts);
 			} catch (error) {
 				console.error('Error fetching category:', error);
 			}
@@ -30,6 +31,14 @@ export default function Category() {
 
 		fetchCategory();
 	}, [slug]);
+
+	const handlePostClick = (postId: string) => {
+		navigate(`/post/detail?post_id=${postId}`);
+	};
+
+  const handleCreatorClick = (displayName: string) => {
+    navigate(`/account/profile?display_name=${displayName}`);
+  };
 
 
   const convertToPosts = (posts: PostCategory[]): PostCardProps[] => {
@@ -52,15 +61,19 @@ export default function Category() {
 
   return (
     <div className="w-full max-w-screen-md mx-auto bg-white space-y-6 pt-16">
-			<Header />
-			<PostsSection
-				title="カテゴリー別ランキング"
-				posts={convertToPosts(posts)}
-				showRank={false}
-				columns={2}
-				onPostClick={() => {}}
-			/>
-			<BottomNavigation />
+			<div className="min-h-screen bg-gray-50 pb-20">
+				<Header />
+				<PostsSection
+					title="カテゴリー別ランキング"
+					showMoreButton={false}
+					posts={convertToPosts(posts)}
+					onCreatorClick={handleCreatorClick}
+					showRank={false}
+					columns={2}
+					onPostClick={handlePostClick}
+				/>
+				<BottomNavigation />
+			</div>
 		</div>
   );
 }

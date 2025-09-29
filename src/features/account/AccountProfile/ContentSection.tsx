@@ -2,6 +2,7 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Post {
   id: string;
@@ -51,10 +52,16 @@ export default function ContentSection({
   individualPurchases, 
   gachaItems 
 }: ContentSectionProps) {
+  const navigate = useNavigate();
+
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const handlePostClick = (postId: string) => {
+    navigate(`/post/detail?post_id=${postId}`);
   };
 
   const renderEmptyState = (type: string) => (
@@ -69,7 +76,11 @@ export default function ContentSection({
         return posts.length > 0 ? (
           <div className="grid grid-cols-3 gap-1 p-1 pb-24">
             {posts.map((post) => (
-              <div key={post.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                key={post.id} 
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => handlePostClick(post.id)}
+              >
                 <div className="relative">
                   <img 
                     src={post.thumbnail_url || NO_IMAGE_URL} 
@@ -115,7 +126,11 @@ export default function ContentSection({
         return individualPurchases.length > 0 ? (
           <div className="grid grid-cols-3 gap-1 p-1 pb-24">
              {individualPurchases.map((post) => (
-              <div key={post.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                key={post.id} 
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => handlePostClick(post.id)}
+              >
                 <div className="relative">
                   <img 
                     src={post.thumbnail_url || NO_IMAGE_URL} 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ProfileSectionProps } from '@/feateure/account/section/types';
+import { ProfileSectionProps } from '@/features/account/section/types';
 
 export default function ProfileSection({ user }: ProfileSectionProps) {
   const navigate = useNavigate();

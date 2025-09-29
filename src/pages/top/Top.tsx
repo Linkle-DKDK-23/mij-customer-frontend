@@ -14,12 +14,13 @@ import CreatorsSection from '@/features/top/section/CreatorsSection';
 import { Post, Creator, Genre, BannerItem } from '@/features/top/types';
 import { getTopPageData } from '@/api/endpoints/top';
 import { TopPageData } from '@/api/types/type';
+import PostGrid from '@/components/common/PostGrid';
 
-const bannerItems: BannerItem[] = [
-  { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
-  { id: '2', image: 'https://picsum.photos/800/200?random=32', title: 'New Releases' },
-  { id: '3', image: 'https://picsum.photos/800/200?random=33', title: 'Popular Now' }
-];
+// const bannerItems: BannerItem[] = [
+//   { id: '1', image: 'https://picsum.photos/800/200?random=31', title: 'Featured Content' },
+//   { id: '2', image: 'https://picsum.photos/800/200?random=32', title: 'New Releases' },
+//   { id: '3', image: 'https://picsum.photos/800/200?random=33', title: 'Popular Now' }
+// ];
 
 export default function Top() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function Top() {
       thumbnail: post.thumbnail_url || 'https://picsum.photos/300/200?random=1',
       duration: post.duration || 0,
       views: 0,
-      likes: 'likes_count' in post ? post.likes_count : 0,
+      likes: post.likes_count || 0,
       creator: {
         name: post.creator_name,
         display_name: post.display_name,
@@ -90,6 +91,7 @@ export default function Top() {
   const handleCreatorClick = (displayName: string) => {
     navigate(`/account/profile?display_name=${displayName}`);
   };
+  
 
   if (loading) {
     return (
@@ -128,7 +130,7 @@ export default function Top() {
         <Header />
 
         {/* Banner Carousel */}
-        <BannerCarouselSection bannerItems={bannerItems} />
+        {/* <BannerCarouselSection bannerItems={bannerItems} /> */}
 
         {/* Post Library Navigation */}
         <PostLibraryNavigationSection />
@@ -144,6 +146,7 @@ export default function Top() {
           columns={2}
           onPostClick={handlePostClick}
           onCreatorClick={handleCreatorClick}
+          onMoreClick={() => navigate('/ranking/posts')}
         />
 
         {/* トップクリエイター */}
@@ -151,19 +154,20 @@ export default function Top() {
           title="トップクリエイター" 
           creators={convertToCreators(topPageData.top_creators)} 
           showRank={true}
+          showMoreButton={true}
         />
 
         {/* 新人クリエイター */}
-        <CreatorsSection 
+        {/* <CreatorsSection 
           title="新人クリエイター" 
           creators={convertToCreators(topPageData.new_creators)} 
-        />
+        /> */}
 
         {/* 注目クリエイター */}
-        <CreatorsSection 
+        {/* <CreatorsSection 
           title="注目クリエイター" 
           creators={convertToCreators(topPageData.new_creators)} 
-        />
+        /> */}
 
         {/* 新着投稿 */}
         <PostsSection
@@ -173,6 +177,8 @@ export default function Top() {
           columns={2}
           onPostClick={handlePostClick}
           onCreatorClick={handleCreatorClick}
+          showMoreButton={true}
+          onMoreClick={() => navigate('/post/new-arrivals')}
         />
 
         {/* Fixed Bottom Navigation */}

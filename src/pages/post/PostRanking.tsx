@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import FilterSection from '@/features/postRanking/section/FilterSection';
@@ -7,8 +8,9 @@ import { RankingResponse, TabItem } from '@/features/postRanking/types';
 import { getRanking } from '@/api/endpoints/ranking';
 
 export default function PostRanking() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('posts');
-  const [activeTimePeriod, setActiveTimePeriod] = useState('daily');
+  const [activeTimePeriod, setActiveTimePeriod] = useState('all');
   const [rankingData, setRankingData] = useState<RankingResponse | null>(null);
   const [currentPosts, setCurrentPosts] = useState<any[]>([]);
 
@@ -67,6 +69,14 @@ export default function PostRanking() {
     setActiveTimePeriod(periodId);
   };
 
+  const handlePostClick = (postId: string) => {
+    navigate(`/post/detail?post_id=${postId}`);
+  };
+
+  const handleCreatorClick = (displayName: string) => {
+    navigate(`/account/profile?display_name=${displayName}`);
+  };
+
   // Convert ranking posts to PostCardProps format
   const convertToPostCards = (posts: any[]) => {
     return posts.map(post => ({
@@ -98,10 +108,12 @@ export default function PostRanking() {
         />
         <PostsSection
           title={activeTab === 'posts' ? '総合ランキング' : 'クリエイターランキング'}
+          showMoreButton={false}
           posts={convertToPostCards(currentPosts)}
           showRank={true}
           columns={2}
-          onPostClick={() => {}}
+          onPostClick={handlePostClick}
+          onCreatorClick={handleCreatorClick}
         />
         <BottomNavigation />
       </div>

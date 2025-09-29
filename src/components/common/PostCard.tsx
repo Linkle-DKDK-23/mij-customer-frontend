@@ -104,7 +104,7 @@ export default function PostCard({
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center space-x-3">
             <span className="flex items-center">
-              <LikeButton postId={id} />
+              <LikeButton postId={id} initialCount={likes} />
             </span>
           </div>
           <BookmarkButton postId={id} className="h-6 px-2" />

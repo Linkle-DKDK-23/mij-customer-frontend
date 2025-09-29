@@ -1,4 +1,4 @@
-import { Tab } from '@/feateure/creater/types';
+import { Tab } from '@/features/creater/types';
 
 export default function TabsSection({ activeTab, setActiveTab, tabs }: { activeTab: string, setActiveTab: React.Dispatch<React.SetStateAction<string>>, tabs: Tab[] }) {
 	

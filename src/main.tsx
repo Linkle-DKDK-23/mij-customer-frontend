@@ -3,15 +3,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AppRouter from "@/routes/AppRouter";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { AgeVerificationProvider } from "@/contexts/AgeVerificationContext";
 import "@/index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <AppRouter />
-      </AuthProvider>
+      <AgeVerificationProvider>
+        <AuthProvider>
+          <AppRouter />
+        </AuthProvider>
+      </AgeVerificationProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

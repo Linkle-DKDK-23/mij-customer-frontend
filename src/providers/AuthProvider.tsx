@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "@/api/axios";
 import { AuthCtx, AuthContextValue, User } from "@/providers/AuthContext";
 import { me as meApi } from "@/api/endpoints/auth";
+import { isUser, isCreator, isAdmin } from "@/utils/userRole";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -19,10 +20,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error?.response?.status === 401) {
         setUser(null);
         localStorage.removeItem('lastAccessTime');
-        // セッション期限切れの場合はログイン画面にリダイレクト
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+        // 401エラーの場合はリダイレクトしない（公開ページへのアクセスを許可）
+        console.log('User not authenticated, allowing access to public pages');
       } else {
         setUser(null);
       }
@@ -40,12 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const hoursSinceLastAccess = timeDiff / (1000 * 60 * 60);
       
       if (hoursSinceLastAccess > 48) {
-        // 48時間経過している場合、ユーザーをログアウトしてログイン画面に遷移
+        // 48時間経過している場合、ユーザーをログアウト
         setUser(null);
         localStorage.removeItem('lastAccessTime');
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
-        }
+        // 48時間期限切れでもリダイレクトしない（公開ページへのアクセスを許可）
+        console.log('Session expired, allowing access to public pages');
         return true;
       }
     }
@@ -80,7 +78,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(interval);
   }, []);
 
-  const value: AuthContextValue = { user, loading, reload, setUser };
+  // ロール判定のヘルパー関数
+  const roleHelpers = {
+    isUser: () => user ? isUser(user.role) : false,
+    isCreator: () => user ? isCreator(user.role) : false,
+    isAdmin: () => user ? isAdmin(user.role) : false,
+  };
+
+  const value: AuthContextValue = {
+    user,
+    loading,
+    reload,
+    setUser,
+    ...roleHelpers
+  };
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
