@@ -10,7 +10,7 @@ import { getRanking } from '@/api/endpoints/ranking';
 export default function PostRanking() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('posts');
-  const [activeTimePeriod, setActiveTimePeriod] = useState('daily');
+  const [activeTimePeriod, setActiveTimePeriod] = useState('all');
   const [rankingData, setRankingData] = useState<RankingResponse | null>(null);
   const [currentPosts, setCurrentPosts] = useState<any[]>([]);
 

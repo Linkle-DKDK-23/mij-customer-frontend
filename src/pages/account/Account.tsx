@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/common/Header';
 import BottomNavigation from '@/components/common/BottomNavigation';
 import { getAccountInfo } from '@/api/endpoints/account';
+import AuthDialog from '@/components/auth/AuthDialog';
 
 // セクションコンポーネントをインポート
 import ProfileSection from '@/features/account/section/ProfileSection';
@@ -20,6 +21,7 @@ export default function Account() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'admin' | 'joined' | 'individual' | 'likes'>('admin');
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   const { user } = useAuth();
   
@@ -51,18 +53,27 @@ export default function Account() {
 
   useEffect(() => {
     const fetchAccountInfo = async () => {
+      // ユーザーがログインしていない場合はAuthDialogを表示
+      if (!user) {
+        setLoading(false);
+        setShowAuthDialog(true);
+        return;
+      }
+
       try {
         const data = await getAccountInfo();
         setAccountInfo(data);
       } catch (error) {
         console.error('Failed to fetch account info:', error);
+        // API呼び出しに失敗した場合もAuthDialogを表示
+        setShowAuthDialog(true);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAccountInfo();
-  }, []);
+  }, [user]);
 
 
 
@@ -122,6 +133,12 @@ export default function Account() {
         )}
       </div>
       <BottomNavigation />
+
+      {/* Auth Dialog */}
+      <AuthDialog
+        isOpen={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+      />
     </div>
   );
 }

@@ -1,7 +1,9 @@
 // src/routes/AppRouter.tsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@/providers/AuthProvider';
+import { useAgeVerification } from '@/contexts/AgeVerificationContext';
+import Confirmation from '@/components/confirmation/confirmation';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 import Upload from '@/pages/Upload';
 import ViewVideo from '@/pages/ViewVideo';
@@ -51,10 +53,21 @@ import AccountNotifications from '@/pages/account/AccountNotifications';
 import PrivateRoute from '@/routes/PrivateRoute';
 
 export default function AppRouter() {
+  const { showVerification } = useAgeVerification();
+
+  // 年齢確認が必要な場合は確認画面を表示
+  if (showVerification) {
+    return <Confirmation />;
+  }
+
   return (
-    <Routes>
-      {/* 公開ページ */}
-      <Route path="/" element={<Top />} />
+    <>
+      {/* ページ遷移時のスクロールリセット */}
+      <ScrollToTop />
+
+      <Routes>
+        {/* 公開ページ */}
+        <Route path="/" element={<Top />} />
       <Route path="/category" element={<Category />} />
       <Route path="/view_video" element={<ViewVideo />} />
       <Route path="/share/video" element={<ShareVideo />} />
@@ -177,6 +190,7 @@ export default function AppRouter() {
           </PrivateRoute>
         }
       />
-    </Routes>
+      </Routes>
+    </>
   );
 }

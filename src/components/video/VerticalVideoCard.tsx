@@ -213,11 +213,11 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
 
   return (
     <div className="relative w-full h-[calc(100vh-var(--nav-h)-env(safe-area-inset-bottom))] bg-black flex items-center justify-center">
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full max-w-md mx-auto">
         {post.video_url ? (
           <video
             ref={videoRef}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             loop
             muted
             playsInline

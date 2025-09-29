@@ -95,7 +95,7 @@ export default function Search() {
     setSearchQuery(query);
     if (query.trim()) {
       // 実際のアプリでは、ここでAPIを呼び出してデータを取得
-      setSearchResults(mockSearchResults);
+      setSearchResults([]); // 空の配列に変更
       setShowResults(true);
     } else {
       setSearchResults([]);
@@ -228,16 +228,10 @@ export default function Search() {
         {/* Search Results */}
         {showResults ? (
           <div className="bg-white">
-            {searchResults.length > 0 ? (
-              <div className="divide-y divide-gray-100">
-                {searchResults.map(renderSearchResult)}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <SearchIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">検索結果が見つかりませんでした</p>
-              </div>
-            )}
+            <div className="text-center py-12">
+              <SearchIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">検索に一致するものが見つかりませんでした。</p>
+            </div>
           </div>
         ) : (
           // Default Search Page Content

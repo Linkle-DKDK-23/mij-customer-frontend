@@ -59,7 +59,7 @@ export default function PurchaseDialog({ isOpen, onClose, post, onPurchase }: Pu
               {post.single !== null && (
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <span className="text-sm text-gray-600">単品購入価格</span>
+                    <span className="text-sm text-gray-600">単品販売</span>
                     <div className="text-lg font-bold text-gray-900">¥{formatPrice(post.single.amount)}</div>
                   </div>
                   <div className="ml-4">

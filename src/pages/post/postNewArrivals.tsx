@@ -9,6 +9,7 @@ import { PostCardProps } from '@/components/common/PostCard';
 export default function PostNewArrivals() {
   const [newArrivals, setNewArrivals] = useState<any[]>([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchNewArrivals = async () => {
       const response = await getNewArrivals();
@@ -25,7 +26,7 @@ export default function PostNewArrivals() {
       thumbnail: post.thumbnail_url || 'https://picsum.photos/300/200?random=1',
       duration: post.duration || 0,
       views: 0,
-      likes: 'likes_count' in post ? post.likes_count : 0,
+      likes: post.likes_count || 0,
       creator: {
         name: post.creator_name,
         display_name: post.display_name,
