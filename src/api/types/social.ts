@@ -15,14 +15,14 @@ export interface CommentResponse {
   body: string;
   created_at: string;
   updated_at: string;
-  user_display_name: string;
+  user_username: string;
   user_avatar?: string;
 }
 
 export interface UserBasicResponse {
   id: string;
-  display_name: string;
-  slug: string;
+  username: string;
+  profile_name: string;
   avatar_storage_key?: string;
 }
 

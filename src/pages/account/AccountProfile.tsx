@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AccountLayout from '@/features/account/component/AccountLayout';
 import AccountNavigation from '@/features/account/component/AccountNavigation';
-import { getUserProfileByDisplayName } from '@/api/endpoints/user';
+import { getUserProfileByUsername } from '@/api/endpoints/user';
 import { UserProfile } from '@/api/types/profile';
 import BottomNavigation from '@/components/common/BottomNavigation';
 
@@ -20,11 +20,11 @@ export default function AccountProfile() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'posts' | 'plans' | 'individual' | 'gacha'>('posts');
   
-  const displayName = searchParams.get('display_name');
+  const username = searchParams.get('username');
 
   useEffect(() => {
-    if (!displayName) {
-      setError('スラッグが指定されていません');
+    if (!username) {
+      setError('ユーザー名が指定されていません');
       setLoading(false);
       return;
     }
@@ -32,7 +32,7 @@ export default function AccountProfile() {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const data = await getUserProfileByDisplayName(displayName);
+        const data = await getUserProfileByUsername(username);
         setProfile(data);
       } catch (err) {
         setError('プロフィールの取得に失敗しました');
@@ -42,7 +42,7 @@ export default function AccountProfile() {
     };
 
     fetchProfile();
-  }, [displayName]);
+  }, [username]);
 
   if (loading) return <div className="p-6 text-center">読み込み中...</div>;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
@@ -63,16 +63,16 @@ export default function AccountProfile() {
     <AccountLayout>
       <div className="space-y-6">
         {/* Profile Header Section */}
-        <ProfileHeaderSection 
+        <ProfileHeaderSection
           coverUrl={profile.cover_url}
           avatarUrl={profile.avatar_url}
-          displayName={profile.display_name}
+          username={profile.username}
         />
 
         {/* Profile Info Section */}
         <ProfileInfoSection 
-          slug={profile.slug}
-          displayName={profile.display_name}
+          profile_name={profile.profile_name}
+          username={profile.username}
           bio={profile.bio}
           postCount={profile.post_count}
           followerCount={profile.follower_count}

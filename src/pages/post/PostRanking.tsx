@@ -73,8 +73,8 @@ export default function PostRanking() {
     navigate(`/post/detail?post_id=${postId}`);
   };
 
-  const handleCreatorClick = (displayName: string) => {
-    navigate(`/account/profile?display_name=${displayName}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
   // Convert ranking posts to PostCardProps format
@@ -88,7 +88,7 @@ export default function PostRanking() {
       likes: post.likes_count || 0,
       creator: {
         name: post.creator_name || '',
-        display_name: post.display_name || '',
+        username: post.username || '',
         avatar: post.creator_avatar_url || '',
         verified: false
       },

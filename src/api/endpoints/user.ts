@@ -8,11 +8,11 @@ export const signUp = async (form: SignUpForm) => {
 };
 
 /**
- * スラッグによるユーザープロフィール取得
- * @param slug ユーザースラッグ
+ * プロフィール名によるユーザープロフィール取得
+ * @param profileName ユーザープロフィール名
  * @returns UserProfile
  */
-export const getUserProfileByDisplayName = (displayName: string): Promise<UserProfile> => {
-  console.log('displayName', displayName);
-  return apiClient.get(`/users/profile?display_name=${displayName}`).then(response => response.data);
+export const getUserProfileByUsername = (username: string): Promise<UserProfile> => {
+  console.log('username', username);
+  return apiClient.get(`/users/profile?username=${username}`).then(response => response.data);
 };

@@ -8,8 +8,8 @@ export interface UserProfile {
 }
 
 export interface AccountInfo {
-  slug?: string;
-  display_name?: string;
+  profile_name?: string;
+  username?: string;
   avatar_url?: string;
   following_count?: number;
   followers_count?: number;

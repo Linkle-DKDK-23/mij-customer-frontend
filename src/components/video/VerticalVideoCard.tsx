@@ -301,7 +301,7 @@ export default function VerticalVideoCard({ post, isActive, onVideoClick, onPurc
             
             <div className="flex items-center space-x-3">
               <div>
-                <p className="text-white font-semibold text-sm">{post.creator.slug}</p>
+                <p className="text-white font-semibold text-sm">{post.creator.profile_name}</p>
               </div>
             </div>
             <p className="text-white text-sm leading-relaxed">{post.title}</p>

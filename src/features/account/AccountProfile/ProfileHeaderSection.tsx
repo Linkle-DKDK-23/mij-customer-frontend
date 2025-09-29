@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 interface ProfileHeaderSectionProps {
   coverUrl?: string;
   avatarUrl?: string;
-  displayName: string;
+  username: string;
 }
 
-export default function ProfileHeaderSection({ coverUrl, avatarUrl, displayName }: ProfileHeaderSectionProps) {
+export default function ProfileHeaderSection({ coverUrl, avatarUrl, username }: ProfileHeaderSectionProps) {
   return (
     <div className="relative">
       <div 

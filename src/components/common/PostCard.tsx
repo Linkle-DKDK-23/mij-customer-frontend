@@ -13,14 +13,14 @@ export interface PostCardProps {
   likes?: number;
   creator: {
     name: string;
-    display_name: string;
+    username: string;
     avatar: string;
     verified: boolean;
   };
   rank?: number;
   showRank?: boolean;
   onClick?: (id: string) => void;
-  onCreatorClick?: (displayName: string) => void;
+  onCreatorClick?: (username: string) => void;
 }
 
 export default function PostCard({
@@ -45,7 +45,7 @@ export default function PostCard({
   const handleCreatorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onCreatorClick) {
-      onCreatorClick(creator.display_name);
+      onCreatorClick(creator.username);
     }
   };
 

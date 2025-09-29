@@ -7,7 +7,7 @@ export interface Post {
   likes: number;
   creator: {
     name: string;
-    display_name: string;
+    username: string;
     avatar: string;
     verified: boolean;
   };
@@ -21,7 +21,7 @@ export interface RecentPostsSectionProps {
 export interface Creator {
   id: string;
   name: string;
-  display_name: string;
+  username: string;
   avatar: string;
   followers: number;
   verified: boolean;

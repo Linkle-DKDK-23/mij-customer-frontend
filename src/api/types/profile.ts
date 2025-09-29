@@ -33,8 +33,8 @@ export interface ProfileGacha {
 
 export interface UserProfile {
   id: string;
-  slug: string;
-  display_name?: string;
+  profile_name: string;
+  username?: string;
   avatar_url?: string;
   cover_url?: string;
   bio?: string;

@@ -29,7 +29,7 @@ export default function PostNewArrivals() {
       likes: post.likes_count || 0,
       creator: {
         name: post.creator_name,
-        display_name: post.display_name,
+        username: post.username,
         avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
         verified: false
       },
@@ -41,8 +41,8 @@ export default function PostNewArrivals() {
     navigate(`/post/detail?post_id=${postId}`);
   };
 
-  const handleCreatorClick = (displayName: string) => {
-    navigate(`/account/profile?display_name=${displayName}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
   return (

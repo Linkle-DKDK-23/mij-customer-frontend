@@ -17,7 +17,7 @@ export interface PostDetailData {
 	created_at: string;
 	creator: {
 		name: string;
-		slug: string;
+		profile_name: string;
 		avatar: string;
 		verified: boolean;
 	};
