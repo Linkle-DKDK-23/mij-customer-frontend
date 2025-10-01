@@ -85,7 +85,7 @@ export default function SelectPaymentDialog({ isOpen, onClose, post, onPaymentMe
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 text-sm truncate">{post.title}</h3>
-                      <p className="text-xs text-gray-600 truncate">@{post.creator.slug}</p>
+                      <p className="text-xs text-gray-600 truncate">@{post.creator.profile_name}</p>
                     </div>
                   </div>
                 ): (purchaseType === 'subscription') ? (

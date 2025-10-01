@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 interface ProfileHeaderSectionProps {
   coverUrl?: string;
   avatarUrl?: string;
-  displayName: string;
+  username: string;
 }
 
-export default function ProfileHeaderSection({ coverUrl, avatarUrl, displayName }: ProfileHeaderSectionProps) {
+export default function ProfileHeaderSection({ coverUrl, avatarUrl, username }: ProfileHeaderSectionProps) {
   return (
     <div className="relative">
       <div 
@@ -22,7 +22,7 @@ export default function ProfileHeaderSection({ coverUrl, avatarUrl, displayName 
       <div className="absolute -bottom-10 left-6">
         <img 
           src={avatarUrl || '/src/assets/no-image.svg'} 
-          alt={displayName}
+          alt={username}
           className="w-20 h-20 rounded-full border-4 border-white object-cover"
         />
       </div>

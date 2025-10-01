@@ -64,7 +64,7 @@ export default function Top() {
       likes: post.likes_count || 0,
       creator: {
         name: post.creator_name,
-        display_name: post.display_name,
+        username: post.username,
         avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
         verified: false
       },
@@ -76,7 +76,7 @@ export default function Top() {
     return creators.map(creator => ({
       id: creator.id,
       name: creator.name,
-      display_name: creator.display_name,
+      username: creator.username,
       avatar: creator.avatar_url || 'https://picsum.photos/60/60?random=1',
       followers: creator.followers_count,
       verified: false,
@@ -88,8 +88,8 @@ export default function Top() {
     navigate(`/post/detail?post_id=${postId}`);
   };
 
-  const handleCreatorClick = (displayName: string) => {
-    navigate(`/account/profile?display_name=${displayName}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
   
 

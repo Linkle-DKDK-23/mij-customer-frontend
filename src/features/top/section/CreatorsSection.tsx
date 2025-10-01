@@ -15,11 +15,11 @@ export default function CreatorsSection({
 }: CreatorsSectionProps) {
   const navigate = useNavigate();
 
-  const handleCreatorClick = (display_name: string) => {
+  const handleCreatorClick = (username: string) => {
     if (onCreatorClick) {
-      onCreatorClick(display_name);
+      onCreatorClick(username);
     } else {
-      navigate(`/account/profile?display_name=${display_name}`);
+      navigate(`/account/profile?username=${username}`);
     }
   };
 
@@ -54,7 +54,7 @@ export default function CreatorsSection({
               }
             >
               <div className="text-center">
-                <div onClick={() => handleCreatorClick(creator.display_name)}>
+                <div onClick={() => handleCreatorClick(creator.username)}>
                   <div className="relative inline-block mb-3">
                     <img
                       src={creator.avatar}

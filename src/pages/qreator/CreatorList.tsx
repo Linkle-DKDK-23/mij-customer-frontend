@@ -15,7 +15,7 @@ const CreatorList = () => {
     return creators.map(creator => ({
       id: creator.id,
       name: creator.name,
-      display_name: creator.display_name,
+      username: creator.username,
       avatar: creator.avatar_url || 'https://picsum.photos/60/60?random=1',
       followers: creator.followers_count,
       verified: false,
@@ -36,8 +36,8 @@ const CreatorList = () => {
 		fetchCreatorList();
   }, []);
 
-	const handleCreatorClick = (displayName: string) => {
-		navigate(`/account/profile?display_name=${displayName}`);
+	const handleCreatorClick = (username: string) => {
+		navigate(`/account/profile?username=${username}`);
 	};
 
   return (

@@ -39,8 +39,8 @@ export default function Account() {
     : baseNavigationItems;
 
   const mockUser: UserProfile = {
-    name: accountInfo?.slug || '',
-    username: accountInfo?.display_name || '',
+    name: accountInfo?.profile_name || '',
+    username: accountInfo?.username || '',
     avatar: accountInfo?.avatar_url || '/src/assets/no-image.svg',
     followingCount: accountInfo?.following_count || 0,
     followerCount: accountInfo?.followers_count || 0,

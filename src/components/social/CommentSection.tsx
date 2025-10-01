@@ -52,12 +52,12 @@ function CommentItem({ comment, onReply, onEdit, onDelete, currentUserId }: Comm
             <img
               className="h-8 w-8 rounded-full"
               src={comment.user_avatar}
-              alt={comment.user_display_name}
+              alt={comment.user_username}
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
               <span className="text-sm text-gray-600">
-                {comment.user_display_name.charAt(0)}
+                {comment.user_username.charAt(0)}
               </span>
             </div>
           )}
@@ -66,7 +66,7 @@ function CommentItem({ comment, onReply, onEdit, onDelete, currentUserId }: Comm
         <div className="flex-1">
           <div className="flex items-center space-x-2">
             <h4 className="text-sm font-medium text-gray-900">
-              {comment.user_display_name}
+              {comment.user_username}
             </h4>
             <span className="text-xs text-gray-500">
               {new Date(comment.created_at).toLocaleString()}

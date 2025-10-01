@@ -4,7 +4,7 @@ export interface Post {
   thumbnail_url: string;
   likes_count: number;
   creator_name: string;
-  display_name: string;
+  username: string;
   creator_avatar_url: string;
   rank: number;
 }
@@ -27,7 +27,7 @@ export interface RankingPostsAllTimeResponse {
   thumbnail_url: string;
   likes_count: number;
   creator_name: string;
-  display_name: string;
+  username: string;
   creator_avatar_url: string;
   rank: number;
 }
@@ -38,7 +38,7 @@ export interface RankingPostsDailyResponse {
   thumbnail_url: string;
   likes_count: number;
   creator_name: string;
-  display_name: string;
+  username: string;
   creator_avatar_url: string;
   rank: number;
 }
@@ -49,7 +49,7 @@ export interface RankingPostsMonthlyResponse {
   thumbnail_url: string;
   likes_count: number;
   creator_name: string;
-  display_name: string;
+  username: string;
   creator_avatar_url: string;
   rank: number;
 }
@@ -60,7 +60,7 @@ export interface RankingPostsWeeklyResponse {
   thumbnail_url: string;
   likes_count: number;
   creator_name: string;
-  display_name: string;
+  username: string;
   creator_avatar_url: string;
   rank: number;
 }

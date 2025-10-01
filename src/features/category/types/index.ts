@@ -4,6 +4,6 @@ export interface PostCategory {
 	thumbnail_url: string;
 	likes_count: number;
 	creator_name: string;
-	display_name: string;
+	username: string;
 	creator_avatar_url: string;
 }

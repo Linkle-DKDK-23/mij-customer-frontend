@@ -2,8 +2,8 @@ import { AccountFileKind } from "@/constants/constants";
 import { FileSpec } from "./commons";
 
 export interface AccountInfo {
-	slug?: string;
-	display_name?: string;
+	profile_name?: string;
+	username?: string;
 	avatar_url?: string;
 	cover_url?: string;
 	followers_count: number;
@@ -21,7 +21,7 @@ export interface AccountInfo {
 
 export interface AccountUpdateRequest {
 	name?: string;
-	display_name?: string;
+	username?: string;
 	description?: string;
 	links?: Record<string, string>;
 	avatar_url?: string;
@@ -80,7 +80,7 @@ export interface AccountPostResponse {
     thumbnail_url: string | null
     likes_count: number
     creator_name: string
-    display_name: string
+    username: string
     creator_avatar_url: string | null
 	price: number | null
 	currency: string | null

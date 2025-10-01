@@ -8,8 +8,8 @@ export default function RecentPostsSection({ posts }: RecentPostsSectionProps) {
 
   const navigate = useNavigate();
 
-  const handleCreatorClick = (display_name: string) => {
-    navigate(`/account/profile?display_name=${display_name}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
   return (
@@ -47,11 +47,11 @@ export default function RecentPostsSection({ posts }: RecentPostsSectionProps) {
                     alt={post.creator.name}
                     className="w-6 h-6 rounded-full"
                     onClick={() => {
-                      handleCreatorClick(post.creator.display_name);
+                      handleCreatorClick(post.creator.username);
                     }}
                   />
                   <span className="text-xs text-gray-600 flex items-center" onClick={() => {
-                    handleCreatorClick(post.creator.display_name);
+                    handleCreatorClick(post.creator.username);
                   }}>
                     {post.creator.name}
                     {post.creator.verified && <span className="text-yellow-500 ml-1">★</span>}

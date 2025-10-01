@@ -36,8 +36,8 @@ export default function Category() {
 		navigate(`/post/detail?post_id=${postId}`);
 	};
 
-  const handleCreatorClick = (displayName: string) => {
-    navigate(`/account/profile?display_name=${displayName}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
 
@@ -51,7 +51,7 @@ export default function Category() {
       likes: post.likes_count,
       creator: {
         name: post.creator_name,
-        display_name: post.display_name,
+        username: post.username,
         avatar: post.creator_avatar_url || 'https://picsum.photos/40/40?random=1',
         verified: false
       },

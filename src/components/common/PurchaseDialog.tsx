@@ -47,7 +47,7 @@ export default function PurchaseDialog({ isOpen, onClose, post, onPurchase }: Pu
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-gray-900 truncate">{post.title}</h3>
-                <p className="text-sm text-gray-600 truncate">@{post.creator.slug}</p>
+                <p className="text-sm text-gray-600 truncate">@{post.creator.profile_name}</p>
                 <p className="text-sm text-gray-500">
                   本編 {post.main_video_duration}
                 </p>

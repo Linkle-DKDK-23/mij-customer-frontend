@@ -8,8 +8,8 @@ export default function RankingSection({ posts }: RecentPostsSectionProps) {
 
   const navigate = useNavigate();
 
-  const handleCreatorClick = (display_name: string) => {
-    navigate(`/account/profile?display_name=${display_name}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
   const handlePostClick = (post: Post) => {
@@ -56,12 +56,12 @@ export default function RankingSection({ posts }: RecentPostsSectionProps) {
                     alt={post.creator.name}
                     className="w-6 h-6 rounded-full"
                     onClick={() => {
-                      handleCreatorClick(post.creator.display_name);
+                      handleCreatorClick(post.creator.username);
                     }}
                   />
                   <span 
                     onClick={() => {
-                      handleCreatorClick(post.creator.display_name);
+                      handleCreatorClick(post.creator.username);
                     }}
                     className="text-xs text-gray-600 flex items-center"
                   >

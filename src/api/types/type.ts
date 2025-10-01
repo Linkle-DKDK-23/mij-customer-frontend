@@ -11,7 +11,7 @@ export interface TopPageData {
 		thumbnail_url?: string;
 		likes_count: number;
 		creator_name: string;
-		display_name: string;
+		username: string;
 		creator_avatar_url?: string;
 		rank: number;
 		duration: string;
@@ -19,7 +19,7 @@ export interface TopPageData {
 	top_creators: Array<{
 		id: string;
 		name: string;
-		display_name: string;
+		username: string;
 		avatar_url?: string;
 		followers_count: number;
 		rank?: number;
@@ -27,7 +27,7 @@ export interface TopPageData {
 	new_creators: Array<{
 		id: string;
 		name: string;
-		display_name: string;
+		username: string;
 		avatar_url?: string;
 		followers_count: number;
 	}>;
@@ -36,7 +36,7 @@ export interface TopPageData {
 		description: string;
 		thumbnail_url?: string;
 		creator_name: string;
-		display_name: string;
+		username: string;
 		creator_avatar_url?: string;
 		duration?: string;
 		likes_count?: number;

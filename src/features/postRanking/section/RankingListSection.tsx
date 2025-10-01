@@ -12,8 +12,8 @@ interface RankingListSectionProps {
 export default function RankingListSection({ sections, posts }: RankingListSectionProps) {
   const navigate = useNavigate();
 
-  const handleCreatorClick = (display_name: string) => {
-    navigate(`/account/profile?display_name=${display_name}`);
+  const handleCreatorClick = (username: string) => {
+    navigate(`/account/profile?username=${username}`);
   };
 
   return (
@@ -56,12 +56,12 @@ export default function RankingListSection({ sections, posts }: RankingListSecti
                         alt={post.creator_name}
                         className="w-6 h-6 rounded-full"
                         onClick={() => {
-                          handleCreatorClick(post.display_name);
+                          handleCreatorClick(post.username);
                         }}
                       />
                       <span 
                         onClick={() => {
-                          handleCreatorClick(post.display_name);
+                          handleCreatorClick(post.username);
                         }}
                         className="text-xs text-gray-600 flex items-center cursor-pointer"
                       >

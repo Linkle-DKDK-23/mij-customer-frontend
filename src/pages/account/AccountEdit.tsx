@@ -127,7 +127,7 @@ export default function AccountEdit() {
 
       const res = await updateAccountInfo({
         name: profileData.name,
-        display_name: profileData.id.replace('@', ''),
+        username: profileData.id.replace('@', ''),
         description: profileData.description,
         links: profileData.links,
         avatar_url: presignRes.uploads['avatar'].key,
@@ -161,8 +161,8 @@ export default function AccountEdit() {
         setAccountInfo(data);
         setProfileData(prev => ({
           ...prev,
-          name: data.slug,
-          id: data.display_name,
+          name: data.profile_name,
+          id: data.username,
           avatar: data.avatar_url || '/src/assets/no-image.svg'
         }));
       } catch (error) {
